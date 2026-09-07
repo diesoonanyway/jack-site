@@ -493,9 +493,11 @@ const featuredApp =
   /*
     HERO / SURFACE
 
-    Hero receives the photo DIRECTLY.
-    This guarantees the moon + horizon
-    are visible.
+    The moon/ocean image now comes
+    from BaseLayout's fixed body background.
+
+    This section only adds a transparent
+    overlay for readability.
   */
 
   .home-hero {
@@ -512,8 +514,7 @@ const featuredApp =
 
     margin-bottom: 28px;
 
-    background-image:
-
+    background:
       linear-gradient(
         90deg,
 
@@ -544,19 +545,7 @@ const featuredApp =
           13,
           0.12
         ) 100%
-      ),
-
-      url(
-        '/images/moon-ocean.png'
       );
-
-    background-size: cover;
-
-    background-position:
-      center 55%;
-
-    background-repeat:
-      no-repeat;
   }
 
   .hero-top {
@@ -698,8 +687,6 @@ const featuredApp =
 
   /*
     DEPTH SYSTEM
-
-    Each section is progressively darker.
   */
 
   .depth-1 {
@@ -1125,9 +1112,6 @@ const featuredApp =
 
     .home-hero {
       min-height: 72vh;
-
-      background-position:
-        center center;
     }
 
     .hero-top {
