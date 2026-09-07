@@ -1,0 +1,1174 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const writing =
+  (await getCollection('writing'))
+    .filter(
+      (post) => !post.data.draft
+    )
+    .sort(
+      (a, b) =>
+        b.data.date.valueOf() -
+        a.data.date.valueOf()
+    );
+
+const podcasts =
+  (await getCollection('podcast'))
+    .filter(
+      (post) => !post.data.draft
+    )
+    .sort(
+      (a, b) =>
+        b.data.date.valueOf() -
+        a.data.date.valueOf()
+    );
+
+const videos =
+  (await getCollection('youtube'))
+    .filter(
+      (post) => !post.data.draft
+    )
+    .sort(
+      (a, b) =>
+        b.data.date.valueOf() -
+        a.data.date.valueOf()
+    );
+
+const apps =
+  (await getCollection('apps'))
+    .filter(
+      (app) => !app.data.draft
+    )
+    .sort(
+      (a, b) =>
+        b.data.date.valueOf() -
+        a.data.date.valueOf()
+    );
+
+const featuredWriting =
+  writing.find(
+    (post) =>
+      post.data.featured
+  ) ?? writing[0];
+
+const latestWriting =
+  writing
+    .filter(
+      (post) =>
+        post.id !==
+        featuredWriting?.id
+    )
+    .slice(0, 3);
+
+const featuredPodcast =
+  podcasts.find(
+    (post) =>
+      post.data.featured
+  ) ?? podcasts[0];
+
+const featuredVideo =
+  videos.find(
+    (post) =>
+      post.data.featured
+  ) ?? videos[0];
+
+const featuredApp =
+  apps.find(
+    (app) =>
+      app.data.featured
+  ) ?? apps[0];
+---
+
+<BaseLayout
+  title="Jack"
+  description="Writing, conversations, videos and useful things."
+>
+
+  <!-- SURFACE -->
+
+  <section
+    class="
+      home-hero
+      ocean-panel
+    "
+  >
+    <div class="hero-top">
+      <span>
+        Independent Writing
+      </span>
+
+      <span>
+        Ideas → Media → Products
+      </span>
+    </div>
+
+    <h1>
+      Ideas worth<br />
+      developing.
+    </h1>
+
+    <div class="hero-bottom">
+      <p>
+        Writing is where ideas begin.
+        The strongest ones grow into
+        conversations, videos and useful
+        products.
+      </p>
+
+      <a href="/writing/">
+        Explore Writing →
+      </a>
+    </div>
+  </section>
+
+
+  <!-- SHALLOW WATER -->
+
+  <section
+    class="
+      home-section
+      ocean-panel
+      depth-1
+    "
+  >
+    <div class="section-label">
+      <span class="number">
+        01
+      </span>
+
+      <span>
+        Featured Writing
+      </span>
+    </div>
+
+    {featuredWriting ? (
+      <div class="featured-content">
+        <h2>
+          {featuredWriting.data.title}
+        </h2>
+
+        <div class="featured-bottom">
+          <p>
+            {
+              featuredWriting.data.description ||
+              'An idea worth spending more time with.'
+            }
+          </p>
+
+          <a
+            href={`/writing/${featuredWriting.id}/`}
+          >
+            Read article →
+          </a>
+        </div>
+      </div>
+    ) : (
+      <p class="muted">
+        No published writing yet.
+      </p>
+    )}
+  </section>
+
+
+  <!-- DESCENDING -->
+
+  <section
+    class="
+      home-section
+      ocean-panel
+      depth-2
+    "
+  >
+    <div
+      class="
+        section-label
+        section-label-link
+      "
+    >
+      <div>
+        <span class="number">
+          02
+        </span>
+
+        <span>
+          Latest Writing
+        </span>
+      </div>
+
+      <a href="/writing/">
+        View all →
+      </a>
+    </div>
+
+    {latestWriting.length > 0 ? (
+      <div class="writing-list">
+        {latestWriting.map(
+          (post) => (
+            <a
+              href={`/writing/${post.id}/`}
+              class="writing-row"
+            >
+              <div>
+                <span class="post-date">
+                  {
+                    post.data.date
+                      .toLocaleDateString(
+                        'en-AU',
+                        {
+                          year:
+                            'numeric',
+                          month:
+                            'short',
+                          day:
+                            'numeric',
+                        }
+                      )
+                  }
+                </span>
+
+                <h3>
+                  {post.data.title}
+                </h3>
+              </div>
+
+              <span class="arrow">
+                ↗
+              </span>
+            </a>
+          )
+        )}
+      </div>
+    ) : (
+      <p class="muted">
+        More writing will appear here.
+      </p>
+    )}
+  </section>
+
+
+  <!-- MID WATER -->
+
+  <section class="formats">
+
+    <div
+      class="
+        format
+        ocean-panel
+        depth-3
+      "
+    >
+      <div class="section-label">
+        <span class="number">
+          03
+        </span>
+
+        <span>
+          Podcast
+        </span>
+      </div>
+
+      <h2>
+        {
+          featuredPodcast
+            ? featuredPodcast.data.title
+            : 'Go deeper through conversation.'
+        }
+      </h2>
+
+      <p>
+        Longer conversations around
+        ideas that deserve more space.
+      </p>
+
+      <a href="/podcast/">
+        Explore Podcast →
+      </a>
+    </div>
+
+
+    <div
+      class="
+        format
+        ocean-panel
+        depth-4
+      "
+    >
+      <div class="section-label">
+        <span class="number">
+          04
+        </span>
+
+        <span>
+          YouTube
+        </span>
+      </div>
+
+      <h2>
+        {
+          featuredVideo
+            ? featuredVideo.data.title
+            : 'See the idea take shape.'
+        }
+      </h2>
+
+      <p>
+        Visual explanations,
+        experiments and things
+        being built.
+      </p>
+
+      <a href="/youtube/">
+        Explore YouTube →
+      </a>
+    </div>
+
+  </section>
+
+
+  <!-- DEEP WATER -->
+
+  <section
+    class="
+      home-section
+      ocean-panel
+      depth-5
+    "
+  >
+    <div class="section-label">
+      <span class="number">
+        05
+      </span>
+
+      <span>
+        Apps
+      </span>
+    </div>
+
+    <div class="apps-layout">
+      <h2>
+        {
+          featuredApp
+            ? featuredApp.data.title
+            : 'Useful things built from real problems.'
+        }
+      </h2>
+
+      <div class="side-copy">
+        <p>
+          When an idea points to a
+          problem worth solving,
+          it may become a product.
+        </p>
+
+        <a href="/apps/">
+          Explore Apps →
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- DEEPER -->
+
+  <section
+    class="
+      newsletter
+      ocean-panel
+      depth-6
+    "
+    id="subscribe"
+  >
+    <div>
+      <div class="section-label">
+        <span class="number">
+          06
+        </span>
+
+        <span>
+          Newsletter
+        </span>
+      </div>
+
+      <h2>
+        New ideas,<br />
+        occasionally.
+      </h2>
+    </div>
+
+    <div class="newsletter-right">
+      <p>
+        A short email when there is
+        something worth reading,
+        watching or trying.
+      </p>
+
+      <div class="fake-form">
+        <span>
+          Your email
+        </span>
+
+        <strong>
+          Subscribe →
+        </strong>
+      </div>
+
+      <small>
+        Newsletter integration
+        coming later.
+      </small>
+    </div>
+  </section>
+
+
+  <!-- ABYSS -->
+
+  <section
+    class="
+      home-section
+      ocean-panel
+      depth-7
+      about-section
+    "
+  >
+    <div class="section-label">
+      <span class="number">
+        07
+      </span>
+
+      <span>
+        About
+      </span>
+    </div>
+
+    <div class="about-layout">
+      <h2>
+        Writing first.<br />
+        Everything else<br />
+        grows from there.
+      </h2>
+
+      <div class="side-copy">
+        <p>
+          This site is where ideas
+          start through writing.
+          Some grow into conversations,
+          videos and products.
+        </p>
+
+        <p>
+          The writing comes first.
+          Everything else develops
+          from the ideas worth
+          taking further.
+        </p>
+
+        <a href="/about/">
+          About Jack →
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+
+<style is:global>
+
+  /*
+    GENERAL PANEL
+  */
+
+  .ocean-panel {
+    width: 100%;
+
+    border:
+      1px solid var(--line);
+
+    box-shadow:
+      var(--shadow);
+  }
+
+
+  /*
+    HERO / SURFACE
+
+    Hero receives the photo DIRECTLY.
+    This guarantees the moon + horizon
+    are visible.
+  */
+
+  .home-hero {
+    min-height: 84vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content:
+      space-between;
+
+    padding: 64px;
+
+    margin-bottom: 28px;
+
+    background-image:
+
+      linear-gradient(
+        90deg,
+
+        rgba(
+          1,
+          7,
+          13,
+          0.72
+        ) 0%,
+
+        rgba(
+          1,
+          7,
+          13,
+          0.46
+        ) 38%,
+
+        rgba(
+          1,
+          7,
+          13,
+          0.18
+        ) 68%,
+
+        rgba(
+          1,
+          7,
+          13,
+          0.12
+        ) 100%
+      ),
+
+      url(
+        '/images/moon-ocean.png'
+      );
+
+    background-size: cover;
+
+    background-position:
+      center 55%;
+
+    background-repeat:
+      no-repeat;
+  }
+
+  .hero-top {
+    display: flex;
+
+    justify-content:
+      space-between;
+
+    gap: 20px;
+
+    color: #e0e5eb;
+
+    font-size: 0.8rem;
+
+    font-weight: 700;
+
+    letter-spacing:
+      0.12em;
+
+    text-transform:
+      uppercase;
+
+    text-shadow:
+      0 2px 18px
+      rgba(0, 0, 0, 0.9);
+  }
+
+  .home-hero h1 {
+    max-width: 1120px;
+
+    margin:
+      80px 0 72px;
+
+    text-shadow:
+      0 6px 46px
+      rgba(0, 0, 0, 0.92);
+  }
+
+  .hero-bottom {
+    display: grid;
+
+    grid-template-columns:
+      minmax(
+        0,
+        580px
+      )
+      auto;
+
+    justify-content:
+      space-between;
+
+    align-items: end;
+
+    gap: 40px;
+  }
+
+  .hero-bottom p {
+    margin: 0;
+
+    color: #f0f2f5;
+
+    font-size: 1.14rem;
+
+    line-height: 1.75;
+
+    text-shadow:
+      0 3px 22px
+      rgba(0, 0, 0, 0.95);
+  }
+
+  .hero-bottom a {
+    font-weight: 700;
+
+    text-shadow:
+      0 3px 22px
+      rgba(0, 0, 0, 0.95);
+  }
+
+
+  /*
+    COMMON SECTION
+  */
+
+  .home-section {
+    padding: 76px 64px;
+
+    margin-top: 28px;
+  }
+
+  .section-label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-bottom: 58px;
+
+    color: #cbd4dd;
+
+    font-size: 0.82rem;
+
+    font-weight: 700;
+
+    letter-spacing:
+      0.12em;
+
+    text-transform:
+      uppercase;
+  }
+
+  .number {
+    display: inline-block;
+
+    width: 30px;
+  }
+
+  .section-label-link {
+    justify-content:
+      space-between;
+  }
+
+  .section-label-link > div {
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+  }
+
+  .section-label-link > a {
+    color: var(--text);
+
+    letter-spacing: 0;
+
+    text-transform: none;
+  }
+
+
+  /*
+    DEPTH SYSTEM
+
+    Each section is progressively darker.
+  */
+
+  .depth-1 {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(
+          5,
+          20,
+          38,
+          0.28
+        ),
+        rgba(
+          4,
+          17,
+          33,
+          0.36
+        )
+      );
+  }
+
+  .depth-2 {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(
+          4,
+          17,
+          33,
+          0.38
+        ),
+        rgba(
+          3,
+          15,
+          30,
+          0.46
+        )
+      );
+  }
+
+  .depth-3 {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(
+          3,
+          15,
+          30,
+          0.48
+        ),
+        rgba(
+          2,
+          13,
+          27,
+          0.58
+        )
+      );
+  }
+
+  .depth-4 {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(
+          2,
+          13,
+          27,
+          0.58
+        ),
+        rgba(
+          1,
+          10,
+          22,
+          0.69
+        )
+      );
+  }
+
+  .depth-5 {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(
+          1,
+          11,
+          24,
+          0.66
+        ),
+        rgba(
+          1,
+          8,
+          19,
+          0.77
+        )
+      );
+  }
+
+  .depth-6 {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(
+          1,
+          9,
+          21,
+          0.76
+        ),
+        rgba(
+          0,
+          6,
+          15,
+          0.87
+        )
+      );
+  }
+
+  .depth-7 {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(
+          0,
+          6,
+          15,
+          0.86
+        ),
+        rgba(
+          0,
+          3,
+          8,
+          0.95
+        )
+      );
+  }
+
+
+  /*
+    FEATURED WRITING
+  */
+
+  .featured-content h2 {
+    max-width: 1120px;
+
+    margin-bottom: 72px;
+  }
+
+  .featured-bottom {
+    display: grid;
+
+    grid-template-columns:
+      minmax(
+        0,
+        580px
+      )
+      auto;
+
+    justify-content:
+      space-between;
+
+    align-items: end;
+
+    gap: 40px;
+  }
+
+  .featured-bottom p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 1.05rem;
+  }
+
+  .featured-bottom a {
+    font-weight: 700;
+  }
+
+
+  /*
+    WRITING LIST
+  */
+
+  .writing-list {
+    border-top:
+      1px solid var(--line);
+  }
+
+  .writing-row {
+    display: grid;
+
+    grid-template-columns:
+      1fr auto;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 34px 0;
+
+    border-bottom:
+      1px solid var(--line);
+  }
+
+  .writing-row:hover {
+    color: var(--accent);
+  }
+
+  .writing-row h3 {
+    margin-bottom: 0;
+  }
+
+  .post-date {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--muted);
+
+    font-size: 0.86rem;
+  }
+
+  .arrow {
+    color: var(--muted);
+
+    font-size: 1.8rem;
+  }
+
+
+  /*
+    PODCAST + YOUTUBE
+  */
+
+  .formats {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 28px;
+
+    margin-top: 28px;
+  }
+
+  .format {
+    min-height: 580px;
+
+    padding: 76px 64px;
+  }
+
+  .format h2 {
+    max-width: 580px;
+  }
+
+  .format p {
+    max-width: 470px;
+
+    margin-top: 42px;
+
+    color: var(--muted);
+
+    font-size: 1.05rem;
+  }
+
+  .format a {
+    display: inline-block;
+
+    margin-top: 20px;
+
+    font-weight: 700;
+  }
+
+
+  /*
+    APPS
+  */
+
+  .apps-layout {
+    display: grid;
+
+    grid-template-columns:
+      1.5fr 0.6fr;
+
+    align-items: end;
+
+    gap: 100px;
+  }
+
+  .apps-layout h2 {
+    max-width: 920px;
+
+    margin-bottom: 0;
+  }
+
+  .side-copy {
+    max-width: 440px;
+  }
+
+  .side-copy p {
+    color: #d1d9e1;
+
+    font-size: 1.05rem;
+  }
+
+  .side-copy a {
+    font-weight: 700;
+  }
+
+
+  /*
+    NEWSLETTER
+  */
+
+  .newsletter {
+    display: grid;
+
+    grid-template-columns:
+      1.2fr 0.8fr;
+
+    align-items: end;
+
+    gap: 100px;
+
+    padding: 76px 64px;
+
+    margin-top: 28px;
+  }
+
+  .newsletter h2 {
+    margin-bottom: 0;
+  }
+
+  .newsletter-right p {
+    max-width: 450px;
+
+    color: #dce2e9;
+
+    font-size: 1.05rem;
+  }
+
+  .fake-form {
+    display: flex;
+
+    justify-content:
+      space-between;
+
+    gap: 20px;
+
+    margin-top: 32px;
+
+    padding: 18px 0;
+
+    border-top:
+      1px solid
+      rgba(
+        255,
+        255,
+        255,
+        0.28
+      );
+
+    border-bottom:
+      1px solid
+      rgba(
+        255,
+        255,
+        255,
+        0.28
+      );
+  }
+
+  .fake-form span {
+    color: var(--muted);
+  }
+
+  .newsletter small {
+    display: block;
+
+    margin-top: 12px;
+
+    color: var(--muted);
+  }
+
+
+  /*
+    ABOUT / ABYSS
+  */
+
+  .about-section {
+    min-height: 500px;
+  }
+
+  .about-layout {
+    display: grid;
+
+    grid-template-columns:
+      1.35fr 0.65fr;
+
+    align-items: end;
+
+    gap: 100px;
+  }
+
+  .about-layout h2 {
+    max-width: 900px;
+
+    margin-bottom: 0;
+  }
+
+
+  /*
+    MOBILE
+  */
+
+  @media (max-width: 760px) {
+
+    .home-hero,
+    .home-section,
+    .format,
+    .newsletter {
+      padding: 30px 22px;
+    }
+
+    .home-hero {
+      min-height: 72vh;
+
+      background-position:
+        center center;
+    }
+
+    .hero-top {
+      flex-direction: column;
+
+      gap: 6px;
+    }
+
+    .home-hero h1 {
+      margin:
+        58px 0 54px;
+    }
+
+    .hero-bottom,
+    .featured-bottom,
+    .apps-layout,
+    .newsletter,
+    .about-layout {
+      grid-template-columns:
+        1fr;
+
+      gap: 36px;
+    }
+
+    .formats {
+      grid-template-columns:
+        1fr;
+    }
+
+    .format {
+      min-height: auto;
+    }
+
+    .section-label {
+      margin-bottom: 38px;
+
+      font-size: 0.76rem;
+    }
+
+    .about-section {
+      min-height: auto;
+    }
+  }
+</style>

@@ -1,0 +1,206 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const videos = await getCollection('youtube');
+
+  return videos
+    .filter((video) => !video.data.draft)
+    .map((video) => ({
+      params: {
+        id: video.id,
+      },
+      props: {
+        video,
+      },
+    }));
+}
+
+const { video } = Astro.props;
+
+const { Content } = await render(video);
+---
+
+<BaseLayout
+  title={`${video.data.title} — YouTube — Jack`}
+  description={video.data.description || video.data.title}
+>
+  <article class="video-page">
+    <section class="video-header">
+      <p class="eyebrow">
+        <a href="/youtube/">
+          YouTube
+        </a>
+      </p>
+
+      <h1>
+        {video.data.title}
+      </h1>
+
+      <p class="date">
+        {video.data.date.toLocaleDateString('en-AU', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
+      </p>
+
+      {video.data.description && (
+        <p class="description">
+          {video.data.description}
+        </p>
+      )}
+    </section>
+
+    {video.data.youtubeId && (
+      <section class="video-embed">
+        <div class="embed-frame">
+          <iframe
+            src={`https://www.youtube.com/embed/${video.data.youtubeId}`}
+            title={video.data.title}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+    )}
+
+    <section class="video-body article-body">
+      <Content />
+    </section>
+
+    {(video.data.relatedWriting ||
+      video.data.relatedPodcast ||
+      video.data.relatedApp) && (
+      <section class="related">
+        <p class="eyebrow">
+          Explore this idea
+        </p>
+
+        <div class="related-links">
+          {video.data.relatedWriting && (
+            <a href={video.data.relatedWriting}>
+              Read the writing →
+            </a>
+          )}
+
+          {video.data.relatedPodcast && (
+            <a href={video.data.relatedPodcast}>
+              Listen to the podcast →
+            </a>
+          )}
+
+          {video.data.relatedApp && (
+            <a href={video.data.relatedApp}>
+              Explore the app →
+            </a>
+          )}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style is:global>
+  .video-page {
+    margin-top: 24px;
+  }
+
+  .video-header {
+    padding: 80px 64px;
+
+    border: 1px solid var(--line);
+
+    background:
+      linear-gradient(
+        90deg,
+        rgba(1, 8, 15, 0.78),
+        rgba(1, 8, 15, 0.5)
+      );
+  }
+
+  .video-header h1 {
+    max-width: 1100px;
+    margin: 24px 0 34px;
+  }
+
+  .date {
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .video-header .description {
+    max-width: 720px;
+
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+
+  .video-embed {
+    padding: 40px 64px;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+    background: rgba(0, 5, 11, 0.8);
+  }
+
+  .embed-frame {
+    position: relative;
+
+    width: 100%;
+    max-width: 1100px;
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    background: #000;
+  }
+
+  .embed-frame iframe {
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+  }
+
+  .video-body {
+    padding: 70px 64px;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+    background: rgba(1, 8, 15, 0.8);
+  }
+
+  .related {
+    padding: 60px 64px;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+    background: rgba(1, 8, 15, 0.84);
+  }
+
+  .related-links {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 20px 32px;
+
+    margin-top: 28px;
+  }
+
+  .related-links a {
+    font-weight: 700;
+  }
+
+  @media (max-width: 760px) {
+    .video-header,
+    .video-embed,
+    .video-body,
+    .related {
+      padding: 38px 22px;
+    }
+  }
+</style>

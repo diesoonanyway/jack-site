@@ -1,0 +1,184 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const apps = await getCollection('apps');
+
+  return apps
+    .filter((app) => !app.data.draft)
+    .map((app) => ({
+      params: {
+        id: app.id,
+      },
+      props: {
+        app,
+      },
+    }));
+}
+
+const { app } = Astro.props;
+
+const { Content } = await render(app);
+---
+
+<BaseLayout
+  title={`${app.data.title} — Apps — Jack`}
+  description={app.data.description || app.data.title}
+>
+  <article class="app-page">
+    <section class="app-header">
+      <p class="eyebrow">
+        <a href="/apps/">
+          Apps
+        </a>
+      </p>
+
+      <h1>
+        {app.data.title}
+      </h1>
+
+      <p class="date">
+        {app.data.date.toLocaleDateString('en-AU', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
+      </p>
+
+      {app.data.description && (
+        <p class="description">
+          {app.data.description}
+        </p>
+      )}
+
+      <div class="app-actions">
+        {app.data.url && (
+          <a
+            class="primary-action"
+            href={app.data.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open app →
+          </a>
+        )}
+
+        {app.data.price && (
+          <span class="price">
+            {app.data.price}
+          </span>
+        )}
+      </div>
+    </section>
+
+    <section class="app-body article-body">
+      <Content />
+    </section>
+
+    {app.data.relatedWriting && (
+      <section class="related">
+        <p class="eyebrow">
+          The idea behind it
+        </p>
+
+        <a href={app.data.relatedWriting}>
+          Read the writing →
+        </a>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style is:global>
+  .app-page {
+    margin-top: 24px;
+  }
+
+  .app-header {
+    padding: 80px 64px;
+
+    border: 1px solid var(--line);
+
+    background:
+      linear-gradient(
+        90deg,
+        rgba(1, 8, 15, 0.78),
+        rgba(1, 8, 15, 0.5)
+      );
+  }
+
+  .app-header h1 {
+    max-width: 1100px;
+    margin: 24px 0 34px;
+  }
+
+  .date {
+    margin-bottom: 24px;
+    color: var(--muted);
+  }
+
+  .app-header .description {
+    max-width: 720px;
+
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+
+  .app-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 18px;
+
+    margin-top: 36px;
+  }
+
+  .primary-action {
+    display: inline-block;
+
+    padding: 12px 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    border-radius: 999px;
+
+    font-weight: 700;
+  }
+
+  .price {
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .app-body {
+    padding: 70px 64px;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+    background: rgba(1, 8, 15, 0.82);
+  }
+
+  .related {
+    padding: 60px 64px;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+    background: rgba(1, 8, 15, 0.86);
+  }
+
+  .related a {
+    display: inline-block;
+    margin-top: 24px;
+
+    font-weight: 700;
+  }
+
+  @media (max-width: 760px) {
+    .app-header,
+    .app-body,
+    .related {
+      padding: 38px 22px;
+    }
+  }
+</style>

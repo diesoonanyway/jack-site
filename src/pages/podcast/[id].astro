@@ -1,0 +1,205 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('podcast');
+
+  return posts
+    .filter((post) => !post.data.draft)
+    .map((post) => ({
+      params: {
+        id: post.id,
+      },
+      props: {
+        post,
+      },
+    }));
+}
+
+const { post } = Astro.props;
+
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  title={`${post.data.title} — Podcast — Jack`}
+  description={post.data.description || post.data.title}
+>
+  <article class="podcast-page">
+    <div class="podcast-header">
+      <p class="eyebrow">
+        <a href="/podcast/">
+          Podcast
+        </a>
+      </p>
+
+      {post.data.episode && (
+        <p class="episode">
+          Episode {post.data.episode}
+        </p>
+      )}
+
+      <h1>
+        {post.data.title}
+      </h1>
+
+      <p class="date">
+        {post.data.date.toLocaleDateString('en-AU', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
+      </p>
+
+      {post.data.description && (
+        <p class="description">
+          {post.data.description}
+        </p>
+      )}
+
+      {post.data.audioUrl && (
+        <div class="audio-area">
+          <a
+            href={post.data.audioUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Listen to episode →
+          </a>
+        </div>
+      )}
+    </div>
+
+    <div class="podcast-body article-body">
+      <Content />
+    </div>
+
+    {(post.data.relatedWriting ||
+      post.data.relatedYoutube ||
+      post.data.relatedApp) && (
+      <section class="related">
+        <p class="eyebrow">
+          Explore this idea
+        </p>
+
+        <div class="related-links">
+          {post.data.relatedWriting && (
+            <a href={post.data.relatedWriting}>
+              Read the writing →
+            </a>
+          )}
+
+          {post.data.relatedYoutube && (
+            <a href={post.data.relatedYoutube}>
+              Watch on YouTube →
+            </a>
+          )}
+
+          {post.data.relatedApp && (
+            <a href={post.data.relatedApp}>
+              Explore the app →
+            </a>
+          )}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style is:global>
+  .podcast-page {
+    margin-top: 24px;
+  }
+
+  .podcast-header {
+    padding: 80px 64px;
+
+    border: 1px solid var(--line);
+    background: rgba(1, 8, 15, 0.72);
+  }
+
+  .podcast-header h1 {
+    max-width: 1100px;
+    margin: 24px 0 34px;
+  }
+
+  .episode,
+  .date {
+    color: var(--muted);
+  }
+
+  .episode {
+    margin-top: 28px;
+    margin-bottom: 0;
+
+    font-size: 0.88rem;
+    font-weight: 700;
+
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .date {
+    margin-bottom: 24px;
+  }
+
+  .podcast-header .description {
+    max-width: 720px;
+
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+
+  .audio-area {
+    margin-top: 38px;
+  }
+
+  .audio-area a {
+    display: inline-block;
+
+    padding: 12px 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+
+    font-weight: 700;
+  }
+
+  .podcast-body {
+    padding: 70px 64px;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+    background: rgba(1, 8, 15, 0.78);
+  }
+
+  .related {
+    padding: 60px 64px;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+    background: rgba(1, 8, 15, 0.82);
+  }
+
+  .related-links {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 20px 32px;
+
+    margin-top: 28px;
+  }
+
+  .related-links a {
+    font-weight: 700;
+  }
+
+  @media (max-width: 760px) {
+    .podcast-header,
+    .podcast-body,
+    .related {
+      padding: 38px 22px;
+    }
+  }
+</style>

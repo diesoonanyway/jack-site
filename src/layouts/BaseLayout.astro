@@ -1,0 +1,537 @@
+---
+const {
+  title = 'Jack',
+  description = 'Writing, ideas and useful things.',
+  image = '/images/moon-ocean.png',
+  type = 'website',
+  noindex = false,
+} = Astro.props;
+
+/*
+  Astro.site는 나중에 astro.config.mjs에서
+  실제 도메인을 설정하면 자동으로 사용된다.
+
+  아직 localhost 개발 중일 때는
+  canonical을 억지로 잘못된 주소로 만들지 않는다.
+*/
+const canonicalURL = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+
+const socialImageURL = Astro.site
+  ? new URL(image, Astro.site)
+  : image;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+
+    <!-- BASIC SEO -->
+
+    <title>{title}</title>
+
+    <meta
+      name="description"
+      content={description}
+    />
+
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, nofollow' : 'index, follow'}
+    />
+
+    {canonicalURL && (
+      <link
+        rel="canonical"
+        href={canonicalURL.toString()}
+      />
+    )}
+
+    <!-- OPEN GRAPH -->
+
+    <meta
+      property="og:title"
+      content={title}
+    />
+
+    <meta
+      property="og:description"
+      content={description}
+    />
+
+    <meta
+      property="og:type"
+      content={type}
+    />
+
+    {canonicalURL && (
+      <meta
+        property="og:url"
+        content={canonicalURL.toString()}
+      />
+    )}
+
+    <meta
+      property="og:image"
+      content={socialImageURL.toString()}
+    />
+
+    <meta
+      property="og:site_name"
+      content="Jack"
+    />
+
+    <!-- X / TWITTER -->
+
+    <meta
+      name="twitter:card"
+      content="summary_large_image"
+    />
+
+    <meta
+      name="twitter:title"
+      content={title}
+    />
+
+    <meta
+      name="twitter:description"
+      content={description}
+    />
+
+    <meta
+      name="twitter:image"
+      content={socialImageURL.toString()}
+    />
+
+    <style is:global>
+      :root {
+        --bg: #01060b;
+
+        --text: #f6f4ef;
+        --body-text: #dce3ea;
+        --muted: #adb9c5;
+
+        --line: rgba(255, 255, 255, 0.12);
+
+        --accent: #dbeaff;
+        --accent-strong: #ffffff;
+
+        --max: 1480px;
+        --reading: 780px;
+
+        --shadow:
+          0 24px 80px rgba(0, 0, 0, 0.22);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-height: 100%;
+        scroll-behavior: smooth;
+        background: var(--bg);
+      }
+
+      body {
+        position: relative;
+
+        margin: 0;
+        min-height: 100vh;
+
+        overflow-x: hidden;
+
+        color: var(--text);
+
+        font-family:
+          Arial,
+          Helvetica,
+          sans-serif;
+
+        line-height: 1.6;
+
+        background-color: var(--bg);
+
+        background-image:
+          linear-gradient(
+            rgba(1, 6, 12, 0.08),
+            rgba(1, 6, 12, 0.12)
+          ),
+          url('/images/moon-ocean.png');
+
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+
+      .page-depth {
+        position: absolute;
+        inset: 0;
+
+        z-index: 0;
+
+        pointer-events: none;
+
+        background:
+          linear-gradient(
+            to bottom,
+
+            rgba(1, 7, 13, 0.03) 0%,
+
+            rgba(2, 12, 22, 0.08) 8%,
+
+            rgba(2, 15, 29, 0.16) 18%,
+
+            rgba(2, 17, 33, 0.26) 30%,
+
+            rgba(1, 14, 29, 0.38) 43%,
+
+            rgba(1, 11, 24, 0.52) 56%,
+
+            rgba(1, 9, 20, 0.66) 69%,
+
+            rgba(0, 7, 16, 0.78) 82%,
+
+            rgba(0, 4, 10, 0.91) 100%
+          );
+      }
+
+      .site-shell {
+        position: relative;
+        z-index: 1;
+
+        width: min(
+          calc(100% - 32px),
+          var(--max)
+        );
+
+        margin: 0 auto;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: var(--accent);
+      }
+
+      .site-header {
+        position: sticky;
+
+        top: 14px;
+        z-index: 50;
+
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 32px;
+
+        width: 100%;
+
+        padding: 22px 30px;
+
+        margin-top: 14px;
+
+        border:
+          1px solid var(--line);
+
+        border-radius: 18px;
+
+        background:
+          rgba(1, 7, 14, 0.7);
+
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+
+        box-shadow: var(--shadow);
+      }
+
+      .brand {
+        font-size: 1rem;
+        font-weight: 900;
+
+        letter-spacing: 0.14em;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        gap: 26px;
+
+        font-size: 0.98rem;
+      }
+
+      .nav a {
+        color: var(--text);
+      }
+
+      .nav a:last-child {
+        padding: 8px 16px;
+
+        border:
+          1px solid
+          rgba(255, 255, 255, 0.28);
+
+        border-radius: 999px;
+
+        background:
+          rgba(255, 255, 255, 0.06);
+      }
+
+      .nav a:last-child:hover {
+        color: #ffffff;
+
+        background:
+          rgba(255, 255, 255, 0.14);
+      }
+
+      main {
+        width: 100%;
+
+        padding:
+          30px 0 100px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        font-size:
+          clamp(4.5rem, 8vw, 8.6rem);
+
+        line-height: 0.9;
+
+        letter-spacing: -0.06em;
+      }
+
+      h2 {
+        font-size:
+          clamp(2.7rem, 5vw, 5rem);
+
+        line-height: 0.98;
+
+        letter-spacing: -0.05em;
+      }
+
+      h3 {
+        font-size:
+          clamp(1.7rem, 3vw, 2.5rem);
+
+        line-height: 1.08;
+
+        letter-spacing: -0.03em;
+      }
+
+      h1,
+      h2,
+      h3 {
+        text-shadow:
+          0 5px 36px
+          rgba(0, 0, 0, 0.58);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .reading-width {
+        max-width: var(--reading);
+      }
+
+      .article-body {
+        max-width: var(--reading);
+
+        color: var(--body-text);
+
+        font-size: 1.12rem;
+      }
+
+      .article-body p {
+        margin-bottom: 1.5em;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+
+        font-size: 0.82rem;
+        font-weight: 700;
+
+        letter-spacing: 0.14em;
+
+        text-transform: uppercase;
+      }
+
+      .text-link {
+        display: inline-block;
+
+        margin-top: 16px;
+
+        font-weight: 700;
+      }
+
+      .text-link::after {
+        content: " →";
+      }
+
+      .site-footer {
+        display: flex;
+
+        justify-content: space-between;
+
+        gap: 20px;
+
+        width: 100%;
+
+        padding: 24px 30px;
+
+        margin-bottom: 18px;
+
+        border:
+          1px solid var(--line);
+
+        border-radius: 18px;
+
+        background:
+          rgba(0, 4, 10, 0.8);
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+
+        color: var(--muted);
+
+        font-size: 0.88rem;
+
+        box-shadow: var(--shadow);
+      }
+
+      @media (max-width: 760px) {
+        body {
+          background-attachment: scroll;
+        }
+
+        .site-shell {
+          width:
+            calc(100% - 20px);
+        }
+
+        .site-header {
+          top: 8px;
+
+          align-items: flex-start;
+
+          flex-direction: column;
+
+          gap: 16px;
+
+          padding: 18px;
+        }
+
+        .nav {
+          gap: 12px 16px;
+
+          font-size: 0.92rem;
+        }
+
+        h1 {
+          font-size:
+            clamp(
+              3.4rem,
+              17vw,
+              5.4rem
+            );
+        }
+
+        h2 {
+          font-size:
+            clamp(
+              2.3rem,
+              12vw,
+              4rem
+            );
+        }
+
+        .site-footer {
+          flex-direction: column;
+
+          padding: 20px 18px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div
+      class="page-depth"
+      aria-hidden="true"
+    ></div>
+
+    <div class="site-shell">
+      <header class="site-header">
+        <a
+          href="/"
+          class="brand"
+        >
+          JACK
+        </a>
+
+        <nav class="nav">
+          <a href="/writing/">
+            Writing
+          </a>
+
+          <a href="/podcast/">
+            Podcast
+          </a>
+
+          <a href="/youtube/">
+            YouTube
+          </a>
+
+          <a href="/apps/">
+            Apps
+          </a>
+
+          <a href="/about/">
+            About
+          </a>
+
+          <a href="/#subscribe">
+            Subscribe
+          </a>
+        </nav>
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer class="site-footer">
+        <span>
+          © {new Date().getFullYear()} Jack
+        </span>
+
+        <span>
+          Writing → Conversation → Product
+        </span>
+      </footer>
+    </div>
+  </body>
+</html>

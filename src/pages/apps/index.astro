@@ -1,0 +1,178 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const apps = (await getCollection('apps'))
+  .filter((app) => !app.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout
+  title="Apps — Jack"
+  description="Useful products built from real problems."
+>
+  <section class="page-intro">
+    <p class="eyebrow">Apps</p>
+
+    <h1>Apps</h1>
+
+    <p class="intro-copy">
+      Useful products built from problems worth solving.
+    </p>
+  </section>
+
+  <section class="content-section">
+    {apps.length > 0 ? (
+      <div class="app-list">
+        {apps.map((app) => (
+          <article class="app-item">
+            <div>
+              <p class="meta">
+                {app.data.date.toLocaleDateString('en-AU', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+
+              <h2>
+                <a href={`/apps/${app.id}/`}>
+                  {app.data.title}
+                </a>
+              </h2>
+
+              {app.data.description && (
+                <p class="description">
+                  {app.data.description}
+                </p>
+              )}
+
+              {app.data.price && (
+                <p class="price">
+                  {app.data.price}
+                </p>
+              )}
+            </div>
+
+            <a
+              class="view-link"
+              href={`/apps/${app.id}/`}
+            >
+              View →
+            </a>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p class="empty">
+        No published apps yet.
+      </p>
+    )}
+  </section>
+</BaseLayout>
+
+<style is:global>
+  .page-intro {
+    padding: 90px 64px;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+
+    background:
+      linear-gradient(
+        90deg,
+        rgba(1, 8, 15, 0.72),
+        rgba(1, 8, 15, 0.42)
+      );
+  }
+
+  .page-intro h1 {
+    margin-bottom: 36px;
+  }
+
+  .intro-copy {
+    max-width: 620px;
+    margin-bottom: 0;
+
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+
+  .content-section {
+    padding: 70px 64px;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+    background: rgba(1, 8, 15, 0.74);
+  }
+
+  .app-list {
+    border-top: 1px solid var(--line);
+  }
+
+  .app-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+
+    gap: 50px;
+
+    padding: 42px 0;
+
+    border-bottom: 1px solid var(--line);
+  }
+
+  .app-item h2 {
+    max-width: 900px;
+    margin-bottom: 18px;
+  }
+
+  .meta {
+    margin-bottom: 16px;
+
+    color: var(--muted);
+
+    font-size: 0.82rem;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .description {
+    max-width: 700px;
+    margin-bottom: 0;
+
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  .price {
+    margin-top: 14px;
+    margin-bottom: 0;
+
+    font-weight: 700;
+  }
+
+  .view-link {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .empty {
+    margin-bottom: 0;
+    color: var(--muted);
+  }
+
+  @media (max-width: 760px) {
+    .page-intro,
+    .content-section {
+      padding: 40px 22px;
+    }
+
+    .app-item {
+      grid-template-columns: 1fr;
+      align-items: start;
+      gap: 22px;
+    }
+  }
+</style>
