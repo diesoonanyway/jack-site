@@ -7,13 +7,6 @@ const {
   noindex = false,
 } = Astro.props;
 
-/*
-  Astro.site는 나중에 astro.config.mjs에서
-  실제 도메인을 설정하면 자동으로 사용된다.
-
-  아직 localhost 개발 중일 때는
-  canonical을 억지로 잘못된 주소로 만들지 않는다.
-*/
 const canonicalURL = Astro.site
   ? new URL(Astro.url.pathname, Astro.site)
   : undefined;
@@ -21,6 +14,14 @@ const canonicalURL = Astro.site
 const socialImageURL = Astro.site
   ? new URL(image, Astro.site)
   : image;
+
+/*
+  Google Analytics는 실제 배포된 사이트에서만 실행한다.
+  localhost 개발 방문은 Analytics에 기록하지 않는다.
+*/
+const isProduction = import.meta.env.PROD;
+
+const measurementId = 'G-Z9K72KWHGP';
 ---
 
 <!doctype html>
@@ -32,6 +33,30 @@ const socialImageURL = Astro.site
       name="viewport"
       content="width=device-width, initial-scale=1"
     />
+
+    <!-- GOOGLE ANALYTICS -->
+
+    {isProduction && (
+      <>
+        <script
+          is:inline
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
+        ></script>
+
+        <script is:inline define:vars={{ measurementId }}>
+          window.dataLayer = window.dataLayer || [];
+
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+
+          gtag('js', new Date());
+
+          gtag('config', measurementId);
+        </script>
+      </>
+    )}
 
     <!-- BASIC SEO -->
 
