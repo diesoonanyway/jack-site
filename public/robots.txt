@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://jack-site.korean-app-dev.workers.dev/sitemap-index.xml
