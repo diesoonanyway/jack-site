@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jack-site.korean-app-dev.workers.dev/sitemap-index.xml
+Sitemap: https://ifitallends.com/sitemap-index.xml
