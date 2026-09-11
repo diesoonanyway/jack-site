@@ -8,12 +8,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "publish": "node scripts/publish.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^7.3.1"
+    "astro": "^7.3.1",
+    "js-yaml": "^4.3.2"
   },
   "allowScripts": {
     "esbuild": true

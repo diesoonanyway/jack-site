@@ -15,10 +15,6 @@ const socialImageURL = Astro.site
   ? new URL(image, Astro.site)
   : image;
 
-/*
-  Google Analytics는 실제 배포된 사이트에서만 실행한다.
-  localhost 개발 방문은 Analytics에 기록하지 않는다.
-*/
 const isProduction = import.meta.env.PROD;
 
 const measurementId = 'G-Z9K72KWHGP';
@@ -33,8 +29,6 @@ const measurementId = 'G-Z9K72KWHGP';
       name="viewport"
       content="width=device-width, initial-scale=1"
     />
-
-    <!-- GOOGLE ANALYTICS -->
 
     {isProduction && (
       <>
@@ -58,8 +52,6 @@ const measurementId = 'G-Z9K72KWHGP';
       </>
     )}
 
-    <!-- BASIC SEO -->
-
     <title>{title}</title>
 
     <meta
@@ -78,8 +70,6 @@ const measurementId = 'G-Z9K72KWHGP';
         href={canonicalURL.toString()}
       />
     )}
-
-    <!-- OPEN GRAPH -->
 
     <meta
       property="og:title"
@@ -113,8 +103,6 @@ const measurementId = 'G-Z9K72KWHGP';
       content="Jack"
     />
 
-    <!-- X / TWITTER -->
-
     <meta
       name="twitter:card"
       content="summary_large_image"
@@ -138,16 +126,12 @@ const measurementId = 'G-Z9K72KWHGP';
     <style is:global>
       :root {
         --bg: #01060b;
-
         --text: #f6f4ef;
         --body-text: #dce3ea;
         --muted: #adb9c5;
-
         --line: rgba(255, 255, 255, 0.12);
-
         --accent: #dbeaff;
         --accent-strong: #ffffff;
-
         --max: 1480px;
         --reading: 780px;
 
@@ -208,23 +192,14 @@ const measurementId = 'G-Z9K72KWHGP';
         background:
           linear-gradient(
             to bottom,
-
             rgba(1, 7, 13, 0.03) 0%,
-
             rgba(2, 12, 22, 0.08) 8%,
-
             rgba(2, 15, 29, 0.16) 18%,
-
             rgba(2, 17, 33, 0.26) 30%,
-
             rgba(1, 14, 29, 0.38) 43%,
-
             rgba(1, 11, 24, 0.52) 56%,
-
             rgba(1, 9, 20, 0.66) 69%,
-
             rgba(0, 7, 16, 0.78) 82%,
-
             rgba(0, 4, 10, 0.91) 100%
           );
       }
@@ -269,9 +244,7 @@ const measurementId = 'G-Z9K72KWHGP';
 
         margin-top: 14px;
 
-        border:
-          1px solid var(--line);
-
+        border: 1px solid var(--line);
         border-radius: 18px;
 
         background:
@@ -286,7 +259,6 @@ const measurementId = 'G-Z9K72KWHGP';
       .brand {
         font-size: 1rem;
         font-weight: 900;
-
         letter-spacing: 0.14em;
       }
 
@@ -420,8 +392,9 @@ const measurementId = 'G-Z9K72KWHGP';
         display: flex;
 
         justify-content: space-between;
+        align-items: center;
 
-        gap: 20px;
+        gap: 24px;
 
         width: 100%;
 
@@ -429,9 +402,7 @@ const measurementId = 'G-Z9K72KWHGP';
 
         margin-bottom: 18px;
 
-        border:
-          1px solid var(--line);
-
+        border: 1px solid var(--line);
         border-radius: 18px;
 
         background:
@@ -445,6 +416,33 @@ const measurementId = 'G-Z9K72KWHGP';
         font-size: 0.88rem;
 
         box-shadow: var(--shadow);
+      }
+
+      .footer-right {
+        display: flex;
+
+        align-items: center;
+
+        gap: 14px;
+      }
+
+      .footer-link {
+        color: var(--muted);
+
+        white-space: nowrap;
+      }
+
+      .footer-link:hover {
+        color: var(--accent);
+      }
+
+      .footer-divider {
+        color:
+          rgba(255, 255, 255, 0.28);
+      }
+
+      .footer-tagline {
+        white-space: nowrap;
       }
 
       @media (max-width: 760px) {
@@ -494,9 +492,21 @@ const measurementId = 'G-Z9K72KWHGP';
         }
 
         .site-footer {
+          align-items: flex-start;
           flex-direction: column;
 
           padding: 20px 18px;
+        }
+
+        .footer-right {
+          align-items: flex-start;
+          flex-wrap: wrap;
+
+          gap: 8px 12px;
+        }
+
+        .footer-tagline {
+          white-space: normal;
         }
       }
     </style>
@@ -553,9 +563,39 @@ const measurementId = 'G-Z9K72KWHGP';
           © {new Date().getFullYear()} Jack
         </span>
 
-        <span>
-          Writing → Conversation → Product
-        </span>
+        <div class="footer-right">
+          <a
+            href="/privacy/"
+            class="footer-link"
+          >
+            Privacy
+          </a>
+
+          <span
+            class="footer-divider"
+            aria-hidden="true"
+          >
+            ·
+          </span>
+
+          <a
+            href="/contact/"
+            class="footer-link"
+          >
+            Contact
+          </a>
+
+          <span
+            class="footer-divider"
+            aria-hidden="true"
+          >
+            ·
+          </span>
+
+          <span class="footer-tagline">
+            Writing → Conversation → Product
+          </span>
+        </div>
       </footer>
     </div>
   </body>
