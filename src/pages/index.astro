@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPublicSlug } from '../lib/content-slug';
 
 const { lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
@@ -245,7 +246,9 @@ const featuredApp =
           </p>
 
           <a
-            href={localizedPath(`/writing/${featuredWriting.id}/`)}
+            href={localizedPath(
+              `/writing/${getPublicSlug(featuredWriting.id, featuredWriting.data.lang)}/`,
+            )}
           >
             {copy.readArticle}
           </a>
@@ -294,7 +297,9 @@ const featuredApp =
         {latestWriting.map(
           (post) => (
             <a
-              href={localizedPath(`/writing/${post.id}/`)}
+              href={localizedPath(
+                `/writing/${getPublicSlug(post.id, post.data.lang)}/`,
+              )}
               class="writing-row"
             >
               <div>

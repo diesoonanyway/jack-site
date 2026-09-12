@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublicSlug } from '../../lib/content-slug';
 
 export async function getStaticPaths() {
   const posts = await getCollection('writing');
@@ -8,7 +9,7 @@ export async function getStaticPaths() {
   return posts
     .filter((post) => !post.data.draft && post.data.lang === 'en')
     .map((post) => ({
-      params: { id: post.id },
+      params: { id: getPublicSlug(post.id, post.data.lang) },
       props: { post },
     }));
 }
