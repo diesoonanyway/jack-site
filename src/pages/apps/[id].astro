@@ -6,7 +6,7 @@ export async function getStaticPaths() {
   const apps = await getCollection('apps');
 
   return apps
-    .filter((app) => !app.data.draft)
+    .filter((app) => !app.data.draft && app.data.lang === 'en')
     .map((app) => ({
       params: {
         id: app.id,
@@ -17,7 +17,9 @@ export async function getStaticPaths() {
     }));
 }
 
-const { app } = Astro.props;
+const { app, lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
 
 const { Content } = await render(app);
 ---
@@ -25,12 +27,14 @@ const { Content } = await render(app);
 <BaseLayout
   title={`${app.data.title} — Apps — Jack`}
   description={app.data.description || app.data.title}
+  {lang}
+  alternatePath={app.data.translation}
 >
   <article class="app-page">
     <section class="app-header">
       <p class="eyebrow">
-        <a href="/apps/">
-          Apps
+        <a href={`${pathPrefix}/apps/`}>
+          {isKorean ? '앱' : 'Apps'}
         </a>
       </p>
 
@@ -39,7 +43,7 @@ const { Content } = await render(app);
       </h1>
 
       <p class="date">
-        {app.data.date.toLocaleDateString('en-AU', {
+        {app.data.date.toLocaleDateString(isKorean ? 'ko-KR' : 'en-AU', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
@@ -60,7 +64,7 @@ const { Content } = await render(app);
             target="_blank"
             rel="noopener noreferrer"
           >
-            Open app →
+            {isKorean ? '앱 열기 →' : 'Open app →'}
           </a>
         )}
 
@@ -79,11 +83,11 @@ const { Content } = await render(app);
     {app.data.relatedWriting && (
       <section class="related">
         <p class="eyebrow">
-          The idea behind it
+          {isKorean ? '이 앱을 만든 아이디어' : 'The idea behind it'}
         </p>
 
         <a href={app.data.relatedWriting}>
-          Read the writing →
+          {isKorean ? '글 읽기 →' : 'Read the writing →'}
         </a>
       </section>
     )}

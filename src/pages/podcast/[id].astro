@@ -6,7 +6,7 @@ export async function getStaticPaths() {
   const posts = await getCollection('podcast');
 
   return posts
-    .filter((post) => !post.data.draft)
+    .filter((post) => !post.data.draft && post.data.lang === 'en')
     .map((post) => ({
       params: {
         id: post.id,
@@ -17,7 +17,9 @@ export async function getStaticPaths() {
     }));
 }
 
-const { post } = Astro.props;
+const { post, lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
 
 const { Content } = await render(post);
 ---
@@ -25,18 +27,20 @@ const { Content } = await render(post);
 <BaseLayout
   title={`${post.data.title} — Podcast — Jack`}
   description={post.data.description || post.data.title}
+  {lang}
+  alternatePath={post.data.translation}
 >
   <article class="podcast-page">
     <div class="podcast-header">
       <p class="eyebrow">
-        <a href="/podcast/">
-          Podcast
+        <a href={`${pathPrefix}/podcast/`}>
+          {isKorean ? '팟캐스트' : 'Podcast'}
         </a>
       </p>
 
       {post.data.episode && (
         <p class="episode">
-          Episode {post.data.episode}
+          {isKorean ? '에피소드' : 'Episode'} {post.data.episode}
         </p>
       )}
 
@@ -45,7 +49,7 @@ const { Content } = await render(post);
       </h1>
 
       <p class="date">
-        {post.data.date.toLocaleDateString('en-AU', {
+        {post.data.date.toLocaleDateString(isKorean ? 'ko-KR' : 'en-AU', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
@@ -65,7 +69,7 @@ const { Content } = await render(post);
             target="_blank"
             rel="noopener noreferrer"
           >
-            Listen to episode →
+            {isKorean ? '에피소드 듣기 →' : 'Listen to episode →'}
           </a>
         </div>
       )}
@@ -80,25 +84,25 @@ const { Content } = await render(post);
       post.data.relatedApp) && (
       <section class="related">
         <p class="eyebrow">
-          Explore this idea
+          {isKorean ? '이 아이디어 더 살펴보기' : 'Explore this idea'}
         </p>
 
         <div class="related-links">
           {post.data.relatedWriting && (
             <a href={post.data.relatedWriting}>
-              Read the writing →
+              {isKorean ? '글 읽기 →' : 'Read the writing →'}
             </a>
           )}
 
           {post.data.relatedYoutube && (
             <a href={post.data.relatedYoutube}>
-              Watch on YouTube →
+              {isKorean ? '유튜브에서 보기 →' : 'Watch on YouTube →'}
             </a>
           )}
 
           {post.data.relatedApp && (
             <a href={post.data.relatedApp}>
-              Explore the app →
+              {isKorean ? '앱 살펴보기 →' : 'Explore the app →'}
             </a>
           )}
         </div>

@@ -2,22 +2,31 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
+const { lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
+const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
+
 const apps = (await getCollection('apps'))
-  .filter((app) => !app.data.draft)
+  .filter((app) => !app.data.draft && app.data.lang === lang)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <BaseLayout
-  title="Apps — Jack"
-  description="Useful products built from real problems."
+  title={isKorean ? '앱 — Jack' : 'Apps — Jack'}
+  description={isKorean ? '실제 문제에서 출발한 유용한 제품.' : 'Useful products built from real problems.'}
+  {lang}
+  alternatePath={isKorean ? '/apps/' : '/ko/apps/'}
 >
   <section class="page-intro">
-    <p class="eyebrow">Apps</p>
+    <p class="eyebrow">{isKorean ? '앱' : 'Apps'}</p>
 
-    <h1>Apps</h1>
+    <h1>{isKorean ? '앱' : 'Apps'}</h1>
 
     <p class="intro-copy">
-      Useful products built from problems worth solving.
+      {isKorean
+        ? '해결할 가치가 있는 문제에서 출발한 유용한 제품입니다.'
+        : 'Useful products built from problems worth solving.'}
     </p>
   </section>
 
@@ -28,7 +37,7 @@ const apps = (await getCollection('apps'))
           <article class="app-item">
             <div>
               <p class="meta">
-                {app.data.date.toLocaleDateString('en-AU', {
+                {app.data.date.toLocaleDateString(dateLocale, {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
@@ -36,7 +45,7 @@ const apps = (await getCollection('apps'))
               </p>
 
               <h2>
-                <a href={`/apps/${app.id}/`}>
+                <a href={`${pathPrefix}/apps/${app.id}/`}>
                   {app.data.title}
                 </a>
               </h2>
@@ -56,16 +65,16 @@ const apps = (await getCollection('apps'))
 
             <a
               class="view-link"
-              href={`/apps/${app.id}/`}
+              href={`${pathPrefix}/apps/${app.id}/`}
             >
-              View →
+              {isKorean ? '보기 →' : 'View →'}
             </a>
           </article>
         ))}
       </div>
     ) : (
       <p class="empty">
-        No published apps yet.
+        {isKorean ? '아직 공개된 앱이 없습니다.' : 'No published apps yet.'}
       </p>
     )}
   </section>

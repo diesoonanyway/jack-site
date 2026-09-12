@@ -1,15 +1,55 @@
 ---
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+
 const {
   title = 'Jack',
   description = 'Writing, ideas and useful things.',
   image = '/images/moon-ocean.png',
   type = 'website',
   noindex = false,
+  lang = 'en',
+  alternatePath,
 } = Astro.props;
 
 const canonicalURL = Astro.site
   ? new URL(Astro.url.pathname, Astro.site)
   : undefined;
+
+const hasAlternate = typeof alternatePath === 'string' && alternatePath.length > 0;
+const enPath = lang === 'en' ? Astro.url.pathname : alternatePath;
+const koPath = lang === 'ko' ? Astro.url.pathname : alternatePath;
+const enAlternateURL = hasAlternate && Astro.site
+  ? new URL(enPath, Astro.site)
+  : undefined;
+const koAlternateURL = hasAlternate && Astro.site
+  ? new URL(koPath, Astro.site)
+  : undefined;
+
+const pathPrefix = lang === 'ko' ? '/ko' : '';
+const homePath = lang === 'ko' ? '/ko/' : '/';
+const navigation = lang === 'ko'
+  ? {
+      writing: '글',
+      podcast: '팟캐스트',
+      youtube: '유튜브',
+      apps: '앱',
+      about: '소개',
+      subscribe: '구독',
+      privacy: '개인정보 처리방침',
+      contact: '연락처',
+      tagline: '글 → 대화 → 제품',
+    }
+  : {
+      writing: 'Writing',
+      podcast: 'Podcast',
+      youtube: 'YouTube',
+      apps: 'Apps',
+      about: 'About',
+      subscribe: 'Subscribe',
+      privacy: 'Privacy',
+      contact: 'Contact',
+      tagline: 'Writing → Conversation → Product',
+    };
 
 const socialImageURL = Astro.site
   ? new URL(image, Astro.site)
@@ -21,7 +61,7 @@ const measurementId = 'G-Z9K72KWHGP';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
 
@@ -69,6 +109,22 @@ const measurementId = 'G-Z9K72KWHGP';
         rel="canonical"
         href={canonicalURL.toString()}
       />
+    )}
+
+    {enAlternateURL && koAlternateURL && (
+      <>
+        <link
+          rel="alternate"
+          hreflang="en"
+          href={enAlternateURL.toString()}
+        />
+
+        <link
+          rel="alternate"
+          hreflang="ko"
+          href={koAlternateURL.toString()}
+        />
+      </>
     )}
 
     <meta
@@ -276,7 +332,7 @@ const measurementId = 'G-Z9K72KWHGP';
         color: var(--text);
       }
 
-      .nav a:last-child {
+      .nav .subscribe-link {
         padding: 8px 16px;
 
         border:
@@ -289,7 +345,7 @@ const measurementId = 'G-Z9K72KWHGP';
           rgba(255, 255, 255, 0.06);
       }
 
-      .nav a:last-child:hover {
+      .nav .subscribe-link:hover {
         color: #ffffff;
 
         background:
@@ -521,36 +577,45 @@ const measurementId = 'G-Z9K72KWHGP';
     <div class="site-shell">
       <header class="site-header">
         <a
-          href="/"
+          href={homePath}
           class="brand"
         >
           JACK
         </a>
 
         <nav class="nav">
-          <a href="/writing/">
-            Writing
+          <a href={`${pathPrefix}/writing/`}>
+            {navigation.writing}
           </a>
 
-          <a href="/podcast/">
-            Podcast
+          <a href={`${pathPrefix}/podcast/`}>
+            {navigation.podcast}
           </a>
 
-          <a href="/youtube/">
-            YouTube
+          <a href={`${pathPrefix}/youtube/`}>
+            {navigation.youtube}
           </a>
 
-          <a href="/apps/">
-            Apps
+          <a href={`${pathPrefix}/apps/`}>
+            {navigation.apps}
           </a>
 
-          <a href="/about/">
-            About
+          <a href={`${pathPrefix}/about/`}>
+            {navigation.about}
           </a>
 
-          <a href="/#subscribe">
-            Subscribe
+          <a
+            href={`${homePath}#subscribe`}
+            class="subscribe-link"
+          >
+            {navigation.subscribe}
           </a>
+
+          <LanguageSwitcher
+            {lang}
+            {enPath}
+            {koPath}
+          />
         </nav>
       </header>
 
@@ -565,10 +630,10 @@ const measurementId = 'G-Z9K72KWHGP';
 
         <div class="footer-right">
           <a
-            href="/privacy/"
+            href={`${pathPrefix}/privacy/`}
             class="footer-link"
           >
-            Privacy
+            {navigation.privacy}
           </a>
 
           <span
@@ -579,10 +644,10 @@ const measurementId = 'G-Z9K72KWHGP';
           </span>
 
           <a
-            href="/contact/"
+            href={`${pathPrefix}/contact/`}
             class="footer-link"
           >
-            Contact
+            {navigation.contact}
           </a>
 
           <span
@@ -593,7 +658,7 @@ const measurementId = 'G-Z9K72KWHGP';
           </span>
 
           <span class="footer-tagline">
-            Writing → Conversation → Product
+            {navigation.tagline}
           </span>
         </div>
       </footer>

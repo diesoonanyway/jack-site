@@ -1,34 +1,45 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const { lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
 ---
 
 <BaseLayout
-  title="About — Jack"
-  description="About Jack and the ideas behind this site."
+  title={isKorean ? '소개 — Jack' : 'About — Jack'}
+  description={isKorean
+    ? 'Jack과 이 사이트를 이루는 생각에 관한 소개입니다.'
+    : 'About Jack and the ideas behind this site.'}
+  {lang}
+  alternatePath={isKorean ? '/about/' : '/ko/about/'}
 >
   <section class="reading-width">
-    <p class="eyebrow">About</p>
+    <p class="eyebrow">{isKorean ? '소개' : 'About'}</p>
 
-    <h1>About</h1>
+    <h1>{isKorean ? '소개' : 'About'}</h1>
 
     <p class="muted">
-      I write about ideas, problems and things worth building.
+      {isKorean
+        ? '저는 아이디어와 문제, 그리고 만들 가치가 있는 것들에 관해 씁니다.'
+        : 'I write about ideas, problems and things worth building.'}
     </p>
   </section>
 
   <section class="section">
     <div class="reading-width article-body">
-      <p>
-        This site is where I develop ideas through writing.
-      </p>
-
-      <p>
-        Some ideas become conversations, videos or products.
-      </p>
-
-      <p>
-        The writing comes first. Everything else grows from there.
-      </p>
+      {isKorean ? (
+        <>
+          <p>이 사이트는 글쓰기를 통해 아이디어를 발전시키는 곳입니다.</p>
+          <p>어떤 아이디어는 대화, 영상 또는 제품으로 이어집니다.</p>
+          <p>글이 먼저입니다. 다른 모든 것은 그곳에서 자라납니다.</p>
+        </>
+      ) : (
+        <>
+          <p>This site is where I develop ideas through writing.</p>
+          <p>Some ideas become conversations, videos or products.</p>
+          <p>The writing comes first. Everything else grows from there.</p>
+        </>
+      )}
     </div>
   </section>
 </BaseLayout>

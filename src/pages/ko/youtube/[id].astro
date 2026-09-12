@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import YouTubeDetail from '../../youtube/[id].astro';
+
+export async function getStaticPaths() {
+  const videos = await getCollection('youtube');
+
+  return videos
+    .filter((video) => !video.data.draft && video.data.lang === 'ko')
+    .map((video) => ({
+      params: { id: video.id },
+      props: { video },
+    }));
+}
+
+const { video } = Astro.props;
+---
+
+<YouTubeDetail video={video} lang="ko" />

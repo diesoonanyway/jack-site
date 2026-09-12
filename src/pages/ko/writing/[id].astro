@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import WritingDetail from '../../writing/[id].astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('writing');
+
+  return posts
+    .filter((post) => !post.data.draft && post.data.lang === 'ko')
+    .map((post) => ({
+      params: { id: post.id },
+      props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+---
+
+<WritingDetail post={post} lang="ko" />

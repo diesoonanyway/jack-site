@@ -2,22 +2,31 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
+const { lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
+const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
+
 const posts = (await getCollection('podcast'))
-  .filter((post) => !post.data.draft)
+  .filter((post) => !post.data.draft && post.data.lang === lang)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <BaseLayout
-  title="Podcast — Jack"
-  description="Conversations and deeper explorations of ideas."
+  title={isKorean ? '팟캐스트 — Jack' : 'Podcast — Jack'}
+  description={isKorean ? '아이디어를 더 깊이 탐구하는 대화.' : 'Conversations and deeper explorations of ideas.'}
+  {lang}
+  alternatePath={isKorean ? '/podcast/' : '/ko/podcast/'}
 >
   <section class="page-intro">
-    <p class="eyebrow">Podcast</p>
+    <p class="eyebrow">{isKorean ? '팟캐스트' : 'Podcast'}</p>
 
-    <h1>Podcast</h1>
+    <h1>{isKorean ? '팟캐스트' : 'Podcast'}</h1>
 
     <p class="intro-copy">
-      Conversations and deeper explorations of ideas worth taking further.
+      {isKorean
+        ? '더 발전시킬 가치가 있는 아이디어를 대화로 깊이 탐구합니다.'
+        : 'Conversations and deeper explorations of ideas worth taking further.'}
     </p>
   </section>
 
@@ -29,10 +38,10 @@ const posts = (await getCollection('podcast'))
             <div>
               <p class="meta">
                 {post.data.episode
-                  ? `Episode ${post.data.episode} · `
+                  ? `${isKorean ? '에피소드' : 'Episode'} ${post.data.episode} · `
                   : ''}
 
-                {post.data.date.toLocaleDateString('en-AU', {
+                {post.data.date.toLocaleDateString(dateLocale, {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
@@ -40,7 +49,7 @@ const posts = (await getCollection('podcast'))
               </p>
 
               <h2>
-                <a href={`/podcast/${post.id}/`}>
+                <a href={`${pathPrefix}/podcast/${post.id}/`}>
                   {post.data.title}
                 </a>
               </h2>
@@ -54,16 +63,16 @@ const posts = (await getCollection('podcast'))
 
             <a
               class="read-link"
-              href={`/podcast/${post.id}/`}
+              href={`${pathPrefix}/podcast/${post.id}/`}
             >
-              Listen →
+              {isKorean ? '듣기 →' : 'Listen →'}
             </a>
           </article>
         ))}
       </div>
     ) : (
       <p class="empty">
-        No published podcast episodes yet.
+        {isKorean ? '아직 발행된 팟캐스트가 없습니다.' : 'No published podcast episodes yet.'}
       </p>
     )}
   </section>

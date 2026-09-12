@@ -1,32 +1,39 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const { lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
 ---
 
 <BaseLayout
-  title="Contact — If It All Ends"
-  description="Get in touch with If It All Ends."
+  title={isKorean ? '연락처 — If It All Ends' : 'Contact — If It All Ends'}
+  description={isKorean
+    ? 'If It All Ends에 연락하는 방법입니다.'
+    : 'Get in touch with If It All Ends.'}
+  {lang}
+  alternatePath={isKorean ? '/contact/' : '/ko/contact/'}
 >
   <section class="contact-page">
     <div class="contact-header">
       <p class="eyebrow">
-        Contact
+        {isKorean ? '연락처' : 'Contact'}
       </p>
 
       <h1>
-        Get in touch.
+        {isKorean ? '연락하세요.' : 'Get in touch.'}
       </h1>
 
       <p class="intro">
-        For feedback, questions, collaborations,
-        or anything related to the site,
-        you can reach me by email.
+        {isKorean
+          ? '피드백, 질문, 협업 또는 사이트와 관련된 문의는 이메일로 보내 주세요.'
+          : 'For feedback, questions, collaborations, or anything related to the site, you can reach me by email.'}
       </p>
     </div>
 
     <div class="contact-content">
       <div class="contact-block">
         <p class="label">
-          Email
+          {isKorean ? '이메일' : 'Email'}
         </p>
 
         <a
@@ -39,13 +46,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <div class="contact-note">
         <p>
-          I read every message.
+          {isKorean ? '보내 주신 모든 메시지를 읽습니다.' : 'I read every message.'}
         </p>
 
         <p>
-          If you're writing about a specific article,
-          podcast, video, or app, include the title
-          or link so I know what you're referring to.
+          {isKorean
+            ? '특정 글, 팟캐스트, 영상 또는 앱에 관한 내용이라면 무엇을 말씀하시는지 알 수 있도록 제목이나 링크를 함께 보내 주세요.'
+            : "If you're writing about a specific article, podcast, video, or app, include the title or link so I know what you're referring to."}
         </p>
       </div>
     </div>

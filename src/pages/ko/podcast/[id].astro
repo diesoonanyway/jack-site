@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import PodcastDetail from '../../podcast/[id].astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('podcast');
+
+  return posts
+    .filter((post) => !post.data.draft && post.data.lang === 'ko')
+    .map((post) => ({
+      params: { id: post.id },
+      props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+---
+
+<PodcastDetail post={post} lang="ko" />

@@ -2,22 +2,31 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
+const { lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
+const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
+
 const videos = (await getCollection('youtube'))
-  .filter((video) => !video.data.draft)
+  .filter((video) => !video.data.draft && video.data.lang === lang)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <BaseLayout
-  title="YouTube — Jack"
-  description="Videos and visual explorations of ideas."
+  title={isKorean ? '유튜브 — Jack' : 'YouTube — Jack'}
+  description={isKorean ? '아이디어를 영상과 시각 자료로 탐구합니다.' : 'Videos and visual explorations of ideas.'}
+  {lang}
+  alternatePath={isKorean ? '/youtube/' : '/ko/youtube/'}
 >
   <section class="page-intro">
-    <p class="eyebrow">YouTube</p>
+    <p class="eyebrow">{isKorean ? '유튜브' : 'YouTube'}</p>
 
-    <h1>YouTube</h1>
+    <h1>{isKorean ? '유튜브' : 'YouTube'}</h1>
 
     <p class="intro-copy">
-      Visual explanations, experiments and ideas taking shape.
+      {isKorean
+        ? '시각적 설명, 실험, 그리고 형태를 갖춰 가는 아이디어입니다.'
+        : 'Visual explanations, experiments and ideas taking shape.'}
     </p>
   </section>
 
@@ -28,7 +37,7 @@ const videos = (await getCollection('youtube'))
           <article class="video-item">
             <div>
               <p class="meta">
-                {video.data.date.toLocaleDateString('en-AU', {
+                {video.data.date.toLocaleDateString(dateLocale, {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
@@ -36,7 +45,7 @@ const videos = (await getCollection('youtube'))
               </p>
 
               <h2>
-                <a href={`/youtube/${video.id}/`}>
+                <a href={`${pathPrefix}/youtube/${video.id}/`}>
                   {video.data.title}
                 </a>
               </h2>
@@ -50,16 +59,16 @@ const videos = (await getCollection('youtube'))
 
             <a
               class="watch-link"
-              href={`/youtube/${video.id}/`}
+              href={`${pathPrefix}/youtube/${video.id}/`}
             >
-              Watch →
+              {isKorean ? '보기 →' : 'Watch →'}
             </a>
           </article>
         ))}
       </div>
     ) : (
       <p class="empty">
-        No published YouTube videos yet.
+        {isKorean ? '아직 발행된 영상이 없습니다.' : 'No published YouTube videos yet.'}
       </p>
     )}
   </section>

@@ -6,30 +6,34 @@ export async function getStaticPaths() {
   const posts = await getCollection('writing');
 
   return posts
-    .filter((post) => !post.data.draft)
+    .filter((post) => !post.data.draft && post.data.lang === 'en')
     .map((post) => ({
       params: { id: post.id },
       props: { post },
     }));
 }
 
-const { post } = Astro.props;
+const { post, lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
 const { Content } = await render(post);
 ---
 
 <BaseLayout
   title={`${post.data.title} — Jack`}
   description={post.data.description || post.data.title}
+  {lang}
+  alternatePath={post.data.translation}
 >
   <article class="reading-width">
     <p class="eyebrow">
-      <a href="/writing">Writing</a>
+      <a href={`${pathPrefix}/writing/`}>{isKorean ? '글' : 'Writing'}</a>
     </p>
 
     <h1>{post.data.title}</h1>
 
     <p class="muted">
-      {post.data.date.toLocaleDateString('en-AU', {
+      {post.data.date.toLocaleDateString(isKorean ? 'ko-KR' : 'en-AU', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',

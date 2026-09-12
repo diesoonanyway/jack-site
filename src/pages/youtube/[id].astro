@@ -6,7 +6,7 @@ export async function getStaticPaths() {
   const videos = await getCollection('youtube');
 
   return videos
-    .filter((video) => !video.data.draft)
+    .filter((video) => !video.data.draft && video.data.lang === 'en')
     .map((video) => ({
       params: {
         id: video.id,
@@ -17,7 +17,9 @@ export async function getStaticPaths() {
     }));
 }
 
-const { video } = Astro.props;
+const { video, lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
 
 const { Content } = await render(video);
 ---
@@ -25,12 +27,14 @@ const { Content } = await render(video);
 <BaseLayout
   title={`${video.data.title} — YouTube — Jack`}
   description={video.data.description || video.data.title}
+  {lang}
+  alternatePath={video.data.translation}
 >
   <article class="video-page">
     <section class="video-header">
       <p class="eyebrow">
-        <a href="/youtube/">
-          YouTube
+        <a href={`${pathPrefix}/youtube/`}>
+          {isKorean ? '유튜브' : 'YouTube'}
         </a>
       </p>
 
@@ -39,7 +43,7 @@ const { Content } = await render(video);
       </h1>
 
       <p class="date">
-        {video.data.date.toLocaleDateString('en-AU', {
+        {video.data.date.toLocaleDateString(isKorean ? 'ko-KR' : 'en-AU', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
@@ -76,25 +80,25 @@ const { Content } = await render(video);
       video.data.relatedApp) && (
       <section class="related">
         <p class="eyebrow">
-          Explore this idea
+          {isKorean ? '이 아이디어 더 살펴보기' : 'Explore this idea'}
         </p>
 
         <div class="related-links">
           {video.data.relatedWriting && (
             <a href={video.data.relatedWriting}>
-              Read the writing →
+              {isKorean ? '글 읽기 →' : 'Read the writing →'}
             </a>
           )}
 
           {video.data.relatedPodcast && (
             <a href={video.data.relatedPodcast}>
-              Listen to the podcast →
+              {isKorean ? '팟캐스트 듣기 →' : 'Listen to the podcast →'}
             </a>
           )}
 
           {video.data.relatedApp && (
             <a href={video.data.relatedApp}>
-              Explore the app →
+              {isKorean ? '앱 살펴보기 →' : 'Explore the app →'}
             </a>
           )}
         </div>

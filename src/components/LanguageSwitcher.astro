@@ -1,0 +1,325 @@
+---
+const {
+  lang = 'en',
+  enPath,
+  koPath,
+} = Astro.props;
+
+const otherLanguage = lang === 'en' ? 'ko' : 'en';
+const otherPath = otherLanguage === 'en' ? enPath : koPath;
+const hasCounterpart = typeof otherPath === 'string' && otherPath.length > 0;
+---
+
+<div
+  class="language-switcher"
+  data-language-switcher
+  data-current-language={lang}
+  data-has-counterpart={String(hasCounterpart)}
+>
+  <div
+    class="language-options"
+    aria-label={lang === 'ko' ? '언어 선택' : 'Language selection'}
+  >
+    {lang === 'en' ? (
+      <span class="language-option is-active" aria-current="page">
+        EN
+      </span>
+    ) : enPath ? (
+      <a
+        class="language-option"
+        href={enPath}
+        hreflang="en"
+        lang="en"
+        data-language-choice="en"
+      >
+        EN
+      </a>
+    ) : (
+      <span class="language-option is-disabled" aria-disabled="true">
+        EN
+      </span>
+    )}
+
+    <span class="language-divider" aria-hidden="true">·</span>
+
+    {lang === 'ko' ? (
+      <span class="language-option is-active" aria-current="page">
+        한국어
+      </span>
+    ) : koPath ? (
+      <a
+        class="language-option"
+        href={koPath}
+        hreflang="ko"
+        lang="ko"
+        data-language-choice="ko"
+      >
+        한국어
+      </a>
+    ) : (
+      <span class="language-option is-disabled" aria-disabled="true">
+        한국어
+      </span>
+    )}
+  </div>
+
+  {hasCounterpart && (
+    <aside
+      class="language-hint"
+      data-language-hint
+      role="status"
+      hidden
+    >
+      <p>
+        {lang === 'en'
+          ? '한국어로도 읽을 수 있어요.'
+          : 'This site is also available in English.'}
+      </p>
+
+      <a
+        href={otherPath}
+        hreflang={otherLanguage}
+        lang={otherLanguage}
+        data-language-choice={otherLanguage}
+      >
+        {lang === 'en' ? '한국어로 보기 →' : 'View in English →'}
+      </a>
+    </aside>
+  )}
+</div>
+
+<script>
+  const dismissedKey = 'ifitallends-language-hint-dismissed';
+  const preferredKey = 'ifitallends-preferred-language';
+
+  document.querySelectorAll('[data-language-switcher]').forEach((element) => {
+    if (!(element instanceof HTMLElement) || element.dataset.initialized) return;
+    element.dataset.initialized = 'true';
+
+    element.querySelectorAll('[data-language-choice]').forEach((choice) => {
+      choice.addEventListener('click', () => {
+        if (!(choice instanceof HTMLElement)) return;
+        const selectedLanguage = choice.dataset.languageChoice;
+        if (!selectedLanguage) return;
+
+        try {
+          localStorage.setItem(preferredKey, selectedLanguage);
+        } catch {
+          // Navigation still works when storage is unavailable.
+        }
+      });
+    });
+
+    if (element.dataset.hasCounterpart !== 'true') return;
+
+    const isHomepage =
+      window.location.pathname === '/' ||
+      window.location.pathname === '/ko/';
+    if (!isHomepage) return;
+
+    if (document.referrer) {
+      try {
+        const referrerOrigin = new URL(document.referrer).origin;
+        if (referrerOrigin !== window.location.origin) return;
+      } catch {
+        // An invalid referrer is treated conservatively as external.
+        return;
+      }
+    }
+
+    try {
+      if (sessionStorage.getItem(dismissedKey) === 'true') return;
+    } catch {
+      // The hint can still work without storage.
+    }
+
+    const currentLanguage = element.dataset.currentLanguage;
+    let preferredLanguage: string | null = null;
+
+    try {
+      const storedPreference = localStorage.getItem(preferredKey);
+      if (storedPreference === 'en' || storedPreference === 'ko') {
+        preferredLanguage = storedPreference;
+      }
+    } catch {
+      // Fall back to the browser language when storage is unavailable.
+    }
+
+    if (!preferredLanguage) {
+      const browserLanguages = navigator.languages?.length
+        ? navigator.languages
+        : [navigator.language];
+      const browserUsesKorean = browserLanguages.some((language) =>
+        language.toLowerCase().startsWith('ko')
+      );
+      preferredLanguage = browserUsesKorean ? 'ko' : 'en';
+    }
+
+    const shouldShow = currentLanguage !== preferredLanguage;
+
+    if (!shouldShow) return;
+
+    const hint = element.querySelector('[data-language-hint]');
+    if (!(hint instanceof HTMLElement)) return;
+
+    hint.hidden = false;
+
+    try {
+      sessionStorage.setItem(dismissedKey, 'true');
+    } catch {
+      // The hint remains temporary when storage is unavailable.
+    }
+
+    const hideHint = () => {
+      hint.hidden = true;
+      document.removeEventListener('click', hideHint);
+      document.removeEventListener('keydown', handleKeydown);
+    };
+
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') hideHint();
+    };
+
+    window.setTimeout(hideHint, 2500);
+    document.addEventListener('click', hideHint, { once: true });
+    document.addEventListener('keydown', handleKeydown);
+  });
+</script>
+
+<style>
+  .language-switcher {
+    position: relative;
+    flex: 0 0 auto;
+    margin-left: 12px;
+    padding-left: 28px;
+  }
+
+  .language-switcher::before {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 1px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.14);
+    content: '';
+    transform: translateY(-50%);
+  }
+
+  .language-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .language-option {
+    position: relative;
+    color: rgba(219, 234, 255, 0.58);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    transition: color 140ms ease, opacity 140ms ease;
+  }
+
+  a.language-option:hover,
+  a.language-option:focus-visible {
+    color: var(--accent-strong);
+  }
+
+  .language-option.is-active {
+    color: var(--accent-strong);
+  }
+
+  .language-option.is-active::after {
+    position: absolute;
+    right: 0;
+    bottom: -4px;
+    left: 0;
+    height: 1px;
+    background: rgba(246, 244, 239, 0.72);
+    content: '';
+  }
+
+  .language-option.is-disabled {
+    color: rgba(173, 185, 197, 0.26);
+    cursor: not-allowed;
+  }
+
+  .language-divider {
+    color: rgba(255, 255, 255, 0.26);
+  }
+
+  .language-hint {
+    position: absolute;
+    top: calc(100% + 18px);
+    right: 0;
+    z-index: 80;
+
+    width: max-content;
+    max-width: min(290px, calc(100vw - 40px));
+    padding: 14px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 10px;
+    background: rgba(2, 10, 19, 0.97);
+    box-shadow: 0 16px 44px rgba(0, 0, 0, 0.38);
+
+    color: var(--body-text);
+    font-size: 0.83rem;
+    line-height: 1.45;
+    white-space: normal;
+  }
+
+  .language-hint::before {
+    position: absolute;
+    right: 22px;
+    bottom: 100%;
+    width: 9px;
+    height: 9px;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    border-left: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(2, 10, 19, 0.97);
+    content: '';
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .language-hint p {
+    margin-bottom: 5px;
+  }
+
+  .language-hint a {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .language-hint[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    .language-switcher {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+    .language-switcher::before {
+      display: none;
+    }
+
+    .language-hint {
+      right: auto;
+      left: 0;
+    }
+
+    .language-hint::before {
+      right: auto;
+      left: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .language-option {
+      transition: none;
+    }
+  }
+</style>

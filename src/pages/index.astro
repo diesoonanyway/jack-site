@@ -2,10 +2,98 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+const { lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
+const localizedPath = (path) => `${pathPrefix}${path}`;
+const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
+
+const copy = isKorean
+  ? {
+      description: '글, 대화, 영상 그리고 유용한 것들.',
+      independentWriting: '독립적인 글쓰기',
+      ideasMediaProducts: '아이디어 → 미디어 → 제품',
+      heroTitle: '발전시킬 가치가\n있는 아이디어.',
+      heroCopy: '아이디어는 글쓰기에서 시작합니다. 가장 강한 아이디어는 대화, 영상 그리고 유용한 제품으로 성장합니다.',
+      exploreWriting: '글 둘러보기 →',
+      featuredWriting: '주요 글',
+      featuredFallback: '더 오래 생각해 볼 가치가 있는 아이디어입니다.',
+      readArticle: '글 읽기 →',
+      noWriting: '아직 발행된 글이 없습니다.',
+      latestWriting: '최근 글',
+      viewAll: '모두 보기 →',
+      moreWriting: '새로운 글이 이곳에 표시됩니다.',
+      podcast: '팟캐스트',
+      podcastFallback: '대화를 통해 더 깊이 들어갑니다.',
+      podcastCopy: '더 많은 공간이 필요한 아이디어를 긴 대화로 살펴봅니다.',
+      explorePodcast: '팟캐스트 둘러보기 →',
+      youtube: '유튜브',
+      youtubeFallback: '아이디어가 형태를 갖추는 과정을 봅니다.',
+      youtubeCopy: '시각적 설명, 실험, 그리고 만들어지고 있는 것들입니다.',
+      exploreYoutube: '유튜브 둘러보기 →',
+      apps: '앱',
+      appsFallback: '실제 문제에서 출발한 유용한 것들입니다.',
+      appsCopy: '아이디어가 해결할 가치가 있는 문제를 가리킬 때 제품이 될 수 있습니다.',
+      exploreApps: '앱 둘러보기 →',
+      newsletter: '뉴스레터',
+      newsletterTitle: '새로운 아이디어를\n가끔 전합니다.',
+      newsletterCopy: '읽거나 보거나 사용해 볼 가치가 있는 것이 생기면 짧은 이메일을 보냅니다.',
+      emailLabel: '이메일 주소',
+      emailPlaceholder: '이메일 주소',
+      subscribe: '구독하기 →',
+      builtWithKit: 'Kit으로 제작',
+      newsletterNote: '스팸은 보내지 않습니다. 언제든 구독을 해지할 수 있습니다.',
+      about: '소개',
+      aboutTitle: '글이 먼저입니다.\n다른 모든 것은\n그곳에서 자라납니다.',
+      aboutCopyOne: '이 사이트는 글쓰기를 통해 아이디어가 시작되는 곳입니다. 어떤 아이디어는 대화, 영상 그리고 제품으로 성장합니다.',
+      aboutCopyTwo: '글이 먼저입니다. 다른 모든 것은 더 발전시킬 가치가 있는 아이디어에서 시작됩니다.',
+      aboutJack: 'Jack 소개 →',
+    }
+  : {
+      description: 'Writing, conversations, videos and useful things.',
+      independentWriting: 'Independent Writing',
+      ideasMediaProducts: 'Ideas → Media → Products',
+      heroTitle: 'Ideas worth\ndeveloping.',
+      heroCopy: 'Writing is where ideas begin. The strongest ones grow into conversations, videos and useful products.',
+      exploreWriting: 'Explore Writing →',
+      featuredWriting: 'Featured Writing',
+      featuredFallback: 'An idea worth spending more time with.',
+      readArticle: 'Read article →',
+      noWriting: 'No published writing yet.',
+      latestWriting: 'Latest Writing',
+      viewAll: 'View all →',
+      moreWriting: 'More writing will appear here.',
+      podcast: 'Podcast',
+      podcastFallback: 'Go deeper through conversation.',
+      podcastCopy: 'Longer conversations around ideas that deserve more space.',
+      explorePodcast: 'Explore Podcast →',
+      youtube: 'YouTube',
+      youtubeFallback: 'See the idea take shape.',
+      youtubeCopy: 'Visual explanations, experiments and things being built.',
+      exploreYoutube: 'Explore YouTube →',
+      apps: 'Apps',
+      appsFallback: 'Useful things built from real problems.',
+      appsCopy: 'When an idea points to a problem worth solving, it may become a product.',
+      exploreApps: 'Explore Apps →',
+      newsletter: 'Newsletter',
+      newsletterTitle: 'New ideas,\noccasionally.',
+      newsletterCopy: 'A short email when there is something worth reading, watching or trying.',
+      emailLabel: 'Email address',
+      emailPlaceholder: 'Your email',
+      subscribe: 'Subscribe →',
+      builtWithKit: 'Built with Kit',
+      newsletterNote: 'No spam. Unsubscribe whenever you want.',
+      about: 'About',
+      aboutTitle: 'Writing first.\nEverything else\ngrows from there.',
+      aboutCopyOne: 'This site is where ideas start through writing. Some grow into conversations, videos and products.',
+      aboutCopyTwo: 'The writing comes first. Everything else develops from the ideas worth taking further.',
+      aboutJack: 'About Jack →',
+    };
+
 const writing =
   (await getCollection('writing'))
     .filter(
-      (post) => !post.data.draft
+      (post) => !post.data.draft && post.data.lang === lang
     )
     .sort(
       (a, b) =>
@@ -16,7 +104,7 @@ const writing =
 const podcasts =
   (await getCollection('podcast'))
     .filter(
-      (post) => !post.data.draft
+      (post) => !post.data.draft && post.data.lang === lang
     )
     .sort(
       (a, b) =>
@@ -27,7 +115,7 @@ const podcasts =
 const videos =
   (await getCollection('youtube'))
     .filter(
-      (post) => !post.data.draft
+      (post) => !post.data.draft && post.data.lang === lang
     )
     .sort(
       (a, b) =>
@@ -38,7 +126,7 @@ const videos =
 const apps =
   (await getCollection('apps'))
     .filter(
-      (app) => !app.data.draft
+      (app) => !app.data.draft && app.data.lang === lang
     )
     .sort(
       (a, b) =>
@@ -82,7 +170,9 @@ const featuredApp =
 
 <BaseLayout
   title="Jack"
-  description="Writing, conversations, videos and useful things."
+  description={copy.description}
+  {lang}
+  alternatePath={isKorean ? '/' : '/ko/'}
 >
 
   <!-- SURFACE -->
@@ -95,29 +185,27 @@ const featuredApp =
   >
     <div class="hero-top">
       <span>
-        Independent Writing
+        {copy.independentWriting}
       </span>
 
       <span>
-        Ideas → Media → Products
+        {copy.ideasMediaProducts}
       </span>
     </div>
 
     <h1>
-      Ideas worth<br />
-      developing.
+      {copy.heroTitle.split('\n').map((line, index) => (
+        <>{index > 0 && <br />}{line}</>
+      ))}
     </h1>
 
     <div class="hero-bottom">
       <p>
-        Writing is where ideas begin.
-        The strongest ones grow into
-        conversations, videos and useful
-        products.
+        {copy.heroCopy}
       </p>
 
-      <a href="/writing/">
-        Explore Writing →
+      <a href={localizedPath('/writing/')}>
+        {copy.exploreWriting}
       </a>
     </div>
   </section>
@@ -138,7 +226,7 @@ const featuredApp =
       </span>
 
       <span>
-        Featured Writing
+        {copy.featuredWriting}
       </span>
     </div>
 
@@ -152,20 +240,20 @@ const featuredApp =
           <p>
             {
               featuredWriting.data.description ||
-              'An idea worth spending more time with.'
+              copy.featuredFallback
             }
           </p>
 
           <a
-            href={`/writing/${featuredWriting.id}/`}
+            href={localizedPath(`/writing/${featuredWriting.id}/`)}
           >
-            Read article →
+            {copy.readArticle}
           </a>
         </div>
       </div>
     ) : (
       <p class="muted">
-        No published writing yet.
+        {copy.noWriting}
       </p>
     )}
   </section>
@@ -192,12 +280,12 @@ const featuredApp =
         </span>
 
         <span>
-          Latest Writing
+          {copy.latestWriting}
         </span>
       </div>
 
-      <a href="/writing/">
-        View all →
+      <a href={localizedPath('/writing/')}>
+        {copy.viewAll}
       </a>
     </div>
 
@@ -206,7 +294,7 @@ const featuredApp =
         {latestWriting.map(
           (post) => (
             <a
-              href={`/writing/${post.id}/`}
+              href={localizedPath(`/writing/${post.id}/`)}
               class="writing-row"
             >
               <div>
@@ -214,7 +302,7 @@ const featuredApp =
                   {
                     post.data.date
                       .toLocaleDateString(
-                        'en-AU',
+                        dateLocale,
                         {
                           year:
                             'numeric',
@@ -241,7 +329,7 @@ const featuredApp =
       </div>
     ) : (
       <p class="muted">
-        More writing will appear here.
+        {copy.moreWriting}
       </p>
     )}
   </section>
@@ -264,7 +352,7 @@ const featuredApp =
         </span>
 
         <span>
-          Podcast
+          {copy.podcast}
         </span>
       </div>
 
@@ -272,17 +360,16 @@ const featuredApp =
         {
           featuredPodcast
             ? featuredPodcast.data.title
-            : 'Go deeper through conversation.'
+            : copy.podcastFallback
         }
       </h2>
 
       <p>
-        Longer conversations around
-        ideas that deserve more space.
+        {copy.podcastCopy}
       </p>
 
-      <a href="/podcast/">
-        Explore Podcast →
+      <a href={localizedPath('/podcast/')}>
+        {copy.explorePodcast}
       </a>
     </div>
 
@@ -300,7 +387,7 @@ const featuredApp =
         </span>
 
         <span>
-          YouTube
+          {copy.youtube}
         </span>
       </div>
 
@@ -308,18 +395,16 @@ const featuredApp =
         {
           featuredVideo
             ? featuredVideo.data.title
-            : 'See the idea take shape.'
+            : copy.youtubeFallback
         }
       </h2>
 
       <p>
-        Visual explanations,
-        experiments and things
-        being built.
+        {copy.youtubeCopy}
       </p>
 
-      <a href="/youtube/">
-        Explore YouTube →
+      <a href={localizedPath('/youtube/')}>
+        {copy.exploreYoutube}
       </a>
     </div>
 
@@ -341,7 +426,7 @@ const featuredApp =
       </span>
 
       <span>
-        Apps
+        {copy.apps}
       </span>
     </div>
 
@@ -350,19 +435,17 @@ const featuredApp =
         {
           featuredApp
             ? featuredApp.data.title
-            : 'Useful things built from real problems.'
+            : copy.appsFallback
         }
       </h2>
 
       <div class="side-copy">
         <p>
-          When an idea points to a
-          problem worth solving,
-          it may become a product.
+          {copy.appsCopy}
         </p>
 
-        <a href="/apps/">
-          Explore Apps →
+        <a href={localizedPath('/apps/')}>
+          {copy.exploreApps}
         </a>
       </div>
     </div>
@@ -386,21 +469,20 @@ const featuredApp =
         </span>
 
         <span>
-          Newsletter
+          {copy.newsletter}
         </span>
       </div>
 
       <h2>
-        New ideas,<br />
-        occasionally.
+        {copy.newsletterTitle.split('\n').map((line, index) => (
+          <>{index > 0 && <br />}{line}</>
+        ))}
       </h2>
     </div>
 
     <div class="newsletter-right">
       <p>
-        A short email when there is
-        something worth reading,
-        watching or trying.
+        {copy.newsletterCopy}
       </p>
 
       <script
@@ -433,7 +515,7 @@ const featuredApp =
               class="visually-hidden"
               for="newsletter-email"
             >
-              Email address
+              {copy.emailLabel}
             </label>
 
             <input
@@ -441,8 +523,8 @@ const featuredApp =
               class="formkit-input newsletter-input"
               name="email_address"
               type="email"
-              placeholder="Your email"
-              aria-label="Email address"
+              placeholder={copy.emailPlaceholder}
+              aria-label={copy.emailLabel}
               autocomplete="email"
               required
             />
@@ -454,7 +536,7 @@ const featuredApp =
             data-element="submit"
           >
             <span>
-              Subscribe →
+              {copy.subscribe}
             </span>
           </button>
         </div>
@@ -467,13 +549,13 @@ const featuredApp =
             target="_blank"
             rel="nofollow noopener"
           >
-            Built with Kit
+            {copy.builtWithKit}
           </a>
         </div>
       </form>
 
       <p class="newsletter-note">
-        No spam. Unsubscribe whenever you want.
+        {copy.newsletterNote}
       </p>
     </div>
   </section>
@@ -495,34 +577,28 @@ const featuredApp =
       </span>
 
       <span>
-        About
+        {copy.about}
       </span>
     </div>
 
     <div class="about-layout">
       <h2>
-        Writing first.<br />
-        Everything else<br />
-        grows from there.
+        {copy.aboutTitle.split('\n').map((line, index) => (
+          <>{index > 0 && <br />}{line}</>
+        ))}
       </h2>
 
       <div class="side-copy">
         <p>
-          This site is where ideas
-          start through writing.
-          Some grow into conversations,
-          videos and products.
+          {copy.aboutCopyOne}
         </p>
 
         <p>
-          The writing comes first.
-          Everything else develops
-          from the ideas worth
-          taking further.
+          {copy.aboutCopyTwo}
         </p>
 
-        <a href="/about/">
-          About Jack →
+        <a href={localizedPath('/about/')}>
+          {copy.aboutJack}
         </a>
       </div>
     </div>

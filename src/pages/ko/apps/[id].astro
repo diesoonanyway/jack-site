@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import AppsDetail from '../../apps/[id].astro';
+
+export async function getStaticPaths() {
+  const apps = await getCollection('apps');
+
+  return apps
+    .filter((app) => !app.data.draft && app.data.lang === 'ko')
+    .map((app) => ({
+      params: { id: app.id },
+      props: { app },
+    }));
+}
+
+const { app } = Astro.props;
+---
+
+<AppsDetail app={app} lang="ko" />
