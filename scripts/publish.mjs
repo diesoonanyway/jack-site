@@ -452,7 +452,7 @@ async function main() {
     }
     const build = await run(
       process.execPath,
-      [process.env.npm_execpath, 'run', 'build'],
+      [process.env.npm_execpath, 'run', 'build', '--', '--force'],
       { allowFailure: true },
     );
     if (build.code !== 0) {
