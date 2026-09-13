@@ -42,7 +42,6 @@ const copy = isKorean
       emailLabel: '이메일 주소',
       emailPlaceholder: '이메일 주소',
       subscribe: '구독하기 →',
-      builtWithKit: 'Kit으로 제작',
       newsletterNote: '스팸은 보내지 않습니다. 언제든 구독을 해지할 수 있습니다.',
       about: '소개',
       aboutTitle: '글이 먼저입니다.\n다른 모든 것은\n그곳에서 자라납니다.',
@@ -82,7 +81,6 @@ const copy = isKorean
       emailLabel: 'Email address',
       emailPlaceholder: 'Your email',
       subscribe: 'Subscribe →',
-      builtWithKit: 'Built with Kit',
       newsletterNote: 'No spam. Unsubscribe whenever you want.',
       about: 'About',
       aboutTitle: 'Writing first.\nEverything else\ngrows from there.',
@@ -162,6 +160,14 @@ const featuredVideo =
       post.data.featured
   ) ?? videos[0];
 
+const podcastRail = featuredPodcast
+  ? [featuredPodcast, ...podcasts.filter((post) => post.id !== featuredPodcast.id)]
+  : podcasts;
+
+const videoRail = featuredVideo
+  ? [featuredVideo, ...videos.filter((post) => post.id !== featuredVideo.id)]
+  : videos;
+
 const featuredApp =
   apps.find(
     (app) =>
@@ -181,7 +187,6 @@ const featuredApp =
   <section
     class="
       home-hero
-      ocean-panel
     "
   >
     <div class="hero-top">
@@ -217,8 +222,7 @@ const featuredApp =
   <section
     class="
       home-section
-      ocean-panel
-      depth-1
+      home-flow-section
     "
   >
     <div class="section-label">
@@ -267,8 +271,7 @@ const featuredApp =
   <section
     class="
       home-section
-      ocean-panel
-      depth-2
+      home-flow-section
     "
   >
     <div
@@ -342,77 +345,58 @@ const featuredApp =
 
   <!-- MID WATER -->
 
-  <section class="formats">
-
-    <div
-      class="
-        format
-        ocean-panel
-        depth-3
-      "
-    >
-      <div class="section-label">
-        <span class="number">
-          03
-        </span>
-
-        <span>
-          {copy.podcast}
-        </span>
-      </div>
-
-      <h2>
-        {
-          featuredPodcast
-            ? featuredPodcast.data.title
-            : copy.podcastFallback
-        }
-      </h2>
-
-      <p>
-        {copy.podcastCopy}
-      </p>
-
-      <a href={localizedPath('/podcast/')}>
-        {copy.explorePodcast}
-      </a>
+  <section class="home-section home-flow-section media-section">
+    <div class="section-label">
+      <span class="number">03</span>
+      <span>{copy.podcast}</span>
     </div>
 
-
-    <div
-      class="
-        format
-        ocean-panel
-        depth-4
-      "
-    >
-      <div class="section-label">
-        <span class="number">
-          04
-        </span>
-
-        <span>
-          {copy.youtube}
-        </span>
+    {podcastRail.length > 0 ? (
+      <div class="media-rail" aria-label={copy.podcast}>
+        {podcastRail.map((post) => (
+          <article class="media-rail-item">
+            <h2>{post.data.title}</h2>
+            <p>{post.data.description || copy.podcastCopy}</p>
+            <a href={localizedPath(`/podcast/${getPublicSlug(post.id, post.data.lang)}/`)}>
+              {copy.explorePodcast}
+            </a>
+          </article>
+        ))}
       </div>
+    ) : (
+      <div class="media-empty">
+        <h2>{copy.podcastFallback}</h2>
+        <p>{copy.podcastCopy}</p>
+        <a href={localizedPath('/podcast/')}>{copy.explorePodcast}</a>
+      </div>
+    )}
+  </section>
 
-      <h2>
-        {
-          featuredVideo
-            ? featuredVideo.data.title
-            : copy.youtubeFallback
-        }
-      </h2>
-
-      <p>
-        {copy.youtubeCopy}
-      </p>
-
-      <a href={localizedPath('/youtube/')}>
-        {copy.exploreYoutube}
-      </a>
+  <section class="home-section home-flow-section media-section">
+    <div class="section-label">
+      <span class="number">04</span>
+      <span>{copy.youtube}</span>
     </div>
 
+    {videoRail.length > 0 ? (
+      <div class="media-rail" aria-label={copy.youtube}>
+        {videoRail.map((post) => (
+          <article class="media-rail-item">
+            <h2>{post.data.title}</h2>
+            <p>{post.data.description || copy.youtubeCopy}</p>
+            <a href={localizedPath(`/youtube/${getPublicSlug(post.id, post.data.lang)}/`)}>
+              {copy.exploreYoutube}
+            </a>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="media-empty">
+        <h2>{copy.youtubeFallback}</h2>
+        <p>{copy.youtubeCopy}</p>
+        <a href={localizedPath('/youtube/')}>{copy.exploreYoutube}</a>
+      </div>
+    )}
   </section>
 
 
@@ -421,8 +405,7 @@ const featuredApp =
   <section
     class="
       home-section
-      ocean-panel
-      depth-5
+      home-flow-section
     "
   >
     <div class="section-label">
@@ -462,8 +445,7 @@ const featuredApp =
   <section
     class="
       newsletter
-      ocean-panel
-      depth-6
+      home-flow-section
     "
     id="subscribe"
   >
@@ -546,17 +528,6 @@ const featuredApp =
           </button>
         </div>
 
-        <div
-          class="newsletter-kit-branding"
-        >
-          <a
-            href="https://kit.com/features/forms?utm_campaign=poweredby&utm_content=form&utm_medium=referral&utm_source=dynamic"
-            target="_blank"
-            rel="nofollow noopener"
-          >
-            {copy.builtWithKit}
-          </a>
-        </div>
       </form>
 
       <p class="newsletter-note">
@@ -571,8 +542,7 @@ const featuredApp =
   <section
     class="
       home-section
-      ocean-panel
-      depth-7
+      home-flow-section
       about-section
     "
   >
@@ -613,382 +583,149 @@ const featuredApp =
 
 
 <style is:global>
-
-  /*
-    GENERAL PANEL
-  */
-
-  .ocean-panel {
-    width: 100%;
-
-    border:
-      1px solid var(--line);
-
-    box-shadow:
-      var(--shadow);
-  }
-
-
   /*
     HERO / SURFACE
   */
 
   .home-hero {
     min-height: 84vh;
-
     display: flex;
-
     flex-direction: column;
-
-    justify-content:
-      space-between;
-
+    justify-content: space-between;
+    width: 100%;
     padding: 64px;
-
-    margin-bottom: 28px;
-
     background:
       linear-gradient(
         90deg,
-
-        rgba(
-          1,
-          7,
-          13,
-          0.72
-        ) 0%,
-
-        rgba(
-          1,
-          7,
-          13,
-          0.46
-        ) 38%,
-
-        rgba(
-          1,
-          7,
-          13,
-          0.18
-        ) 68%,
-
-        rgba(
-          1,
-          7,
-          13,
-          0.12
-        ) 100%
+        rgba(1, 7, 13, 0.72) 0%,
+        rgba(1, 7, 13, 0.46) 38%,
+        rgba(1, 7, 13, 0.18) 68%,
+        rgba(1, 7, 13, 0.12) 100%
       );
   }
 
   .hero-top {
     display: flex;
-
-    justify-content:
-      space-between;
-
+    justify-content: space-between;
     gap: 20px;
-
     color: #e0e5eb;
-
     font-size: 0.8rem;
-
     font-weight: 700;
-
-    letter-spacing:
-      0.12em;
-
-    text-transform:
-      uppercase;
-
-    text-shadow:
-      0 2px 18px
-      rgba(0, 0, 0, 0.9);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9);
   }
 
   .home-hero h1 {
     max-width: 1120px;
-
-    margin:
-      80px 0 72px;
-
-    text-shadow:
-      0 6px 46px
-      rgba(0, 0, 0, 0.92);
+    margin: 80px 0 72px;
+    text-shadow: 0 6px 46px rgba(0, 0, 0, 0.92);
   }
 
   .hero-bottom {
     display: grid;
-
-    grid-template-columns:
-      minmax(
-        0,
-        580px
-      )
-      auto;
-
-    justify-content:
-      space-between;
-
+    grid-template-columns: minmax(0, 580px) auto;
+    justify-content: space-between;
     align-items: end;
-
     gap: 40px;
   }
 
   .hero-bottom p {
     margin: 0;
-
     color: #f0f2f5;
-
     font-size: 1.14rem;
-
     line-height: 1.75;
-
-    text-shadow:
-      0 3px 22px
-      rgba(0, 0, 0, 0.95);
+    text-shadow: 0 3px 22px rgba(0, 0, 0, 0.95);
   }
 
   .hero-bottom a {
     font-weight: 700;
-
-    text-shadow:
-      0 3px 22px
-      rgba(0, 0, 0, 0.95);
+    text-shadow: 0 3px 22px rgba(0, 0, 0, 0.95);
   }
 
-
   /*
-    COMMON SECTION
+    EDITORIAL FLOW
   */
 
-  .home-section {
-    padding: 76px 64px;
+  .home-flow-section {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+    padding: 84px 24px;
+  }
 
-    margin-top: 28px;
+  .home-flow-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 24px;
+    right: 24px;
+    height: 1px;
+    background:
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(220, 230, 240, 0.08) 12%,
+        rgba(220, 230, 240, 0.18) 50%,
+        rgba(220, 230, 240, 0.08) 88%,
+        transparent 100%
+      );
   }
 
   .section-label {
     display: flex;
-
     align-items: center;
-
     gap: 18px;
-
     margin-bottom: 58px;
-
     color: #cbd4dd;
-
     font-size: 0.82rem;
-
     font-weight: 700;
-
-    letter-spacing:
-      0.12em;
-
-    text-transform:
-      uppercase;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   .number {
     display: inline-block;
-
     width: 30px;
   }
 
   .section-label-link {
-    justify-content:
-      space-between;
+    justify-content: space-between;
   }
 
   .section-label-link > div {
     display: flex;
-
     align-items: center;
-
     gap: 18px;
   }
 
   .section-label-link > a {
     color: var(--text);
-
     letter-spacing: 0;
-
     text-transform: none;
   }
-
-
-  /*
-    DEPTH SYSTEM
-  */
-
-  .depth-1 {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(
-          5,
-          20,
-          38,
-          0.28
-        ),
-        rgba(
-          4,
-          17,
-          33,
-          0.36
-        )
-      );
-  }
-
-  .depth-2 {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(
-          4,
-          17,
-          33,
-          0.38
-        ),
-        rgba(
-          3,
-          15,
-          30,
-          0.46
-        )
-      );
-  }
-
-  .depth-3 {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(
-          3,
-          15,
-          30,
-          0.48
-        ),
-        rgba(
-          2,
-          13,
-          27,
-          0.58
-        )
-      );
-  }
-
-  .depth-4 {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(
-          2,
-          13,
-          27,
-          0.58
-        ),
-        rgba(
-          1,
-          10,
-          22,
-          0.69
-        )
-      );
-  }
-
-  .depth-5 {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(
-          1,
-          11,
-          24,
-          0.66
-        ),
-        rgba(
-          1,
-          8,
-          19,
-          0.77
-        )
-      );
-  }
-
-  .depth-6 {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(
-          1,
-          9,
-          21,
-          0.76
-        ),
-        rgba(
-          0,
-          6,
-          15,
-          0.87
-        )
-      );
-  }
-
-  .depth-7 {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(
-          0,
-          6,
-          15,
-          0.86
-        ),
-        rgba(
-          0,
-          3,
-          8,
-          0.95
-        )
-      );
-  }
-
 
   /*
     FEATURED JOURNAL
   */
 
   .featured-content h2 {
-    max-width: 1120px;
-
+    max-width: 1050px;
     margin-bottom: 72px;
   }
 
   .featured-bottom {
     display: grid;
-
-    grid-template-columns:
-      minmax(
-        0,
-        580px
-      )
-      auto;
-
-    justify-content:
-      space-between;
-
+    grid-template-columns: minmax(0, 580px) auto;
+    justify-content: space-between;
     align-items: end;
-
     gap: 40px;
   }
 
   .featured-bottom p {
     margin: 0;
-
     color: var(--muted);
-
     font-size: 1.05rem;
   }
 
@@ -996,30 +733,48 @@ const featuredApp =
     font-weight: 700;
   }
 
-
   /*
     JOURNAL LIST
   */
 
   .journal-list {
-    border-top:
-      1px solid var(--line);
+    position: relative;
+    padding-top: 1px;
+  }
+
+  .journal-list::before,
+  .journal-row:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background:
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(220, 230, 240, 0.06) 10%,
+        rgba(220, 230, 240, 0.14) 50%,
+        rgba(220, 230, 240, 0.06) 90%,
+        transparent 100%
+      );
+  }
+
+  .journal-list::before {
+    top: 0;
   }
 
   .journal-row {
+    position: relative;
     display: grid;
-
-    grid-template-columns:
-      1fr auto;
-
+    grid-template-columns: 1fr auto;
     align-items: center;
-
     gap: 20px;
-
     padding: 34px 0;
+  }
 
-    border-bottom:
-      1px solid var(--line);
+  .journal-row:not(:last-child)::after {
+    bottom: 0;
   }
 
   .journal-row:hover {
@@ -1032,66 +787,91 @@ const featuredApp =
 
   .post-date {
     display: block;
-
     margin-bottom: 8px;
-
     color: var(--muted);
-
     font-size: 0.86rem;
   }
 
   .arrow {
     color: var(--muted);
-
     font-size: 1.8rem;
   }
 
-
   /*
-    PODCAST + YOUTUBE
+    PODCAST / YOUTUBE RAILS
   */
 
-  .formats {
+  .media-rail {
+    display: flex;
+    gap: 48px;
     width: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-      1fr 1fr;
-
-    gap: 28px;
-
-    margin-top: 28px;
+    max-width: 100%;
+    padding-bottom: 20px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(220, 230, 240, 0.2) transparent;
   }
 
-  .format {
-    min-height: 580px;
-
-    padding: 76px 64px;
+  .media-rail::-webkit-scrollbar {
+    height: 4px;
   }
 
-  .format h2 {
-    max-width: 580px;
+  .media-rail::-webkit-scrollbar-track {
+    background: transparent;
   }
 
-  .format p {
+  .media-rail::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(220, 230, 240, 0.18);
+  }
+
+  .media-rail-item {
+    position: relative;
+    flex: 0 0 clamp(320px, 42%, 460px);
+    min-width: 0;
+    padding-right: 48px;
+    scroll-snap-align: start;
+  }
+
+  .media-rail-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 1px;
+    background:
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(220, 230, 240, 0.13) 50%,
+        transparent 100%
+      );
+  }
+
+  .media-rail-item h2,
+  .media-empty h2 {
+    max-width: 780px;
+    margin-bottom: 0;
+    font-size: clamp(2rem, 3.5vw, 3.6rem);
+  }
+
+  .media-rail-item p,
+  .media-empty p {
     max-width: 470px;
-
-    margin-top: 42px;
-
+    margin: 28px 0 0;
     color: var(--muted);
-
     font-size: 1.05rem;
   }
 
-  .format a {
+  .media-rail-item a,
+  .media-empty a {
     display: inline-block;
-
     margin-top: 20px;
-
     font-weight: 700;
   }
-
 
   /*
     APPS
@@ -1099,18 +879,13 @@ const featuredApp =
 
   .apps-layout {
     display: grid;
-
-    grid-template-columns:
-      1.5fr 0.6fr;
-
+    grid-template-columns: 1.5fr 0.6fr;
     align-items: end;
-
     gap: 100px;
   }
 
   .apps-layout h2 {
     max-width: 920px;
-
     margin-bottom: 0;
   }
 
@@ -1120,7 +895,6 @@ const featuredApp =
 
   .side-copy p {
     color: #d1d9e1;
-
     font-size: 1.05rem;
   }
 
@@ -1128,24 +902,15 @@ const featuredApp =
     font-weight: 700;
   }
 
-
   /*
     NEWSLETTER
   */
 
   .newsletter {
     display: grid;
-
-    grid-template-columns:
-      1.2fr 0.8fr;
-
+    grid-template-columns: 1.2fr 0.8fr;
     align-items: end;
-
     gap: 100px;
-
-    padding: 76px 64px;
-
-    margin-top: 28px;
   }
 
   .newsletter h2 {
@@ -1154,52 +919,25 @@ const featuredApp =
 
   .newsletter-right p {
     max-width: 450px;
-
     color: #dce2e9;
-
     font-size: 1.05rem;
   }
 
   .newsletter-form {
     width: 100%;
-
     max-width: 520px;
-
     margin-top: 32px;
-
     padding: 0;
-
     background: transparent;
   }
 
   .newsletter-fields {
     display: grid;
-
-    grid-template-columns:
-      minmax(0, 1fr)
-      auto;
-
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: stretch;
-
     gap: 0;
-
-    border-top:
-      1px solid
-      rgba(
-        255,
-        255,
-        255,
-        0.28
-      );
-
-    border-bottom:
-      1px solid
-      rgba(
-        255,
-        255,
-        255,
-        0.28
-      );
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
   }
 
   .newsletter-field {
@@ -1208,21 +946,13 @@ const featuredApp =
 
   .newsletter-input {
     width: 100%;
-
     height: 58px;
-
     padding: 0 8px;
-
     border: 0;
-
     outline: 0;
-
     color: var(--text);
-
     background: transparent;
-
     font: inherit;
-
     font-size: 1rem;
   }
 
@@ -1232,27 +962,18 @@ const featuredApp =
 
   .newsletter-input:focus {
     outline: none;
-
     box-shadow: none;
   }
 
   .newsletter-submit {
     min-width: 130px;
-
     padding: 0 4px;
-
     border: 0;
-
     cursor: pointer;
-
     color: var(--text);
-
     background: transparent;
-
     font: inherit;
-
     font-weight: 700;
-
     text-align: right;
   }
 
@@ -1262,52 +983,22 @@ const featuredApp =
 
   .newsletter-submit span {
     display: block;
-
     padding: 0;
-  }
-
-  .newsletter-kit-branding {
-    margin-top: 10px;
-
-    font-size: 0.72rem;
-  }
-
-  .newsletter-kit-branding a {
-    color: rgba(
-      255,
-      255,
-      255,
-      0.38
-    );
-  }
-
-  .newsletter-kit-branding a:hover {
-    color: var(--muted);
   }
 
   .newsletter-note {
     margin-top: 10px !important;
-
     margin-bottom: 0;
-
     color: var(--muted) !important;
-
     font-size: 0.78rem !important;
   }
 
   .formkit-alert {
     width: 100%;
-
     padding: 12px 14px;
-
-    margin:
-      0 0 12px;
-
-    border:
-      1px solid var(--line);
-
+    margin: 0 0 12px;
+    border: 1px solid var(--line);
     list-style: none;
-
     font-size: 0.88rem;
   }
 
@@ -1317,46 +1008,25 @@ const featuredApp =
 
   .formkit-alert-error {
     color: #ffd7d0;
-
-    background:
-      rgba(
-        130,
-        35,
-        20,
-        0.26
-      );
+    background: rgba(130, 35, 20, 0.26);
   }
 
   .formkit-alert-success {
     color: #d7ffe8;
-
-    background:
-      rgba(
-        20,
-        100,
-        60,
-        0.26
-      );
+    background: rgba(20, 100, 60, 0.26);
   }
 
   .visually-hidden {
     position: absolute;
-
     width: 1px;
     height: 1px;
-
     padding: 0;
     margin: -1px;
-
     overflow: hidden;
-
     clip: rect(0, 0, 0, 0);
-
     white-space: nowrap;
-
     border: 0;
   }
-
 
   /*
     ABOUT / ABYSS
@@ -1368,48 +1038,42 @@ const featuredApp =
 
   .about-layout {
     display: grid;
-
-    grid-template-columns:
-      1.35fr 0.65fr;
-
+    grid-template-columns: 1.35fr 0.65fr;
     align-items: end;
-
     gap: 100px;
   }
 
   .about-layout h2 {
     max-width: 900px;
-
     margin-bottom: 0;
   }
-
 
   /*
     MOBILE
   */
 
   @media (max-width: 760px) {
-
-    .home-hero,
-    .home-section,
-    .format,
-    .newsletter {
-      padding: 30px 22px;
-    }
-
     .home-hero {
       min-height: 72vh;
+      padding: 36px 18px;
     }
 
     .hero-top {
       flex-direction: column;
-
       gap: 6px;
     }
 
     .home-hero h1 {
-      margin:
-        58px 0 54px;
+      margin: 58px 0 54px;
+    }
+
+    .home-flow-section {
+      padding: 72px 18px;
+    }
+
+    .home-flow-section::before {
+      left: 18px;
+      right: 18px;
     }
 
     .hero-bottom,
@@ -1417,35 +1081,32 @@ const featuredApp =
     .apps-layout,
     .newsletter,
     .about-layout {
-      grid-template-columns:
-        1fr;
-
+      grid-template-columns: 1fr;
       gap: 36px;
-    }
-
-    .formats {
-      grid-template-columns:
-        1fr;
-    }
-
-    .format {
-      min-height: auto;
     }
 
     .section-label {
       margin-bottom: 38px;
-
       font-size: 0.76rem;
     }
 
+    .media-rail {
+      gap: 24px;
+      padding-bottom: 16px;
+      scroll-snap-type: x mandatory;
+    }
+
+    .media-rail-item {
+      flex-basis: min(72vw, 340px);
+      padding-right: 24px;
+    }
+
     .newsletter-fields {
-      grid-template-columns:
-        1fr;
+      grid-template-columns: 1fr;
     }
 
     .newsletter-submit {
       height: 48px;
-
       text-align: left;
     }
 
