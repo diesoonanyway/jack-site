@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/editorial.css';
 
 const { lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
@@ -13,20 +14,18 @@ const isKorean = lang === 'ko';
   {lang}
   alternatePath={isKorean ? '/about/' : '/ko/about/'}
 >
-  <section class="reading-width">
-    <p class="eyebrow">{isKorean ? '소개' : 'About'}</p>
+  <div class="editorial-page">
+    <header class="editorial-page-intro">
+      <h1>{isKorean ? '소개' : 'About'}</h1>
 
-    <h1>{isKorean ? '소개' : 'About'}</h1>
+      <p class="muted editorial-page-intro-text">
+        {isKorean
+          ? '저는 아이디어와 문제, 그리고 만들 가치가 있는 것들에 관해 씁니다.'
+          : 'I write about ideas, problems and things worth building.'}
+      </p>
+    </header>
 
-    <p class="muted">
-      {isKorean
-        ? '저는 아이디어와 문제, 그리고 만들 가치가 있는 것들에 관해 씁니다.'
-        : 'I write about ideas, problems and things worth building.'}
-    </p>
-  </section>
-
-  <section class="section">
-    <div class="reading-width article-body">
+    <section class="editorial-page-content editorial-page-content--prose editorial-page-section article-body">
       {isKorean ? (
         <>
           <p>이 사이트는 글쓰기를 통해 아이디어를 발전시키는 곳입니다.</p>
@@ -40,6 +39,6 @@ const isKorean = lang === 'ko';
           <p>The writing comes first. Everything else grows from there.</p>
         </>
       )}
-    </div>
-  </section>
+    </section>
+  </div>
 </BaseLayout>

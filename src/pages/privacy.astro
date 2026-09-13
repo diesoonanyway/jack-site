@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/editorial.css';
 
 const { lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
@@ -14,17 +15,16 @@ const isKorean = lang === 'ko';
   alternatePath={isKorean ? '/privacy/' : '/ko/privacy/'}
 >
   {isKorean ? (
-    <article class="privacy-page">
-      <header class="privacy-header">
-        <p class="eyebrow">개인정보 보호</p>
+    <article class="privacy-page editorial-page">
+      <header class="privacy-header editorial-page-intro">
         <h1>개인정보 처리방침</h1>
-        <p class="last-updated">최종 업데이트: 2026년 9월 8일</p>
-        <p class="intro">
+        <p class="last-updated editorial-page-meta">최종 업데이트: 2026년 9월 8일</p>
+        <p class="intro editorial-page-intro-text">
           이 개인정보 처리방침은 사용자가 이 웹사이트를 방문하거나 뉴스레터를 구독할 때 If It All Ends가 정보를 수집, 이용 및 처리하는 방식을 설명합니다.
         </p>
       </header>
 
-      <div class="privacy-content">
+      <div class="privacy-content editorial-page-content editorial-page-content--prose editorial-page-content--sectioned">
         <section>
           <h2>1. 운영자 정보</h2>
           <p>If It All Ends는 글, 대화, 영상 및 제품을 소개하는 독립 웹사이트입니다.</p>
@@ -130,24 +130,22 @@ const isKorean = lang === 'ko';
       </div>
     </article>
   ) : (
-  <article class="privacy-page">
-    <header class="privacy-header">
-      <p class="eyebrow">Privacy</p>
-
+  <article class="privacy-page editorial-page">
+    <header class="privacy-header editorial-page-intro">
       <h1>Privacy Policy</h1>
 
-      <p class="last-updated">
+      <p class="last-updated editorial-page-meta">
         Last updated: September 8, 2026
       </p>
 
-      <p class="intro">
+      <p class="intro editorial-page-intro-text">
         This Privacy Policy explains how If It All Ends
         collects, uses, and handles information when you
         visit this website or subscribe to the newsletter.
       </p>
     </header>
 
-    <div class="privacy-content">
+    <div class="privacy-content editorial-page-content editorial-page-content--prose editorial-page-content--sectioned">
       <section>
         <h2>1. Who we are</h2>
 
@@ -421,102 +419,20 @@ const isKorean = lang === 'ko';
 </BaseLayout>
 
 <style is:global>
-  .privacy-page {
-    margin-top: 24px;
-  }
-
-  .privacy-header {
-    padding: 80px 64px;
-
-    border:
-      1px solid var(--line);
-
-    background:
-      rgba(1, 8, 15, 0.74);
-  }
-
-  .privacy-header h1 {
-    max-width: 1050px;
-
-    margin:
-      24px 0 32px;
-  }
-
-  .last-updated {
-    margin-bottom: 28px;
-
-    color: var(--muted);
-
-    font-size: 0.9rem;
-  }
-
-  .intro {
-    max-width: 760px;
-
-    margin-bottom: 0;
-
-    color: var(--body-text);
-
-    font-size: 1.12rem;
-
-    line-height: 1.8;
-  }
-
-  .privacy-content {
-    max-width: 900px;
-
-    padding: 72px 64px;
-
-    margin-top: 24px;
-
-    border:
-      1px solid var(--line);
-
-    background:
-      rgba(0, 6, 14, 0.82);
-  }
-
-  .privacy-content section {
-    padding-bottom: 54px;
-
-    margin-bottom: 54px;
-
-    border-bottom:
-      1px solid var(--line);
-  }
-
-  .privacy-content section:last-child {
-    padding-bottom: 0;
-
-    margin-bottom: 0;
-
-    border-bottom: 0;
-  }
-
   .privacy-content h2 {
     margin-bottom: 28px;
-
-    font-size:
-      clamp(
-        2rem,
-        4vw,
-        3.3rem
-      );
+    font-size: clamp(2rem, 4vw, 3.3rem);
   }
 
   .privacy-content h3 {
-    margin:
-      34px 0 16px;
-
+    margin: 34px 0 16px;
     font-size: 1.35rem;
   }
 
   .privacy-content p,
   .privacy-content li {
     color: var(--body-text);
-
     font-size: 1.05rem;
-
     line-height: 1.8;
   }
 
@@ -526,9 +442,7 @@ const isKorean = lang === 'ko';
 
   .privacy-content ul {
     padding-left: 24px;
-
-    margin:
-      24px 0 0;
+    margin: 24px 0 0;
   }
 
   .privacy-content li {
@@ -537,23 +451,7 @@ const isKorean = lang === 'ko';
 
   .privacy-content a {
     color: var(--accent);
-
     text-decoration: underline;
-
     text-underline-offset: 4px;
-  }
-
-  @media (max-width: 760px) {
-    .privacy-header,
-    .privacy-content {
-      padding:
-        40px 22px;
-    }
-
-    .privacy-content section {
-      padding-bottom: 40px;
-
-      margin-bottom: 40px;
-    }
   }
 </style>
