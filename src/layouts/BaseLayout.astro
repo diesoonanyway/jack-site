@@ -3,7 +3,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 
 const {
   title = 'Jack',
-  description = 'Writing, ideas and useful things.',
+  description = 'Journal, ideas and useful things.',
   image = '/images/moon-ocean.png',
   type = 'website',
   noindex = false,
@@ -29,7 +29,7 @@ const pathPrefix = lang === 'ko' ? '/ko' : '';
 const homePath = lang === 'ko' ? '/ko/' : '/';
 const navigation = lang === 'ko'
   ? {
-      writing: '글',
+      journal: 'Journal',
       podcast: '팟캐스트',
       youtube: '유튜브',
       apps: '앱',
@@ -37,10 +37,10 @@ const navigation = lang === 'ko'
       subscribe: '구독',
       privacy: '개인정보 처리방침',
       contact: '연락처',
-      tagline: '글 → 대화 → 제품',
+      tagline: 'Journal → 대화 → 제품',
     }
   : {
-      writing: 'Writing',
+      journal: 'Journal',
       podcast: 'Podcast',
       youtube: 'YouTube',
       apps: 'Apps',
@@ -48,7 +48,7 @@ const navigation = lang === 'ko'
       subscribe: 'Subscribe',
       privacy: 'Privacy',
       contact: 'Contact',
-      tagline: 'Writing → Conversation → Product',
+      tagline: 'Journal → Conversation → Product',
     };
 
 const socialImageURL = Astro.site
@@ -584,8 +584,8 @@ const measurementId = 'G-Z9K72KWHGP';
         </a>
 
         <nav class="nav">
-          <a href={`${pathPrefix}/writing/`}>
-            {navigation.writing}
+          <a href={`${pathPrefix}/journal/`}>
+            {navigation.journal}
           </a>
 
           <a href={`${pathPrefix}/podcast/`}>

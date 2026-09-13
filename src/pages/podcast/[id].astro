@@ -79,7 +79,7 @@ const { Content } = await render(post);
       <Content />
     </div>
 
-    {(post.data.relatedWriting ||
+    {(post.data.relatedJournal ||
       post.data.relatedYoutube ||
       post.data.relatedApp) && (
       <section class="related">
@@ -88,9 +88,9 @@ const { Content } = await render(post);
         </p>
 
         <div class="related-links">
-          {post.data.relatedWriting && (
-            <a href={post.data.relatedWriting}>
-              {isKorean ? '글 읽기 →' : 'Read the writing →'}
+          {post.data.relatedJournal && (
+            <a href={post.data.relatedJournal}>
+              {isKorean ? 'Journal 읽기 →' : 'Read the journal entry →'}
             </a>
           )}
 

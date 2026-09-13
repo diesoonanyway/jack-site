@@ -9,21 +9,19 @@ const isKorean = lang === 'ko';
 const pathPrefix = isKorean ? '/ko' : '';
 const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
 
-const posts = (await getCollection('writing'))
+const posts = (await getCollection('journal'))
   .filter((post) => !post.data.draft && post.data.lang === lang)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <BaseLayout
-  title={isKorean ? '글 — Jack' : 'Writing — Jack'}
+  title="Journal — Jack"
   description={isKorean ? '에세이, 아이디어 그리고 유용한 글.' : 'Essays, ideas and useful writing.'}
   {lang}
-  alternatePath={isKorean ? '/writing/' : '/ko/writing/'}
+  alternatePath={isKorean ? '/journal/' : '/ko/journal/'}
 >
   <section class="editorial-intro">
-    <p class="eyebrow">{isKorean ? '글' : 'Writing'}</p>
-
-    <h1>{isKorean ? '글' : 'Writing'}</h1>
+    <h1>Journal</h1>
 
     <p class="muted">
       {isKorean
@@ -46,7 +44,7 @@ const posts = (await getCollection('writing'))
             </p>
 
             <h2>
-              <a href={`${pathPrefix}/writing/${getPublicSlug(post.id, post.data.lang)}/`}>
+              <a href={`${pathPrefix}/journal/${getPublicSlug(post.id, post.data.lang)}/`}>
                 {post.data.title}
               </a>
             </h2>
@@ -59,7 +57,7 @@ const posts = (await getCollection('writing'))
 
             <a
               class="text-link"
-              href={`${pathPrefix}/writing/${getPublicSlug(post.id, post.data.lang)}/`}
+              href={`${pathPrefix}/journal/${getPublicSlug(post.id, post.data.lang)}/`}
             >
               {isKorean ? '읽기' : 'Read'} →
             </a>
@@ -67,7 +65,7 @@ const posts = (await getCollection('writing'))
         ))}
       </div>
     ) : (
-      <p>{isKorean ? '아직 발행된 글이 없습니다.' : 'No published writing yet.'}</p>
+      <p>{isKorean ? '아직 발행된 Journal 항목이 없습니다.' : 'No published journal entries yet.'}</p>
     )}
   </section>
 </BaseLayout>

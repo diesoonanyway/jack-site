@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 import yaml from 'js-yaml';
 
-const collections = ['writing', 'podcast', 'youtube', 'apps'];
+const collections = ['journal', 'podcast', 'youtube', 'apps'];
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDirectory, '..');
 const publishedRoot = path.join(projectRoot, 'src', 'content');

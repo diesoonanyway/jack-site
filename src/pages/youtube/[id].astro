@@ -75,7 +75,7 @@ const { Content } = await render(video);
       <Content />
     </section>
 
-    {(video.data.relatedWriting ||
+    {(video.data.relatedJournal ||
       video.data.relatedPodcast ||
       video.data.relatedApp) && (
       <section class="related">
@@ -84,9 +84,9 @@ const { Content } = await render(video);
         </p>
 
         <div class="related-links">
-          {video.data.relatedWriting && (
-            <a href={video.data.relatedWriting}>
-              {isKorean ? '글 읽기 →' : 'Read the writing →'}
+          {video.data.relatedJournal && (
+            <a href={video.data.relatedJournal}>
+              {isKorean ? 'Journal 읽기 →' : 'Read the journal entry →'}
             </a>
           )}
 

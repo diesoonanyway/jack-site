@@ -80,14 +80,14 @@ const { Content } = await render(app);
       <Content />
     </section>
 
-    {app.data.relatedWriting && (
+    {app.data.relatedJournal && (
       <section class="related">
         <p class="eyebrow">
           {isKorean ? '이 앱을 만든 아이디어' : 'The idea behind it'}
         </p>
 
-        <a href={app.data.relatedWriting}>
-          {isKorean ? '글 읽기 →' : 'Read the writing →'}
+        <a href={app.data.relatedJournal}>
+          {isKorean ? 'Journal 읽기 →' : 'Read the journal entry →'}
         </a>
       </section>
     )}

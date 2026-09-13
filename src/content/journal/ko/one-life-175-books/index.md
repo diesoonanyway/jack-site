@@ -10,7 +10,7 @@ relatedPodcast: ""
 relatedYoutube: ""
 relatedApp: ""
 lang: ko
-translation: /writing/one-life-175-books/
+translation: /journal/one-life-175-books/
 ---
 
 “나에게는 책, 책, 책이었어. 내가 평생 읽고 싶은 모든 책을 다 읽었지. 두 번씩. 디킨스는 세 번.”

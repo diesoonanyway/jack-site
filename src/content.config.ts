@@ -9,10 +9,10 @@ const languageFields = {
   translation: z.string().optional(),
 };
 
-const writing = defineCollection({
+const journal = defineCollection({
   loader: glob({
     pattern: '**/index.md',
-    base: './src/content/writing',
+    base: './src/content/journal',
   }),
 
   schema: z.object({
@@ -67,7 +67,7 @@ const podcast = defineCollection({
 
     audioUrl: z.string().optional(),
 
-    relatedWriting: z.string().optional(),
+    relatedJournal: z.string().optional(),
 
     relatedYoutube: z.string().optional(),
 
@@ -100,7 +100,7 @@ const youtube = defineCollection({
 
     youtubeId: z.string().optional(),
 
-    relatedWriting: z.string().optional(),
+    relatedJournal: z.string().optional(),
 
     relatedPodcast: z.string().optional(),
 
@@ -133,12 +133,12 @@ const apps = defineCollection({
 
     price: z.string().optional(),
 
-    relatedWriting: z.string().optional(),
+    relatedJournal: z.string().optional(),
   }),
 });
 
 export const collections = {
-  writing,
+  journal,
 
   podcast,
 

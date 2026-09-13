@@ -11,19 +11,19 @@ const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
 
 const copy = isKorean
   ? {
-      description: '글, 대화, 영상 그리고 유용한 것들.',
-      independentWriting: '독립적인 글쓰기',
+      description: 'Journal, 대화, 영상 그리고 유용한 것들.',
+      independentJournal: 'Journal',
       ideasMediaProducts: '아이디어 → 미디어 → 제품',
       heroTitle: '발전시킬 가치가\n있는 아이디어.',
       heroCopy: '아이디어는 글쓰기에서 시작합니다. 가장 강한 아이디어는 대화, 영상 그리고 유용한 제품으로 성장합니다.',
-      exploreWriting: '글 둘러보기 →',
-      featuredWriting: '주요 글',
+      exploreJournal: 'Journal 둘러보기 →',
+      featuredJournal: '주요 Journal',
       featuredFallback: '더 오래 생각해 볼 가치가 있는 아이디어입니다.',
       readArticle: '글 읽기 →',
-      noWriting: '아직 발행된 글이 없습니다.',
-      latestWriting: '최근 글',
+      noJournal: '아직 발행된 Journal 항목이 없습니다.',
+      latestJournal: '최근 Journal',
       viewAll: '모두 보기 →',
-      moreWriting: '새로운 글이 이곳에 표시됩니다.',
+      moreJournal: '새로운 Journal 항목이 이곳에 표시됩니다.',
       podcast: '팟캐스트',
       podcastFallback: '대화를 통해 더 깊이 들어갑니다.',
       podcastCopy: '더 많은 공간이 필요한 아이디어를 긴 대화로 살펴봅니다.',
@@ -51,19 +51,19 @@ const copy = isKorean
       aboutJack: 'Jack 소개 →',
     }
   : {
-      description: 'Writing, conversations, videos and useful things.',
-      independentWriting: 'Independent Writing',
+      description: 'Journal, conversations, videos and useful things.',
+      independentJournal: 'Journal',
       ideasMediaProducts: 'Ideas → Media → Products',
       heroTitle: 'Ideas worth\ndeveloping.',
       heroCopy: 'Writing is where ideas begin. The strongest ones grow into conversations, videos and useful products.',
-      exploreWriting: 'Explore Writing →',
-      featuredWriting: 'Featured Writing',
+      exploreJournal: 'Explore Journal →',
+      featuredJournal: 'Featured Journal',
       featuredFallback: 'An idea worth spending more time with.',
       readArticle: 'Read article →',
-      noWriting: 'No published writing yet.',
-      latestWriting: 'Latest Writing',
+      noJournal: 'No published journal entries yet.',
+      latestJournal: 'Latest Journal',
       viewAll: 'View all →',
-      moreWriting: 'More writing will appear here.',
+      moreJournal: 'More journal entries will appear here.',
       podcast: 'Podcast',
       podcastFallback: 'Go deeper through conversation.',
       podcastCopy: 'Longer conversations around ideas that deserve more space.',
@@ -91,8 +91,8 @@ const copy = isKorean
       aboutJack: 'About Jack →',
     };
 
-const writing =
-  (await getCollection('writing'))
+const journalEntries =
+  (await getCollection('journal'))
     .filter(
       (post) => !post.data.draft && post.data.lang === lang
     )
@@ -135,18 +135,18 @@ const apps =
         a.data.date.valueOf()
     );
 
-const featuredWriting =
-  writing.find(
+const featuredJournalEntry =
+  journalEntries.find(
     (post) =>
       post.data.featured
-  ) ?? writing[0];
+  ) ?? journalEntries[0];
 
-const latestWriting =
-  writing
+const latestJournalEntries =
+  journalEntries
     .filter(
       (post) =>
         post.id !==
-        featuredWriting?.id
+        featuredJournalEntry?.id
     )
     .slice(0, 3);
 
@@ -186,7 +186,7 @@ const featuredApp =
   >
     <div class="hero-top">
       <span>
-        {copy.independentWriting}
+        {copy.independentJournal}
       </span>
 
       <span>
@@ -205,8 +205,8 @@ const featuredApp =
         {copy.heroCopy}
       </p>
 
-      <a href={localizedPath('/writing/')}>
-        {copy.exploreWriting}
+      <a href={localizedPath('/journal/')}>
+        {copy.exploreJournal}
       </a>
     </div>
   </section>
@@ -227,27 +227,27 @@ const featuredApp =
       </span>
 
       <span>
-        {copy.featuredWriting}
+        {copy.featuredJournal}
       </span>
     </div>
 
-    {featuredWriting ? (
+    {featuredJournalEntry ? (
       <div class="featured-content">
         <h2>
-          {featuredWriting.data.title}
+          {featuredJournalEntry.data.title}
         </h2>
 
         <div class="featured-bottom">
           <p>
             {
-              featuredWriting.data.description ||
+              featuredJournalEntry.data.description ||
               copy.featuredFallback
             }
           </p>
 
           <a
             href={localizedPath(
-              `/writing/${getPublicSlug(featuredWriting.id, featuredWriting.data.lang)}/`,
+              `/journal/${getPublicSlug(featuredJournalEntry.id, featuredJournalEntry.data.lang)}/`,
             )}
           >
             {copy.readArticle}
@@ -256,7 +256,7 @@ const featuredApp =
       </div>
     ) : (
       <p class="muted">
-        {copy.noWriting}
+        {copy.noJournal}
       </p>
     )}
   </section>
@@ -283,24 +283,24 @@ const featuredApp =
         </span>
 
         <span>
-          {copy.latestWriting}
+          {copy.latestJournal}
         </span>
       </div>
 
-      <a href={localizedPath('/writing/')}>
+      <a href={localizedPath('/journal/')}>
         {copy.viewAll}
       </a>
     </div>
 
-    {latestWriting.length > 0 ? (
-      <div class="writing-list">
-        {latestWriting.map(
+    {latestJournalEntries.length > 0 ? (
+      <div class="journal-list">
+        {latestJournalEntries.map(
           (post) => (
             <a
               href={localizedPath(
-                `/writing/${getPublicSlug(post.id, post.data.lang)}/`,
+                `/journal/${getPublicSlug(post.id, post.data.lang)}/`,
               )}
-              class="writing-row"
+              class="journal-row"
             >
               <div>
                 <span class="post-date">
@@ -334,7 +334,7 @@ const featuredApp =
       </div>
     ) : (
       <p class="muted">
-        {copy.moreWriting}
+        {copy.moreJournal}
       </p>
     )}
   </section>
@@ -957,7 +957,7 @@ const featuredApp =
 
 
   /*
-    FEATURED WRITING
+    FEATURED JOURNAL
   */
 
   .featured-content h2 {
@@ -998,15 +998,15 @@ const featuredApp =
 
 
   /*
-    WRITING LIST
+    JOURNAL LIST
   */
 
-  .writing-list {
+  .journal-list {
     border-top:
       1px solid var(--line);
   }
 
-  .writing-row {
+  .journal-row {
     display: grid;
 
     grid-template-columns:
@@ -1022,11 +1022,11 @@ const featuredApp =
       1px solid var(--line);
   }
 
-  .writing-row:hover {
+  .journal-row:hover {
     color: var(--accent);
   }
 
-  .writing-row h3 {
+  .journal-row h3 {
     margin-bottom: 0;
   }
 

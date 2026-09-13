@@ -10,7 +10,7 @@ relatedPodcast: ""
 relatedYoutube: ""
 relatedApp: ""
 lang: en
-translation: /ko/writing/one-life-175-books/
+translation: /ko/journal/one-life-175-books/
 ---
 
 That line from *About Time* has been sitting in my head.

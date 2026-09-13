@@ -1,10 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import { getPublicSlug } from '../../../lib/content-slug';
-import WritingDetail from '../../writing/[id].astro';
+import JournalDetail from '../../journal/[id].astro';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('writing');
+  const posts = await getCollection('journal');
 
   return posts
     .filter((post) => !post.data.draft && post.data.lang === 'ko')
@@ -17,4 +17,4 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 ---
 
-<WritingDetail post={post} lang="ko" />
+<JournalDetail post={post} lang="ko" />
