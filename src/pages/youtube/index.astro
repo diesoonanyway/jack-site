@@ -7,168 +7,174 @@ const isKorean = lang === 'ko';
 const pathPrefix = isKorean ? '/ko' : '';
 const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
 
-const videos = (await getCollection('youtube'))
-  .filter((video) => !video.data.draft && video.data.lang === lang)
+const posts = (await getCollection('youtube'))
+  .filter((post) => !post.data.draft && post.data.lang === lang)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <BaseLayout
   title={isKorean ? '유튜브 — Jack' : 'YouTube — Jack'}
-  description={isKorean ? '아이디어를 영상과 시각 자료로 탐구합니다.' : 'Videos and visual explorations of ideas.'}
+  description={
+    isKorean
+      ? '아이디어를 영상으로 발전시킵니다.'
+      : 'Ideas developed through video.'
+  }
   {lang}
   alternatePath={isKorean ? '/youtube/' : '/ko/youtube/'}
 >
-  <section class="page-intro">
-    <p class="eyebrow">{isKorean ? '유튜브' : 'YouTube'}</p>
+  <section class="editorial-intro">
+    <p class="eyebrow">{isKorean ? '영상' : 'Video'}</p>
 
     <h1>{isKorean ? '유튜브' : 'YouTube'}</h1>
 
-    <p class="intro-copy">
+    <p class="muted">
       {isKorean
-        ? '시각적 설명, 실험, 그리고 형태를 갖춰 가는 아이디어입니다.'
-        : 'Visual explanations, experiments and ideas taking shape.'}
+        ? '글과 생각을 다른 방식으로 바라봅니다.'
+        : 'Another way to explore the ideas behind the writing.'}
     </p>
   </section>
 
-  <section class="content-section">
-    {videos.length > 0 ? (
-      <div class="video-list">
-        {videos.map((video) => (
-          <article class="video-item">
-            <div>
-              <p class="meta">
-                {video.data.date.toLocaleDateString(dateLocale, {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+  <section class="editorial-list-section">
+    {posts.length > 0 ? (
+      <div class="editorial-list">
+        {posts.map((post) => (
+          <article class="editorial-entry">
+            <p class="eyebrow">
+              {post.data.date.toLocaleDateString(dateLocale, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
+
+            <h2>
+              <a href={`${pathPrefix}/youtube/${post.id}/`}>
+                {post.data.title}
+              </a>
+            </h2>
+
+            {post.data.description && (
+              <p class="muted entry-description">
+                {post.data.description}
               </p>
-
-              <h2>
-                <a href={`${pathPrefix}/youtube/${video.id}/`}>
-                  {video.data.title}
-                </a>
-              </h2>
-
-              {video.data.description && (
-                <p class="description">
-                  {video.data.description}
-                </p>
-              )}
-            </div>
+            )}
 
             <a
-              class="watch-link"
-              href={`${pathPrefix}/youtube/${video.id}/`}
+              class="text-link"
+              href={`${pathPrefix}/youtube/${post.id}/`}
             >
-              {isKorean ? '보기 →' : 'Watch →'}
+              {isKorean ? '보기' : 'Watch'} →
             </a>
           </article>
         ))}
       </div>
     ) : (
-      <p class="empty">
-        {isKorean ? '아직 발행된 영상이 없습니다.' : 'No published YouTube videos yet.'}
+      <p class="empty-state">
+        {isKorean
+          ? '아직 발행된 영상이 없습니다.'
+          : 'No published videos yet.'}
       </p>
     )}
   </section>
 </BaseLayout>
 
-<style is:global>
-  .page-intro {
-    padding: 90px 64px;
-    margin-top: 24px;
-
-    border: 1px solid var(--line);
-
-    background:
-      linear-gradient(
-        90deg,
-        rgba(1, 8, 15, 0.72),
-        rgba(1, 8, 15, 0.4)
-      );
+<style>
+  .editorial-intro,
+  .editorial-list-section {
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+    padding-inline: 24px;
   }
 
-  .page-intro h1 {
-    margin-bottom: 36px;
+  .editorial-intro {
+    position: relative;
+    padding-bottom: 72px;
+    margin-bottom: 64px;
   }
 
-  .intro-copy {
-    max-width: 620px;
-    margin-bottom: 0;
-
-    color: var(--muted);
-    font-size: 1.1rem;
+  .editorial-intro::after {
+    content: '';
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(220, 230, 240, 0.08) 12%,
+      rgba(220, 230, 240, 0.18) 50%,
+      rgba(220, 230, 240, 0.08) 88%,
+      transparent 100%
+    );
   }
 
-  .content-section {
-    padding: 70px 64px;
-    margin-top: 24px;
-
-    border: 1px solid var(--line);
-    background: rgba(1, 8, 15, 0.72);
+  .editorial-list {
+    width: 100%;
   }
 
-  .video-list {
-    border-top: 1px solid var(--line);
+  .editorial-entry {
+    position: relative;
+    padding-bottom: 64px;
+    margin-bottom: 64px;
   }
 
-  .video-item {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: end;
-
-    gap: 50px;
-
-    padding: 42px 0;
-
-    border-bottom: 1px solid var(--line);
+  .editorial-entry:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(220, 230, 240, 0.07) 10%,
+      rgba(220, 230, 240, 0.16) 50%,
+      rgba(220, 230, 240, 0.07) 90%,
+      transparent 100%
+    );
   }
 
-  .video-item h2 {
-    max-width: 900px;
-    margin-bottom: 18px;
+  .editorial-entry h2 {
+    margin-top: 18px;
   }
 
-  .meta {
-    margin-bottom: 16px;
-
-    color: var(--muted);
-
-    font-size: 0.82rem;
-
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  .entry-description {
+    max-width: none;
+    margin-top: 26px;
+    margin-bottom: 30px;
   }
 
-  .description {
-    max-width: 700px;
-    margin-bottom: 0;
-
-    color: var(--muted);
-    font-size: 1.05rem;
-  }
-
-  .watch-link {
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .empty {
-    margin-bottom: 0;
-    color: var(--muted);
+  .empty-state {
+    color: rgba(219, 234, 255, 0.62);
   }
 
   @media (max-width: 760px) {
-    .page-intro,
-    .content-section {
-      padding: 40px 22px;
+    .editorial-intro,
+    .editorial-list-section {
+      padding-inline: 18px;
     }
 
-    .video-item {
-      grid-template-columns: 1fr;
-      align-items: start;
-      gap: 22px;
+    .editorial-intro {
+      padding-bottom: 52px;
+      margin-bottom: 48px;
+    }
+
+    .editorial-intro::after {
+      left: 18px;
+      right: 18px;
+    }
+
+    .editorial-entry {
+      padding-bottom: 48px;
+      margin-bottom: 48px;
+    }
+
+    .entry-description {
+      margin-top: 22px;
+      margin-bottom: 26px;
     }
   }
 </style>

@@ -14,157 +14,167 @@ const posts = (await getCollection('podcast'))
 
 <BaseLayout
   title={isKorean ? '팟캐스트 — Jack' : 'Podcast — Jack'}
-  description={isKorean ? '아이디어를 더 깊이 탐구하는 대화.' : 'Conversations and deeper explorations of ideas.'}
+  description={
+    isKorean
+      ? '생각을 대화로 발전시키는 팟캐스트입니다.'
+      : 'Conversations that give ideas more room to develop.'
+  }
   {lang}
   alternatePath={isKorean ? '/podcast/' : '/ko/podcast/'}
 >
-  <section class="page-intro">
-    <p class="eyebrow">{isKorean ? '팟캐스트' : 'Podcast'}</p>
+  <section class="editorial-intro">
+    <p class="eyebrow">{isKorean ? '대화' : 'Conversation'}</p>
 
     <h1>{isKorean ? '팟캐스트' : 'Podcast'}</h1>
 
-    <p class="intro-copy">
+    <p class="muted">
       {isKorean
-        ? '더 발전시킬 가치가 있는 아이디어를 대화로 깊이 탐구합니다.'
-        : 'Conversations and deeper explorations of ideas worth taking further.'}
+        ? '생각을 조금 더 오래 붙잡고 이야기합니다.'
+        : 'Conversations that give ideas more room to breathe.'}
     </p>
   </section>
 
-  <section class="content-section">
+  <section class="editorial-list-section">
     {posts.length > 0 ? (
-      <div class="podcast-list">
+      <div class="editorial-list">
         {posts.map((post) => (
-          <article class="podcast-item">
-            <div>
-              <p class="meta">
-                {post.data.episode
-                  ? `${isKorean ? '에피소드' : 'Episode'} ${post.data.episode} · `
-                  : ''}
+          <article class="editorial-entry">
+            <p class="eyebrow">
+              {post.data.date.toLocaleDateString(dateLocale, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
 
-                {post.data.date.toLocaleDateString(dateLocale, {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+            <h2>
+              <a href={`${pathPrefix}/podcast/${post.id}/`}>
+                {post.data.title}
+              </a>
+            </h2>
+
+            {post.data.description && (
+              <p class="muted entry-description">
+                {post.data.description}
               </p>
-
-              <h2>
-                <a href={`${pathPrefix}/podcast/${post.id}/`}>
-                  {post.data.title}
-                </a>
-              </h2>
-
-              {post.data.description && (
-                <p class="description">
-                  {post.data.description}
-                </p>
-              )}
-            </div>
+            )}
 
             <a
-              class="read-link"
+              class="text-link"
               href={`${pathPrefix}/podcast/${post.id}/`}
             >
-              {isKorean ? '듣기 →' : 'Listen →'}
+              {isKorean ? '듣기' : 'Listen'} →
             </a>
           </article>
         ))}
       </div>
     ) : (
-      <p class="empty">
-        {isKorean ? '아직 발행된 팟캐스트가 없습니다.' : 'No published podcast episodes yet.'}
+      <p class="empty-state">
+        {isKorean
+          ? '아직 발행된 팟캐스트가 없습니다.'
+          : 'No published podcast episodes yet.'}
       </p>
     )}
   </section>
 </BaseLayout>
 
-<style is:global>
-  .page-intro {
-    padding: 90px 64px;
-    margin-top: 24px;
-
-    border: 1px solid var(--line);
-    background: rgba(1, 8, 15, 0.62);
+<style>
+  .editorial-intro,
+  .editorial-list-section {
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+    padding-inline: 24px;
   }
 
-  .page-intro h1 {
-    margin-bottom: 36px;
+  .editorial-intro {
+    position: relative;
+    padding-bottom: 72px;
+    margin-bottom: 64px;
   }
 
-  .intro-copy {
-    max-width: 620px;
-    margin-bottom: 0;
-
-    color: var(--muted);
-    font-size: 1.1rem;
+  .editorial-intro::after {
+    content: '';
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(220, 230, 240, 0.08) 12%,
+      rgba(220, 230, 240, 0.18) 50%,
+      rgba(220, 230, 240, 0.08) 88%,
+      transparent 100%
+    );
   }
 
-  .content-section {
-    padding: 70px 64px;
-    margin-top: 24px;
-
-    border: 1px solid var(--line);
-    background: rgba(1, 8, 15, 0.68);
+  .editorial-list {
+    width: 100%;
   }
 
-  .podcast-list {
-    border-top: 1px solid var(--line);
+  .editorial-entry {
+    position: relative;
+    padding-bottom: 64px;
+    margin-bottom: 64px;
   }
 
-  .podcast-item {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: end;
-
-    gap: 50px;
-
-    padding: 42px 0;
-
-    border-bottom: 1px solid var(--line);
+  .editorial-entry:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(220, 230, 240, 0.07) 10%,
+      rgba(220, 230, 240, 0.16) 50%,
+      rgba(220, 230, 240, 0.07) 90%,
+      transparent 100%
+    );
   }
 
-  .podcast-item h2 {
-    max-width: 900px;
-    margin-bottom: 18px;
+  .editorial-entry h2 {
+    margin-top: 18px;
   }
 
-  .meta {
-    margin-bottom: 16px;
-
-    color: var(--muted);
-    font-size: 0.82rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  .entry-description {
+    max-width: none;
+    margin-top: 26px;
+    margin-bottom: 30px;
   }
 
-  .description {
-    max-width: 700px;
-    margin-bottom: 0;
-
-    color: var(--muted);
-    font-size: 1.05rem;
-  }
-
-  .read-link {
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .empty {
-    margin-bottom: 0;
-    color: var(--muted);
+  .empty-state {
+    color: rgba(219, 234, 255, 0.62);
   }
 
   @media (max-width: 760px) {
-    .page-intro,
-    .content-section {
-      padding: 40px 22px;
+    .editorial-intro,
+    .editorial-list-section {
+      padding-inline: 18px;
     }
 
-    .podcast-item {
-      grid-template-columns: 1fr;
-      align-items: start;
-      gap: 22px;
+    .editorial-intro {
+      padding-bottom: 52px;
+      margin-bottom: 48px;
+    }
+
+    .editorial-intro::after {
+      left: 18px;
+      right: 18px;
+    }
+
+    .editorial-entry {
+      padding-bottom: 48px;
+      margin-bottom: 48px;
+    }
+
+    .entry-description {
+      margin-top: 22px;
+      margin-bottom: 26px;
     }
   }
 </style>

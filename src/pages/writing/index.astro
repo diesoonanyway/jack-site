@@ -19,8 +19,9 @@ const posts = (await getCollection('writing'))
   {lang}
   alternatePath={isKorean ? '/writing/' : '/ko/writing/'}
 >
-  <section class="reading-width">
+  <section class="writing-intro">
     <p class="eyebrow">{isKorean ? '글' : 'Writing'}</p>
+
     <h1>{isKorean ? '글' : 'Writing'}</h1>
 
     <p class="muted">
@@ -30,11 +31,11 @@ const posts = (await getCollection('writing'))
     </p>
   </section>
 
-  <section class="section">
+  <section class="writing-list-section">
     {posts.length > 0 ? (
-      <div>
+      <div class="writing-list">
         {posts.map((post) => (
-          <article style="margin-bottom: 56px;">
+          <article class="writing-entry">
             <p class="eyebrow">
               {post.data.date.toLocaleDateString(dateLocale, {
                 year: 'numeric',
@@ -50,7 +51,7 @@ const posts = (await getCollection('writing'))
             </h2>
 
             {post.data.description && (
-              <p class="muted reading-width">
+              <p class="muted writing-description">
                 {post.data.description}
               </p>
             )}
@@ -59,7 +60,7 @@ const posts = (await getCollection('writing'))
               class="text-link"
               href={`${pathPrefix}/writing/${getPublicSlug(post.id, post.data.lang)}/`}
             >
-              {isKorean ? '읽기' : 'Read'}
+              {isKorean ? '읽기' : 'Read'} →
             </a>
           </article>
         ))}
@@ -69,3 +70,104 @@ const posts = (await getCollection('writing'))
     )}
   </section>
 </BaseLayout>
+
+<style>
+  .writing-intro,
+  .writing-list-section {
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  .writing-intro {
+    position: relative;
+    padding-bottom: 72px;
+    margin-bottom: 64px;
+  }
+
+  .writing-intro::after {
+    content: '';
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(220, 230, 240, 0.08) 12%,
+      rgba(220, 230, 240, 0.18) 50%,
+      rgba(220, 230, 240, 0.08) 88%,
+      transparent 100%
+    );
+  }
+
+  .writing-list-section {
+    padding-top: 0;
+  }
+
+  .writing-list {
+    width: 100%;
+  }
+
+  .writing-entry {
+    position: relative;
+    padding-bottom: 64px;
+    margin-bottom: 64px;
+  }
+
+  .writing-entry:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(220, 230, 240, 0.07) 10%,
+      rgba(220, 230, 240, 0.16) 50%,
+      rgba(220, 230, 240, 0.07) 90%,
+      transparent 100%
+    );
+  }
+
+  .writing-entry h2 {
+    margin-top: 18px;
+  }
+
+  .writing-description {
+    max-width: none;
+    margin-top: 26px;
+    margin-bottom: 30px;
+  }
+
+  @media (max-width: 760px) {
+    .writing-intro,
+    .writing-list-section {
+      padding-inline: 18px;
+    }
+
+    .writing-intro {
+      padding-bottom: 52px;
+      margin-bottom: 48px;
+    }
+
+    .writing-intro::after {
+      left: 18px;
+      right: 18px;
+    }
+
+    .writing-entry {
+      padding-bottom: 48px;
+      margin-bottom: 48px;
+    }
+
+    .writing-description {
+      margin-top: 22px;
+      margin-bottom: 26px;
+    }
+  }
+</style>

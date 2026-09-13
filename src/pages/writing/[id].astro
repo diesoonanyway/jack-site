@@ -26,14 +26,14 @@ const { Content } = await render(post);
   {lang}
   alternatePath={post.data.translation}
 >
-  <article class="reading-width">
+  <article class="writing-detail">
     <p class="eyebrow">
       <a href={`${pathPrefix}/writing/`}>{isKorean ? '글' : 'Writing'}</a>
     </p>
 
     <h1>{post.data.title}</h1>
 
-    <p class="muted">
+    <p class="muted article-date">
       {post.data.date.toLocaleDateString(isKorean ? 'ko-KR' : 'en-AU', {
         year: 'numeric',
         month: 'long',
@@ -50,3 +50,35 @@ const { Content } = await render(post);
     </div>
   </article>
 </BaseLayout>
+
+<style>
+  .writing-detail {
+    width: 100%;
+    max-width: 1100px;
+    padding-inline: 24px;
+    margin-inline: auto;
+  }
+
+  .writing-detail h1 {
+    font-size: clamp(3.4rem, 6vw, 6.2rem);
+  }
+
+  .writing-detail .article-date {
+    margin-bottom: 0;
+    padding-bottom: 4rem;
+  }
+
+  .writing-detail .article-body {
+    max-width: none;
+  }
+
+  @media (max-width: 760px) {
+    .writing-detail {
+      padding-inline: 18px;
+    }
+
+    .writing-detail .article-date {
+      padding-bottom: 2.5rem;
+    }
+  }
+</style>
