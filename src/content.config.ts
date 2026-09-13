@@ -4,6 +4,8 @@ import { glob } from 'astro/loaders';
 
 import { z } from 'astro/zod';
 
+import { getJournalEntryId } from './lib/content-slug';
+
 const languageFields = {
   lang: z.enum(['en', 'ko']).default('en'),
   translation: z.string().optional(),
@@ -11,8 +13,9 @@ const languageFields = {
 
 const journal = defineCollection({
   loader: glob({
-    pattern: '**/index.md',
+    pattern: '**/index_{en,ko}.md',
     base: './src/content/journal',
+    generateId: ({ entry, data }) => getJournalEntryId(entry, data.lang),
   }),
 
   schema: z.object({

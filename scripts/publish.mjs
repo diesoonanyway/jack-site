@@ -17,6 +17,7 @@ const sourceRoot = path.resolve(
   process.env.JACK_CONTENT_PATH || path.join(os.homedir(), 'My Drive', 'Jack Content'),
 );
 const dryRun = process.argv.slice(2).includes('--dry-run');
+const journalEntryPattern = /^index_(en|ko)\.md$/i;
 
 function toPosix(value) {
   return value.split(path.sep).join('/');
@@ -93,6 +94,28 @@ async function listIndexFiles(root) {
   return results.sort((a, b) => a.localeCompare(b));
 }
 
+async function listJournalEntryFiles(root) {
+  const results = [];
+
+  async function visit(directory) {
+    const entries = await fs.readdir(directory, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        await visit(fullPath);
+      } else if (entry.isFile() && journalEntryPattern.test(entry.name)) {
+        results.push(fullPath);
+      }
+    }
+  }
+
+  if (await pathExists(root)) {
+    await visit(root);
+  }
+
+  return results.sort((a, b) => a.localeCompare(b));
+}
+
 function parseDraft(markdown) {
   const normalized = markdown.replace(/^\uFEFF/, '');
   const frontmatter = /^---[\t ]*\r?\n([\s\S]*?)\r?\n---[\t ]*(?:\r?\n|$)/.exec(normalized);
@@ -107,15 +130,19 @@ function parseDraft(markdown) {
       return { publish: false, reason: 'frontmatter가 객체가 아님' };
     }
     if (data.draft === false) {
-      return { publish: true, reason: 'draft: false' };
+      return { publish: true, reason: 'draft: false', data };
     }
     if (!Object.hasOwn(data, 'draft')) {
-      return { publish: false, reason: 'draft 필드 없음' };
+      return { publish: false, reason: 'draft 필드 없음', data };
     }
     if (data.draft === true) {
-      return { publish: false, reason: 'draft: true' };
+      return { publish: false, reason: 'draft: true', data };
     }
-    return { publish: false, reason: `draft가 boolean이 아님 (${typeof data.draft})` };
+    return {
+      publish: false,
+      reason: `draft가 boolean이 아님 (${typeof data.draft})`,
+      data,
+    };
   } catch (error) {
     return { publish: false, reason: `YAML 오류: ${error.message}` };
   }
@@ -140,7 +167,20 @@ async function inspectSource() {
     }
 
     const items = [];
-    const indexFiles = await listIndexFiles(collectionRoot);
+    if (collection === 'journal') {
+      const legacyIndexFiles = await listIndexFiles(collectionRoot);
+      if (legacyIndexFiles.length > 0) {
+        throw new Error(
+          `Journal source에 이전 index.md 구조가 남아 있습니다: ${legacyIndexFiles[0]}. ` +
+            'Jack Content를 index_en.md/index_ko.md 구조로 옮긴 뒤 publish해 주세요.',
+        );
+      }
+    }
+
+    const indexFiles =
+      collection === 'journal'
+        ? await listJournalEntryFiles(collectionRoot)
+        : await listIndexFiles(collectionRoot);
 
     for (const indexFile of indexFiles) {
       const itemDirectory = path.dirname(indexFile);
@@ -159,12 +199,29 @@ async function inspectSource() {
 
       const markdown = await fs.readFile(indexFile, 'utf8');
       const decision = parseDraft(markdown);
-      items.push({ collection, slug, directory: itemDirectory, indexFile, ...decision });
+      if (collection === 'journal' && decision.data) {
+        const fileLanguage = journalEntryPattern.exec(path.basename(indexFile))?.[1]?.toLowerCase();
+        if (decision.data.lang !== fileLanguage) {
+          throw new Error(
+            `Journal 언어 불일치: ${indexFile}는 index_${fileLanguage}.md이지만 ` +
+              `frontmatter lang은 ${String(decision.data.lang)}입니다.`,
+          );
+        }
+      }
+      items.push({
+        collection,
+        slug,
+        directory: itemDirectory,
+        indexFile,
+        entryName: path.basename(indexFile),
+        ...decision,
+      });
     }
 
-    const publishedSlugs = items.filter((item) => item.publish).map((item) => item.slug);
+    const publishedSlugs = [...new Set(items.filter((item) => item.publish).map((item) => item.slug))];
+    const allSlugs = [...new Set(items.map((item) => item.slug))];
     for (const slug of publishedSlugs) {
-      const nested = publishedSlugs.find(
+      const nested = allSlugs.find(
         (candidate) => candidate !== slug && candidate.startsWith(`${slug}/`),
       );
       if (nested) {
@@ -204,12 +261,15 @@ async function listFiles(root) {
   return results.sort((a, b) => a.localeCompare(b));
 }
 
-async function directoryFingerprint(root) {
+async function directoryFingerprint(root, includeFile = () => true) {
   const hash = createHash('sha256');
   const files = await listFiles(root);
 
   for (const file of files) {
     const relative = toPosix(path.relative(root, file));
+    if (!includeFile(relative)) {
+      continue;
+    }
     const stat = await fs.lstat(file);
     hash.update(relative);
     hash.update('\0');
@@ -224,13 +284,43 @@ async function directoryFingerprint(root) {
   return hash.digest('hex');
 }
 
+function groupItemsBySlug(items) {
+  const grouped = new Map();
+  for (const item of items) {
+    const group = grouped.get(item.slug) ?? [];
+    group.push(item);
+    grouped.set(item.slug, group);
+  }
+  return grouped;
+}
+
+function journalFileFilter(items) {
+  const publishedEntryNames = new Set(
+    items.filter((item) => item.publish).map((item) => item.entryName.toLowerCase()),
+  );
+
+  return (relative) => {
+    if (relative.includes('/')) {
+      return true;
+    }
+    if (!journalEntryPattern.test(relative)) {
+      return true;
+    }
+    return publishedEntryNames.has(relative.toLowerCase());
+  };
+}
+
 async function inspectCurrentPublished() {
   const result = new Map();
 
   for (const collection of collections) {
     const collectionRoot = path.join(publishedRoot, collection);
     const items = new Map();
-    for (const indexFile of await listIndexFiles(collectionRoot)) {
+    const entryFiles =
+      collection === 'journal'
+        ? await listJournalEntryFiles(collectionRoot)
+        : await listIndexFiles(collectionRoot);
+    for (const indexFile of entryFiles) {
       const directory = path.dirname(indexFile);
       const slug = toPosix(path.relative(collectionRoot, directory));
       if (slug && slug !== '.') {
@@ -248,8 +338,9 @@ async function calculateChanges(sourceInspection, currentPublished) {
 
   for (const collection of collections) {
     const sourceItems = sourceInspection.get(collection);
+    const groupedItems = groupItemsBySlug(sourceItems);
     const intended = new Map(
-      sourceItems.filter((item) => item.publish).map((item) => [item.slug, item.directory]),
+      [...groupedItems].filter(([, items]) => items.some((item) => item.publish)),
     );
     const current = currentPublished.get(collection);
     const added = [];
@@ -257,13 +348,17 @@ async function calculateChanges(sourceInspection, currentPublished) {
     const updated = [];
     const unchanged = [];
 
-    for (const [slug, directory] of intended) {
+    for (const [slug, items] of intended) {
       if (!current.has(slug)) {
         added.push(slug);
         continue;
       }
+      const directory = items[0].directory;
       const [sourceHash, currentHash] = await Promise.all([
-        directoryFingerprint(directory),
+        directoryFingerprint(
+          directory,
+          collection === 'journal' ? journalFileFilter(items) : undefined,
+        ),
         directoryFingerprint(current.get(slug)),
       ]);
       (sourceHash === currentHash ? unchanged : updated).push(slug);
@@ -331,7 +426,8 @@ function printInspection(sourceInspection, changes, nonCollectionEntries) {
       `${collection}: 발견 ${items.length}, 발행 대상 ${published.length}, 제외 ${excluded.length}`,
     );
     for (const item of excluded) {
-      console.log(`  제외: ${item.slug} — ${item.reason}`);
+      const entryLabel = item.entryName ? `${item.slug}/${item.entryName}` : item.slug;
+      console.log(`  제외: ${entryLabel} — ${item.reason}`);
     }
 
     const collectionChanges = changes.get(collection);
@@ -354,6 +450,31 @@ async function createStaging(sourceInspection, stagingRoot) {
   for (const collection of collections) {
     const collectionStage = path.join(stagingRoot, collection);
     await fs.mkdir(collectionStage, { recursive: true });
+
+    if (collection === 'journal') {
+      const groupedItems = groupItemsBySlug(sourceInspection.get(collection));
+      for (const [slug, items] of groupedItems) {
+        if (!items.some((item) => item.publish)) {
+          continue;
+        }
+
+        const sourceDirectory = items[0].directory;
+        const target = path.join(collectionStage, ...slug.split('/'));
+        const includeFile = journalFileFilter(items);
+        await fs.mkdir(path.dirname(target), { recursive: true });
+        await fs.cp(sourceDirectory, target, {
+          recursive: true,
+          force: false,
+          errorOnExist: true,
+          preserveTimestamps: true,
+          filter: (source) => {
+            const relative = toPosix(path.relative(sourceDirectory, source));
+            return !relative || includeFile(relative);
+          },
+        });
+      }
+      continue;
+    }
 
     for (const item of sourceInspection.get(collection).filter((entry) => entry.publish)) {
       const target = path.join(collectionStage, ...item.slug.split('/'));
