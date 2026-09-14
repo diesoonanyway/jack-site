@@ -69,7 +69,15 @@ const { Content } = await render(post);
   }
 
   .journal-detail .article-body {
-    max-width: none;
+    max-width: var(--reading);
+  }
+
+  .journal-detail .article-body :global(img) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
   }
 
   @media (max-width: 760px) {
