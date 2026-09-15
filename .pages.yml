@@ -1,0 +1,62 @@
+settings:
+  content:
+    merge: true
+
+content:
+  - name: journal
+    label: Journal
+    type: collection
+    path: src/content/journal
+    format: yaml-frontmatter
+    subfolders: true
+
+    operations:
+      create: false
+      rename: false
+      delete: false
+
+    view:
+      fields: [title, lang, date, draft]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+
+    fields:
+      - name: title
+        label: Title
+        type: string
+
+      - name: description
+        label: Description
+        type: text
+
+      - name: date
+        label: Date
+        type: date
+        readonly: true
+        options:
+          format: yyyy-MM-dd
+
+      - name: draft
+        label: Draft
+        type: boolean
+
+      - name: lang
+        label: Language
+        type: string
+        readonly: true
+
+      - name: translation
+        label: Translation
+        type: string
+        readonly: true
+
+      - name: body
+        label: Body
+        type: rich-text
+        options:
+          format: markdown
+          media: false
+          switcher: true
