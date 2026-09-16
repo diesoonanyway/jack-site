@@ -69,3 +69,48 @@ content:
           format: markdown
           media: cms_test_images
           switcher: true
+
+  - name: cms_test_journal
+    label: CMS Test Journal
+    type: collection
+    path: _cms-test/journal
+    format: yaml-frontmatter
+    subfolders: true
+
+    operations:
+      create: true
+      rename: true
+      delete: true
+
+    filename:
+      template: "{primary}.md"
+      field: create
+
+    view:
+      fields: [title, lang, draft]
+      primary: title
+
+    fields:
+      - name: title
+        label: Title
+        type: string
+
+      - name: description
+        label: Description
+        type: text
+
+      - name: draft
+        label: Draft
+        type: boolean
+
+      - name: lang
+        label: Language
+        type: string
+
+      - name: body
+        label: Body
+        type: rich-text
+        options:
+          format: markdown
+          media: cms_test_images
+          switcher: true
