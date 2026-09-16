@@ -67,5 +67,5 @@ content:
         type: rich-text
         options:
           format: markdown
-          media: false
+          media: cms_test_images
           switcher: true
