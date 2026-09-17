@@ -6,6 +6,7 @@ description: My notes are becoming more organized, connected, and useful. But
 date: 2026-09-18
 draft: true
 lang: en
+translation: /ko/journal/my-notes-get-smarter/
 ---
 I saved everything.  
 A sentence that moved me.  
