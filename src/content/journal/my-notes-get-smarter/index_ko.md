@@ -5,6 +5,7 @@ description: 내 노트는 점점 더 정리되고, 연결되고, 유용해지�
 date: 2026-09-18
 draft: true
 lang: ko
+translation: /journal/my-notes-get-smarter/
 ---
 요즘 노트는 점점 똑똑해지는데,  
 나는 점점 더 멍청해지는 거 같다.
