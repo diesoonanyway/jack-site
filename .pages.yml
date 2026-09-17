@@ -1,8 +1,8 @@
 media:
   - name: cms_test_images
     label: CMS Test Images
-    input: _cms-test/uploads
-    output: /cms-test/uploads
+    input: public/media
+    output: /media
     extensions: [png, jpg, jpeg, webp]
     categories: [image]
     rename: safe
