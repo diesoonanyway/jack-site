@@ -3,7 +3,7 @@ title: "노트는 점점 똑똑해 지는데, 난 점점 멍청해진다. "
 description: 내 노트는 점점 더 정리되고, 연결되고, 유용해지고 있다. 하지만 시스템이 똑똑해지는 동안 나는 내 기억과 생각을 점점
   덜 쓰게 되는 건 아닐까 하는 생각이 들기 시작했다.
 date: 2026-09-18
-draft: true
+draft: false
 lang: ko
 translation: /journal/my-notes-get-smarter/
 ---
