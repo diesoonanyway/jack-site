@@ -1,6 +1,6 @@
 media:
-  - name: cms_test_images
-    label: CMS Test Images
+  - name: media
+    label: Media
     input: public/media
     output: /media
     extensions: [png, jpg, jpeg, webp]
@@ -20,9 +20,13 @@ content:
     subfolders: true
 
     operations:
-      create: false
+      create: true
       rename: false
       delete: false
+
+    filename:
+      template: "{primary}.md"
+      field: create
 
     view:
       fields: [title, lang, date, draft]
@@ -36,6 +40,7 @@ content:
       - name: title
         label: Title
         type: string
+        required: true
 
       - name: description
         label: Description
@@ -44,73 +49,36 @@ content:
       - name: date
         label: Date
         type: date
-        readonly: true
+        required: true
         options:
           format: yyyy-MM-dd
 
       - name: draft
         label: Draft
         type: boolean
+        default: true
 
       - name: lang
         label: Language
-        type: string
-        readonly: true
+        type: select
+        required: true
+        description: Must match the filename, index_en.md or index_ko.md.
+        options:
+          values:
+            - name: en
+              label: English
+            - name: ko
+              label: Korean
 
       - name: translation
         label: Translation
         type: string
-        readonly: true
+        description: Add the matching EN or KO Journal URL after both language files exist.
 
       - name: body
         label: Body
         type: rich-text
         options:
           format: markdown
-          media: cms_test_images
-          switcher: true
-
-  - name: cms_test_journal
-    label: CMS Test Journal
-    type: collection
-    path: _cms-test/journal
-    format: yaml-frontmatter
-    subfolders: true
-
-    operations:
-      create: true
-      rename: true
-      delete: true
-
-    filename:
-      template: "{primary}.md"
-      field: create
-
-    view:
-      fields: [title, lang, draft]
-      primary: title
-
-    fields:
-      - name: title
-        label: Title
-        type: string
-
-      - name: description
-        label: Description
-        type: text
-
-      - name: draft
-        label: Draft
-        type: boolean
-
-      - name: lang
-        label: Language
-        type: string
-
-      - name: body
-        label: Body
-        type: rich-text
-        options:
-          format: markdown
-          media: cms_test_images
+          media: media
           switcher: true
