@@ -8,7 +8,6 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "publish": "node scripts/publish.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
