@@ -57,6 +57,7 @@ const { Content } = await render(post);
 
   .journal-detail h1 {
     font-size: clamp(3.4rem, 6vw, 6.2rem);
+    line-height: 1.06;
   }
 
   .journal-detail .article-date {
@@ -65,7 +66,7 @@ const { Content } = await render(post);
   }
 
   .journal-detail .article-body {
-    max-width: var(--reading);
+    max-width: 860px;
   }
 
   .journal-detail .article-body :global(img) {
