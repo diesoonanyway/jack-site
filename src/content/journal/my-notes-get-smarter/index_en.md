@@ -27,7 +27,7 @@ So I took only what suited me, shoved it all into my mouth, chewed slowly, and s
 
 ---
 
-## 1. I will no longer save everything
+### 1. I will no longer save everything
 
 I used to collect anything that caught my attention, as if I had spotted money lying on the street.  
 Part of it came from fear. If other people knew something, I felt I should know it too. Otherwise, I might fall behind.
@@ -46,7 +46,7 @@ We are very good at saving ideas we already agree with. Before long, a notebook 
 
 ---
 
-## 2. Not “Where did this come from?” but “What will I use it for?”
+### 2. Not “Where did this come from?” but “What will I use it for?”
 
 It does not matter much whether an idea came from a book, a video, a podcast, or a conversation.  
 The more useful question is:
@@ -74,7 +74,7 @@ Completed projects and inactive material go into the Freezer. They may not be us
 
 ---
 
-## 3. My future self is busy
+### 3. My future self is busy
 
 “I’ll read this again later.”
 
@@ -92,7 +92,7 @@ The point is to understand the idea without having to read the whole thing again
 
 ---
 
-## 4. Knowledge I Keep to Myself Is Not Fully Mine Yet
+### 4. Knowledge I Keep to Myself Is Not Fully Mine Yet
 
 Saving something does not make it mine. Neither does underlining it. I need to digest the idea deeply enough to explain it in my own words, in my own voice, so clearly that someone else can understand it.
 
@@ -108,7 +108,7 @@ But the more important question is:
 
 ---
 
-## Once a Week, Once a Month
+### Once a Week, Once a Month
 
 Every week, I clear my inbox. I review the projects already in progress and decide what matters most for the week ahead.
 
@@ -124,7 +124,7 @@ I also delete goals that no longer matter. Removing a goal can be a form of prog
 
 ---
 
-## What Makes a Good Note?
+### What Makes a Good Note?
 
 AI has made organising notes much easier. It can handle the mechanical work: searching, sorting, summarising and connecting information. But the judgement still has to be mine.
 
