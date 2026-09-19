@@ -4,7 +4,7 @@ description: This is a story-driven Korean learning podcast for people who donâ€
   have time for textbooks, but still want to feel close to Korea â€” its language,
   its people, and its heartbeat.
 date: 2026-09-19
-draft: true
+draft: false
 lang: en
 episode: "1"
 audioUrl: https://open.spotify.com/episode/25hmnsNnD2Hghzg96i3wuN?si=urhTvcuESKudIP6oHe7jVA
