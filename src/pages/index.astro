@@ -351,13 +351,14 @@ const featuredApp =
           <span class="number">03</span>
           <span>{copy.podcast}</span>
         </div>
+      </div>
+
+      <div class="media-rail-frame">
         <div class="media-rail-controls" hidden>
           <button type="button" data-carousel-direction="previous" aria-label={copy.previousPodcasts}>←</button>
           <button type="button" data-carousel-direction="next" aria-label={copy.nextPodcasts}>→</button>
         </div>
-      </div>
-
-      <div class="media-rail podcast-rail" role="region" aria-roledescription="carousel" aria-label={copy.podcast} data-carousel-track>
+        <div class="media-rail podcast-rail" role="region" aria-roledescription="carousel" aria-label={copy.podcast} data-carousel-track>
         {podcastRail.map((post) => (
           <article class="media-rail-item podcast-rail-item">
             {post.data.episode && <span class="media-episode">EP. {post.data.episode}</span>}
@@ -377,6 +378,7 @@ const featuredApp =
             )}
           </article>
         ))}
+        </div>
       </div>
     </section>
   )}
@@ -388,13 +390,14 @@ const featuredApp =
           <span class="number">04</span>
           <span>{copy.youtube}</span>
         </div>
+      </div>
+
+      <div class="media-rail-frame">
         <div class="media-rail-controls" hidden>
           <button type="button" data-carousel-direction="previous" aria-label={copy.previousVideos}>←</button>
           <button type="button" data-carousel-direction="next" aria-label={copy.nextVideos}>→</button>
         </div>
-      </div>
-
-      <div class="media-rail youtube-rail" role="region" aria-roledescription="carousel" aria-label={copy.youtube} data-carousel-track>
+        <div class="media-rail youtube-rail" role="region" aria-roledescription="carousel" aria-label={copy.youtube} data-carousel-track>
         {videoRail.map((post) => {
           const thumbnail = getYouTubeThumbnailUrl(post.data.youtubeId);
           return (
@@ -413,6 +416,7 @@ const featuredApp =
             </article>
           );
         })}
+        </div>
       </div>
     </section>
   )}
@@ -601,17 +605,23 @@ const featuredApp =
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => {
+    const frame = carousel.querySelector<HTMLElement>('.media-rail-frame');
     const track = carousel.querySelector<HTMLElement>('[data-carousel-track]');
     const controls = carousel.querySelector<HTMLElement>('.media-rail-controls');
     const previous = carousel.querySelector<HTMLButtonElement>('[data-carousel-direction="previous"]');
     const next = carousel.querySelector<HTMLButtonElement>('[data-carousel-direction="next"]');
-    if (!track || !controls || !previous || !next) return;
+    if (!frame || !track || !controls || !previous || !next) return;
 
     const updateControls = () => {
       const overflow = track.scrollWidth > track.clientWidth + 2;
       controls.hidden = !overflow;
-      previous.disabled = !overflow || track.scrollLeft <= 2;
-      next.disabled = !overflow || track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+      frame.classList.toggle('has-controls', overflow);
+      const canGoPrevious = overflow && track.scrollLeft > 2;
+      const canGoNext = overflow && track.scrollLeft + track.clientWidth < track.scrollWidth - 2;
+      previous.disabled = !canGoPrevious;
+      next.disabled = !canGoNext;
+      track.classList.toggle('fade-left', canGoPrevious);
+      track.classList.toggle('fade-right', canGoNext);
     };
 
     const move = (direction: number) => {
@@ -853,15 +863,11 @@ const featuredApp =
   */
 
   .media-section-heading {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
+    display: block;
   }
 
-  .media-rail-controls {
-    display: flex;
-    gap: 12px;
+  .media-rail-frame {
+    position: relative;
   }
 
   .media-rail-controls[hidden] {
@@ -869,19 +875,27 @@ const featuredApp =
   }
 
   .media-rail-controls button {
-    width: 38px;
-    height: 38px;
+    width: 52px;
+    height: 52px;
     padding: 0;
     border: 1px solid rgba(220, 230, 240, 0.18);
     border-radius: 50%;
-    background: transparent;
+    background: rgba(1, 8, 15, 0.86);
     color: var(--accent);
-    font: inherit;
+    font-family: inherit;
+    font-size: 1.6rem;
+    line-height: 1;
     cursor: pointer;
+  }
+
+  .media-rail-controls button:not(:disabled):hover {
+    border-color: rgba(220, 230, 240, 0.32);
+    background: rgba(8, 20, 32, 0.94);
   }
 
   .media-rail-controls button:disabled {
     opacity: 0.35;
+    pointer-events: none;
     cursor: default;
   }
 
@@ -902,6 +916,57 @@ const featuredApp =
     scroll-snap-type: x proximity;
     scrollbar-width: thin;
     scrollbar-color: rgba(220, 230, 240, 0.2) transparent;
+  }
+
+  @media (min-width: 761px) {
+    .media-rail-frame.has-controls {
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr) 64px;
+      align-items: center;
+    }
+
+    .media-rail-frame.has-controls .media-rail-controls:not([hidden]) {
+      display: contents;
+    }
+
+    .media-rail-frame.has-controls .media-rail-controls button {
+      grid-row: 1;
+      justify-self: center;
+    }
+
+    .media-rail-frame.has-controls button[data-carousel-direction="previous"] {
+      grid-column: 1;
+    }
+
+    .media-rail-frame.has-controls .media-rail {
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 0;
+    }
+
+    .media-rail-frame.has-controls button[data-carousel-direction="next"] {
+      grid-column: 3;
+    }
+
+    .media-rail-frame.has-controls .media-rail-item {
+      /* Preserve the card width formerly calculated inside 44px rail padding. */
+      flex-basis: clamp(320px, calc(42% + 16.8px), 460px);
+    }
+
+    .media-rail.fade-left:not(.fade-right) {
+      -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.45), #000 76px, #000);
+      mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.45), #000 76px, #000);
+    }
+
+    .media-rail.fade-right:not(.fade-left) {
+      -webkit-mask-image: linear-gradient(to right, #000, #000 calc(100% - 76px), rgba(0, 0, 0, 0.45));
+      mask-image: linear-gradient(to right, #000, #000 calc(100% - 76px), rgba(0, 0, 0, 0.45));
+    }
+
+    .media-rail.fade-left.fade-right {
+      -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.45), #000 76px, #000 calc(100% - 76px), rgba(0, 0, 0, 0.45));
+      mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.45), #000 76px, #000 calc(100% - 76px), rgba(0, 0, 0, 0.45));
+    }
   }
 
   .media-rail::-webkit-scrollbar {
@@ -977,7 +1042,15 @@ const featuredApp =
   .media-rail-item h2 {
     max-width: 780px;
     margin-bottom: 0;
-    font-size: clamp(2rem, 3.5vw, 3.6rem);
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: clamp(1.7rem, 2.8vw, 2.9rem);
+    font-weight: 500;
+    line-height: 1.14;
+    letter-spacing: -0.015em;
+  }
+
+  .media-rail-item h2 a {
+    font-weight: inherit;
   }
 
   .media-rail-item p {
@@ -1012,7 +1085,7 @@ const featuredApp =
 
   .youtube-rail-item h2 {
     margin-top: 24px;
-    font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+    font-size: clamp(1.45rem, 2.1vw, 2rem);
   }
 
   .youtube-rail-item p {
