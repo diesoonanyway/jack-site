@@ -1,6 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  getSafeExternalAudioUrl,
+  getSpotifyEpisodeId,
+  getSpotifyExternalUrl,
+} from '../../lib/spotify';
 
 export async function getStaticPaths() {
   const posts = await getCollection('podcast');
@@ -20,6 +25,12 @@ export async function getStaticPaths() {
 const { post, lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
 const pathPrefix = isKorean ? '/ko' : '';
+const spotifyEpisodeId = getSpotifyEpisodeId(post.data.audioUrl);
+const spotifyEmbedUrl = spotifyEpisodeId
+  ? `https://open.spotify.com/embed/episode/${spotifyEpisodeId}`
+  : null;
+const spotifyExternalUrl = getSpotifyExternalUrl(post.data.audioUrl);
+const externalAudioUrl = getSafeExternalAudioUrl(post.data.audioUrl);
 
 const { Content } = await render(post);
 ---
@@ -61,14 +72,28 @@ const { Content } = await render(post);
         </p>
       )}
 
-      {post.data.audioUrl && (
+      {externalAudioUrl && (
         <div class="audio-area">
+          {spotifyEmbedUrl && (
+            <iframe
+              title={isKorean ? `${post.data.title} Spotify 재생기` : `${post.data.title} Spotify player`}
+              src={spotifyEmbedUrl}
+              width="100%"
+              height="152"
+              frameborder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              allowfullscreen
+            ></iframe>
+          )}
           <a
-            href={post.data.audioUrl}
+            href={externalAudioUrl}
             target="_blank"
             rel="noopener noreferrer"
           >
-            {isKorean ? 'Spotify에서 듣기 →' : 'Listen on Spotify →'}
+            {spotifyExternalUrl
+              ? (isKorean ? 'Spotify에서 열기 →' : 'Open in Spotify →')
+              : (isKorean ? '오디오 링크 열기 →' : 'Open audio link →')}
           </a>
         </div>
       )}
@@ -156,6 +181,14 @@ const { Content } = await render(post);
 
   .audio-area {
     margin-top: 38px;
+    max-width: 720px;
+  }
+
+  .audio-area iframe {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    border: 0;
   }
 
   .audio-area a {
@@ -167,6 +200,10 @@ const { Content } = await render(post);
     border-radius: 999px;
 
     font-weight: 700;
+  }
+
+  .audio-area iframe + a {
+    margin-top: 18px;
   }
 
   .podcast-body {
