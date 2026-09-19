@@ -6,7 +6,7 @@ description: Today’s story — about a woman who wanted foreigners to see the 
   founder — 임혜민.
 date: 2026-09-19
 draft: true
-lang: ko
+lang: en
 episode: "2"
 audioUrl: https://open.spotify.com/episode/5UAX2KHL1rEC2n1It0XDvq?si=-PFpv-iMRSW7QS0rILbQoA
 ---
