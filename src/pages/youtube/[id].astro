@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getYouTubeVideoId } from '../../lib/youtube';
 
 export async function getStaticPaths() {
   const videos = await getCollection('youtube');
@@ -20,6 +21,7 @@ export async function getStaticPaths() {
 const { video, lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
 const pathPrefix = isKorean ? '/ko' : '';
+const videoId = getYouTubeVideoId(video.data.youtubeId);
 
 const { Content } = await render(video);
 ---
@@ -28,7 +30,6 @@ const { Content } = await render(video);
   title={`${video.data.title} — YouTube — Jack`}
   description={video.data.description || video.data.title}
   {lang}
-  alternatePath={video.data.translation}
 >
   <article class="video-page">
     <section class="video-header">
@@ -57,11 +58,11 @@ const { Content } = await render(video);
       )}
     </section>
 
-    {video.data.youtubeId && (
+    {videoId && (
       <section class="video-embed">
         <div class="embed-frame">
           <iframe
-            src={`https://www.youtube.com/embed/${video.data.youtubeId}`}
+            src={`https://www.youtube.com/embed/${videoId}`}
             title={video.data.title}
             loading="lazy"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

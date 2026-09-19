@@ -150,14 +150,84 @@ content:
         type: string
 
       - name: audioUrl
-        label: Audio URL
+        label: Spotify URL
         type: string
 
-      - name: image
-        label: Image
-        type: image
+      - name: body
+        label: Body
+        type: rich-text
         options:
+          format: markdown
           media: media
+          switcher: true
+
+  - name: youtube
+    label: YouTube
+    type: collection
+    path: src/content/youtube
+    format: yaml-frontmatter
+    subfolders: true
+
+    operations:
+      create: true
+      rename: false
+      delete: false
+
+    filename:
+      template: "{primary}/index.md"
+      field: false
+
+    view:
+      layout: tree
+      node:
+        filename: index.md
+        hideDirs: others
+      fields: [title, lang, date, draft]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+
+      - name: description
+        label: Description
+        type: text
+
+      - name: date
+        label: Date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+
+      - name: draft
+        label: Draft
+        type: boolean
+        default: true
+
+      - name: lang
+        label: Language
+        type: select
+        required: true
+        description: Each language is an independent YouTube entry with its own folder and index.md.
+        options:
+          values:
+            - name: en
+              label: English
+            - name: ko
+              label: Korean
+
+      - name: youtubeId
+        label: YouTube URL
+        type: string
+        required: true
+        description: Paste a watch, youtu.be, Shorts, or embed URL.
 
       - name: body
         label: Body

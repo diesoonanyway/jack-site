@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../lib/content-slug';
+import { getYouTubeThumbnailUrl } from '../lib/youtube';
 
 const { lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
@@ -25,13 +26,12 @@ const copy = isKorean
       viewAll: '모두 보기 →',
       moreJournal: '새로운 Journal 항목이 이곳에 표시됩니다.',
       podcast: '팟캐스트',
-      podcastFallback: '대화를 통해 더 깊이 들어갑니다.',
-      podcastCopy: '더 많은 공간이 필요한 아이디어를 긴 대화로 살펴봅니다.',
-      explorePodcast: '팟캐스트 둘러보기 →',
+      listenSpotify: 'Spotify에서 듣기 →',
+      previousPodcasts: '이전 팟캐스트',
+      nextPodcasts: '다음 팟캐스트',
       youtube: '유튜브',
-      youtubeFallback: '아이디어가 형태를 갖추는 과정을 봅니다.',
-      youtubeCopy: '시각적 설명, 실험, 그리고 만들어지고 있는 것들입니다.',
-      exploreYoutube: '유튜브 둘러보기 →',
+      previousVideos: '이전 동영상',
+      nextVideos: '다음 동영상',
       apps: '앱',
       appsFallback: '실제 문제에서 출발한 유용한 것들입니다.',
       appsCopy: '아이디어가 해결할 가치가 있는 문제를 가리킬 때 제품이 될 수 있습니다.',
@@ -64,13 +64,12 @@ const copy = isKorean
       viewAll: 'View all →',
       moreJournal: 'More journal entries will appear here.',
       podcast: 'Podcast',
-      podcastFallback: 'Go deeper through conversation.',
-      podcastCopy: 'Longer conversations around ideas that deserve more space.',
-      explorePodcast: 'Explore Podcast →',
+      listenSpotify: 'Listen on Spotify →',
+      previousPodcasts: 'Previous podcasts',
+      nextPodcasts: 'Next podcasts',
       youtube: 'YouTube',
-      youtubeFallback: 'See the idea take shape.',
-      youtubeCopy: 'Visual explanations, experiments and things being built.',
-      exploreYoutube: 'Explore YouTube →',
+      previousVideos: 'Previous videos',
+      nextVideos: 'Next videos',
       apps: 'Apps',
       appsFallback: 'Useful things built from real problems.',
       appsCopy: 'When an idea points to a problem worth solving, it may become a product.',
@@ -345,59 +344,78 @@ const featuredApp =
 
   <!-- MID WATER -->
 
-  <section class="home-section home-flow-section media-section">
-    <div class="section-label">
-      <span class="number">03</span>
-      <span>{copy.podcast}</span>
-    </div>
+  {podcastRail.length > 0 && (
+    <section class="home-section home-flow-section media-section" data-carousel>
+      <div class="media-section-heading">
+        <div class="section-label">
+          <span class="number">03</span>
+          <span>{copy.podcast}</span>
+        </div>
+        <div class="media-rail-controls" hidden>
+          <button type="button" data-carousel-direction="previous" aria-label={copy.previousPodcasts}>←</button>
+          <button type="button" data-carousel-direction="next" aria-label={copy.nextPodcasts}>→</button>
+        </div>
+      </div>
 
-    {podcastRail.length > 0 ? (
-      <div class="media-rail" aria-label={copy.podcast}>
+      <div class="media-rail podcast-rail" role="region" aria-roledescription="carousel" aria-label={copy.podcast} data-carousel-track>
         {podcastRail.map((post) => (
-          <article class="media-rail-item">
-            <h2>{post.data.title}</h2>
-            <p>{post.data.description || copy.podcastCopy}</p>
-            <a href={localizedPath(`/podcast/${getPublicSlug(post.id, post.data.lang)}/`)}>
-              {copy.explorePodcast}
-            </a>
+          <article class="media-rail-item podcast-rail-item">
+            {post.data.episode && <span class="media-episode">EP. {post.data.episode}</span>}
+            <h2>
+              <a class="media-card-link" href={localizedPath(`/podcast/${getPublicSlug(post.id, post.data.lang)}/`)}>
+                {post.data.title}
+              </a>
+            </h2>
+            {post.data.description && <p>{post.data.description}</p>}
+            <time datetime={post.data.date.toISOString()}>
+              {post.data.date.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
+            </time>
+            {post.data.audioUrl && (
+              <a class="media-external-link" href={post.data.audioUrl} target="_blank" rel="noopener noreferrer">
+                {copy.listenSpotify}
+              </a>
+            )}
           </article>
         ))}
       </div>
-    ) : (
-      <div class="media-empty">
-        <h2>{copy.podcastFallback}</h2>
-        <p>{copy.podcastCopy}</p>
-        <a href={localizedPath('/podcast/')}>{copy.explorePodcast}</a>
-      </div>
-    )}
-  </section>
+    </section>
+  )}
 
-  <section class="home-section home-flow-section media-section">
-    <div class="section-label">
-      <span class="number">04</span>
-      <span>{copy.youtube}</span>
-    </div>
+  {videoRail.length > 0 && (
+    <section class="home-section home-flow-section media-section" data-carousel>
+      <div class="media-section-heading">
+        <div class="section-label">
+          <span class="number">04</span>
+          <span>{copy.youtube}</span>
+        </div>
+        <div class="media-rail-controls" hidden>
+          <button type="button" data-carousel-direction="previous" aria-label={copy.previousVideos}>←</button>
+          <button type="button" data-carousel-direction="next" aria-label={copy.nextVideos}>→</button>
+        </div>
+      </div>
 
-    {videoRail.length > 0 ? (
-      <div class="media-rail" aria-label={copy.youtube}>
-        {videoRail.map((post) => (
-          <article class="media-rail-item">
-            <h2>{post.data.title}</h2>
-            <p>{post.data.description || copy.youtubeCopy}</p>
-            <a href={localizedPath(`/youtube/${getPublicSlug(post.id, post.data.lang)}/`)}>
-              {copy.exploreYoutube}
-            </a>
-          </article>
-        ))}
+      <div class="media-rail youtube-rail" role="region" aria-roledescription="carousel" aria-label={copy.youtube} data-carousel-track>
+        {videoRail.map((post) => {
+          const thumbnail = getYouTubeThumbnailUrl(post.data.youtubeId);
+          return (
+            <article class="media-rail-item youtube-rail-item">
+              {thumbnail && (
+                <a class="media-thumbnail" href={localizedPath(`/youtube/${getPublicSlug(post.id, post.data.lang)}/`)} tabIndex={-1} aria-hidden="true">
+                  <img src={thumbnail} alt="" loading="lazy" width="480" height="360" />
+                </a>
+              )}
+              <h2>
+                <a class="media-card-link" href={localizedPath(`/youtube/${getPublicSlug(post.id, post.data.lang)}/`)}>
+                  {post.data.title}
+                </a>
+              </h2>
+              {post.data.description && <p>{post.data.description}</p>}
+            </article>
+          );
+        })}
       </div>
-    ) : (
-      <div class="media-empty">
-        <h2>{copy.youtubeFallback}</h2>
-        <p>{copy.youtubeCopy}</p>
-        <a href={localizedPath('/youtube/')}>{copy.exploreYoutube}</a>
-      </div>
-    )}
-  </section>
+    </section>
+  )}
 
 
   <!-- DEEP WATER -->
@@ -580,6 +598,39 @@ const featuredApp =
   </section>
 
 </BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => {
+    const track = carousel.querySelector<HTMLElement>('[data-carousel-track]');
+    const controls = carousel.querySelector<HTMLElement>('.media-rail-controls');
+    const previous = carousel.querySelector<HTMLButtonElement>('[data-carousel-direction="previous"]');
+    const next = carousel.querySelector<HTMLButtonElement>('[data-carousel-direction="next"]');
+    if (!track || !controls || !previous || !next) return;
+
+    const updateControls = () => {
+      const overflow = track.scrollWidth > track.clientWidth + 2;
+      controls.hidden = !overflow;
+      previous.disabled = !overflow || track.scrollLeft <= 2;
+      next.disabled = !overflow || track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+    };
+
+    const move = (direction: number) => {
+      const card = track.querySelector<HTMLElement>('.media-rail-item');
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      const distance = (card?.getBoundingClientRect().width ?? track.clientWidth) + gap;
+      track.scrollBy({
+        left: direction * distance,
+        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      });
+    };
+
+    previous.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
+    track.addEventListener('scroll', updateControls, { passive: true });
+    new ResizeObserver(updateControls).observe(track);
+    updateControls();
+  });
+</script>
 
 
 <style is:global>
@@ -801,6 +852,45 @@ const featuredApp =
     PODCAST / YOUTUBE RAILS
   */
 
+  .media-section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .media-rail-controls {
+    display: flex;
+    gap: 12px;
+  }
+
+  .media-rail-controls[hidden] {
+    display: none;
+  }
+
+  .media-rail-controls button {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid rgba(220, 230, 240, 0.18);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--accent);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .media-rail-controls button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .media-rail-controls button:focus-visible,
+  .media-rail-item a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
   .media-rail {
     display: flex;
     gap: 48px;
@@ -835,6 +925,39 @@ const featuredApp =
     scroll-snap-align: start;
   }
 
+  .media-rail-item a {
+    color: inherit;
+  }
+
+  .media-episode,
+  .media-rail-item time {
+    display: block;
+    color: var(--muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+  }
+
+  .media-episode {
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+
+  .media-rail-item time {
+    margin-top: 24px;
+  }
+
+  .media-rail-item .media-external-link {
+    position: relative;
+    z-index: 1;
+    margin-top: 20px;
+  }
+
+  .media-card-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
   .media-rail-item:not(:last-child)::after {
     content: '';
     position: absolute;
@@ -851,26 +974,49 @@ const featuredApp =
       );
   }
 
-  .media-rail-item h2,
-  .media-empty h2 {
+  .media-rail-item h2 {
     max-width: 780px;
     margin-bottom: 0;
     font-size: clamp(2rem, 3.5vw, 3.6rem);
   }
 
-  .media-rail-item p,
-  .media-empty p {
+  .media-rail-item p {
     max-width: 470px;
     margin: 28px 0 0;
     color: var(--muted);
     font-size: 1.05rem;
   }
 
-  .media-rail-item a,
-  .media-empty a {
+  .media-rail-item a {
     display: inline-block;
     margin-top: 20px;
     font-weight: 700;
+  }
+
+  .media-rail-item .media-thumbnail {
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin-top: 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: rgba(1, 8, 15, 0.72);
+  }
+
+  .media-thumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .youtube-rail-item h2 {
+    margin-top: 24px;
+    font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+  }
+
+  .youtube-rail-item p {
+    margin-top: 16px;
   }
 
   /*
@@ -1099,6 +1245,10 @@ const featuredApp =
     .media-rail-item {
       flex-basis: min(72vw, 340px);
       padding-right: 24px;
+    }
+
+    .media-rail-controls {
+      display: none;
     }
 
     .newsletter-fields {

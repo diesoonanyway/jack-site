@@ -28,7 +28,6 @@ const { Content } = await render(post);
   title={`${post.data.title} — Podcast — Jack`}
   description={post.data.description || post.data.title}
   {lang}
-  alternatePath={post.data.translation}
 >
   <article class="podcast-page">
     <div class="podcast-header">
@@ -69,7 +68,7 @@ const { Content } = await render(post);
             target="_blank"
             rel="noopener noreferrer"
           >
-            {isKorean ? '에피소드 듣기 →' : 'Listen to episode →'}
+            {isKorean ? 'Spotify에서 듣기 →' : 'Listen on Spotify →'}
           </a>
         </div>
       )}
