@@ -842,6 +842,7 @@ const featuredApp =
     max-width: 100%;
     padding-bottom: 20px;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     overscroll-behavior-inline: contain;
     scroll-snap-type: x proximity;
     scrollbar-width: thin;
@@ -849,35 +850,22 @@ const featuredApp =
   }
 
   @media (min-width: 761px) {
-    .media-rail-frame.has-controls {
-      display: grid;
-      grid-template-columns: 64px minmax(0, 1fr) 64px;
-      align-items: center;
-      width: calc(100% + 128px);
-      margin-inline: -64px;
-    }
-
     .media-rail-frame.has-controls .media-rail-controls:not([hidden]) {
       display: contents;
     }
 
     .media-rail-frame.has-controls .media-rail-controls button {
-      grid-row: 1;
-      justify-self: center;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     .media-rail-frame.has-controls button[data-carousel-direction="previous"] {
-      grid-column: 1;
-    }
-
-    .media-rail-frame.has-controls .media-rail {
-      grid-column: 2;
-      grid-row: 1;
-      min-width: 0;
+      left: -58px;
     }
 
     .media-rail-frame.has-controls button[data-carousel-direction="next"] {
-      grid-column: 3;
+      right: -58px;
     }
 
     .media-rail-frame.has-controls .media-rail-item {
