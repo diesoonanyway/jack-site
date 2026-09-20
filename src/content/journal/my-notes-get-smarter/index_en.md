@@ -4,6 +4,7 @@ description: My notes are becoming more organized, connected, and useful. But
   I’m starting to wonder whether the system is getting smarter while I’m relying
   on my own memory and thinking less.
 date: 2026-09-18
+createdAt: "2026-09-18T09:21:25+10:00"
 draft: false
 lang: en
 translation: /ko/journal/my-notes-get-smarter/

@@ -190,6 +190,10 @@ const measurementId = 'G-Z9K72KWHGP';
         --accent-strong: #ffffff;
         --max: 1480px;
         --reading: 780px;
+        --font-editorial: Georgia, 'Times New Roman', Times, serif;
+        --editorial-title-weight: 500;
+        --editorial-title-leading: 1.14;
+        --editorial-title-tracking: -0.015em;
 
         --shadow:
           0 24px 80px rgba(0, 0, 0, 0.22);
@@ -399,6 +403,13 @@ const measurementId = 'G-Z9K72KWHGP';
         text-shadow:
           0 5px 36px
           rgba(0, 0, 0, 0.58);
+      }
+
+      .editorial-title {
+        font-family: var(--font-editorial);
+        font-weight: var(--editorial-title-weight);
+        line-height: var(--editorial-title-leading);
+        letter-spacing: var(--editorial-title-tracking);
       }
 
       .muted {

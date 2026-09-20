@@ -5,6 +5,7 @@ description: This is the story of a father who couldn’t see — and a son who 
   his sight. But together, they found something brighter than light itself. A
   love that doesn’t need eyes to see.
 date: 2026-09-19
+createdAt: "2026-09-19T15:54:45+10:00"
 draft: false
 lang: en
 episode: "6"

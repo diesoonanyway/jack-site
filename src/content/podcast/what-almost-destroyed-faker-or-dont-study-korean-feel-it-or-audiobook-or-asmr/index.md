@@ -8,6 +8,7 @@ description: We meet a young Korean man who changed the world of esports. His
   found the strength to rise again. This is the human journey behind the
   greatest esports player of all time.
 date: 2026-09-19
+createdAt: "2026-09-19T15:56:01+10:00"
 draft: false
 lang: en
 episode: "7"

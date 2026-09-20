@@ -6,6 +6,7 @@ description: Baek Se-hee (1989–2025) — author of “I Want to Die but I Want
   tribute revisits her story, her words, and her gift to everyone who ever felt
   too tired to go on.
 date: 2026-09-19
+createdAt: "2026-09-19T15:53:11+10:00"
 draft: false
 lang: en
 episode: "4"

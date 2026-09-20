@@ -64,6 +64,15 @@
   margin-top: 18px;
 }
 
+.editorial-intro h1,
+.editorial-entry h2,
+.editorial-page-intro h1 {
+  font-family: var(--font-editorial);
+  font-weight: var(--editorial-title-weight);
+  line-height: var(--editorial-title-leading);
+  letter-spacing: var(--editorial-title-tracking);
+}
+
 .entry-description {
   max-width: none;
   margin-top: 26px;

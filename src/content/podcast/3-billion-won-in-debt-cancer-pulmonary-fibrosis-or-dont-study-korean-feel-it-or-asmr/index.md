@@ -7,6 +7,7 @@ description: "This is the story of Dan-Yul Moon — once the most famous English
   the journey of a man who stepped outside the game of success to discover what
   truly matters: breathing, loving, and simply being alive."
 date: 2026-09-19
+createdAt: "2026-09-19T15:55:21+10:00"
 draft: false
 lang: en
 episode: "7"

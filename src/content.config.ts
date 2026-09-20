@@ -23,6 +23,8 @@ const journal = defineCollection({
 
     date: z.coerce.date(),
 
+    createdAt: z.coerce.date().optional(),
+
     description: z.string().optional(),
 
     tags: z.array(z.string()).default([]),
@@ -53,6 +55,8 @@ const podcast = defineCollection({
     title: z.string(),
 
     date: z.coerce.date(),
+
+    createdAt: z.coerce.date().optional(),
 
     description: z.string().optional(),
 
@@ -88,6 +92,8 @@ const youtube = defineCollection({
     title: z.string(),
 
     date: z.coerce.date(),
+
+    createdAt: z.coerce.date().optional(),
 
     description: z.string().optional(),
 

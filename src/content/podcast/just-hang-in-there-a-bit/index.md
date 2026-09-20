@@ -5,6 +5,7 @@ description: Today’s story — about a woman who wanted foreigners to see the 
   evening rain on Seoul’s streets. This is the story of Creatrip, and its
   founder — 임혜민.
 date: 2026-09-19
+createdAt: "2026-09-19T15:39:44+10:00"
 draft: false
 lang: en
 episode: "2"

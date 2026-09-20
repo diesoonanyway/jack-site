@@ -8,6 +8,7 @@ description: >-
 
   dontstudykoreanfeelit@gmail.com
 date: 2026-09-19
+createdAt: "2026-09-19T15:57:10+10:00"
 draft: false
 lang: en
 episode: "9"

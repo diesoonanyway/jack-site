@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { sortByCreatedAt } from '../../lib/content-sort';
 import '../../styles/editorial.css';
 
 const { lang = 'en' } = Astro.props;
@@ -8,9 +9,8 @@ const isKorean = lang === 'ko';
 const pathPrefix = isKorean ? '/ko' : '';
 const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
 
-const posts = (await getCollection('podcast'))
-  .filter((post) => !post.data.draft && post.data.lang === lang)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const posts = sortByCreatedAt((await getCollection('podcast'))
+  .filter((post) => !post.data.draft && post.data.lang === lang));
 ---
 
 <BaseLayout

@@ -8,6 +8,7 @@ description: "This is the story of a Korean man who worked seven part-time jobs
   freedom.Tonight’s story asks a quiet question: what does survival really cost
   in Korea?"
 date: 2026-09-19
+createdAt: "2026-09-19T15:57:43+10:00"
 draft: false
 lang: en
 episode: "10"

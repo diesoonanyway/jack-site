@@ -7,6 +7,7 @@ description: >
   millions of learners worldwide — this is how persistence became a voice that
   changed language learning forever.
 date: 2026-09-19
+createdAt: "2026-09-19T15:46:18+10:00"
 draft: false
 lang: en
 episode: "3"

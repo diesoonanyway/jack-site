@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../lib/content-slug';
+import { sortByCreatedAt } from '../lib/content-sort';
 import { getYouTubeThumbnailUrl } from '../lib/youtube';
 
 const { lang = 'en' } = Astro.props;
@@ -13,16 +14,15 @@ const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
 const copy = isKorean
   ? {
       description: 'Journal, 대화, 영상 그리고 유용한 것들.',
-      independentJournal: 'Journal',
-      ideasMediaProducts: '아이디어 → 미디어 → 제품',
+      heroEyebrow: 'Journal',
+      heroMeta: '아이디어 → 미디어 → 제품',
       heroTitle: '발전시킬 가치가\n있는 아이디어.',
       heroCopy: '아이디어는 글쓰기에서 시작합니다. 가장 강한 아이디어는 대화, 영상 그리고 유용한 제품으로 성장합니다.',
-      exploreJournal: 'Journal 둘러보기 →',
-      featuredJournal: '주요 Journal',
+      heroCta: 'Journal 둘러보기 →',
+      journal: 'Journal',
       featuredFallback: '더 오래 생각해 볼 가치가 있는 아이디어입니다.',
       readArticle: '글 읽기 →',
       noJournal: '아직 발행된 Journal 항목이 없습니다.',
-      latestJournal: '최근 Journal',
       viewAll: '모두 보기 →',
       moreJournal: '새로운 Journal 항목이 이곳에 표시됩니다.',
       podcast: '팟캐스트',
@@ -51,16 +51,15 @@ const copy = isKorean
     }
   : {
       description: 'Journal, conversations, videos and useful things.',
-      independentJournal: 'Journal',
-      ideasMediaProducts: 'Ideas → Media → Products',
-      heroTitle: 'Ideas worth\ndeveloping.',
-      heroCopy: 'Writing is where ideas begin. The strongest ones grow into conversations, videos and useful products.',
-      exploreJournal: 'Explore Journal →',
-      featuredJournal: 'Featured Journal',
+      heroEyebrow: 'IF IT ALL ENDS',
+      heroMeta: null,
+      heroTitle: 'A Korean writer studying what it means to remain human in a faster, smarter world. If it all ends anyway...',
+      heroCopy: null,
+      heroCta: 'Explore ↓',
+      journal: 'Journal',
       featuredFallback: 'An idea worth spending more time with.',
       readArticle: 'Read article →',
       noJournal: 'No published journal entries yet.',
-      latestJournal: 'Latest Journal',
       viewAll: 'View all →',
       moreJournal: 'More journal entries will appear here.',
       podcast: 'Podcast',
@@ -89,37 +88,22 @@ const copy = isKorean
     };
 
 const journalEntries =
-  (await getCollection('journal'))
+  sortByCreatedAt((await getCollection('journal'))
     .filter(
       (post) => !post.data.draft && post.data.lang === lang
-    )
-    .sort(
-      (a, b) =>
-        b.data.date.valueOf() -
-        a.data.date.valueOf()
-    );
+    ));
 
 const podcasts =
-  (await getCollection('podcast'))
+  sortByCreatedAt((await getCollection('podcast'))
     .filter(
       (post) => !post.data.draft && post.data.lang === lang
-    )
-    .sort(
-      (a, b) =>
-        b.data.date.valueOf() -
-        a.data.date.valueOf()
-    );
+    ));
 
 const videos =
-  (await getCollection('youtube'))
+  sortByCreatedAt((await getCollection('youtube'))
     .filter(
       (post) => !post.data.draft && post.data.lang === lang
-    )
-    .sort(
-      (a, b) =>
-        b.data.date.valueOf() -
-        a.data.date.valueOf()
-    );
+    ));
 
 const apps =
   (await getCollection('apps'))
@@ -147,25 +131,8 @@ const latestJournalEntries =
     )
     .slice(0, 3);
 
-const featuredPodcast =
-  podcasts.find(
-    (post) =>
-      post.data.featured
-  ) ?? podcasts[0];
-
-const featuredVideo =
-  videos.find(
-    (post) =>
-      post.data.featured
-  ) ?? videos[0];
-
-const podcastRail = featuredPodcast
-  ? [featuredPodcast, ...podcasts.filter((post) => post.id !== featuredPodcast.id)]
-  : podcasts;
-
-const videoRail = featuredVideo
-  ? [featuredVideo, ...videos.filter((post) => post.id !== featuredVideo.id)]
-  : videos;
+const podcastRail = podcasts;
+const videoRail = videos;
 
 const featuredApp =
   apps.find(
@@ -190,168 +157,110 @@ const featuredApp =
   >
     <div class="hero-top">
       <span>
-        {copy.independentJournal}
+        {copy.heroEyebrow}
       </span>
 
-      <span>
-        {copy.ideasMediaProducts}
-      </span>
+      {copy.heroMeta && <span>{copy.heroMeta}</span>}
     </div>
 
-    <h1>
+    <h1 class={isKorean ? 'editorial-title' : 'editorial-title site-intro-title'}>
       {copy.heroTitle.split('\n').map((line, index) => (
         <>{index > 0 && <br />}{line}</>
       ))}
     </h1>
 
-    <div class="hero-bottom">
-      <p>
-        {copy.heroCopy}
-      </p>
+    <div class={copy.heroCopy ? 'hero-bottom' : 'hero-bottom hero-bottom--single'}>
+      {copy.heroCopy && <p>{copy.heroCopy}</p>}
 
-      <a href={localizedPath('/journal/')}>
-        {copy.exploreJournal}
+      <a href={isKorean ? localizedPath('/journal/') : '#journal'}>
+        {copy.heroCta}
       </a>
     </div>
   </section>
 
 
-  <!-- SHALLOW WATER -->
+  <div class="home-content-sections">
+    <!-- JOURNAL -->
 
-  <section
-    class="
-      home-section
-      home-flow-section
-    "
-  >
-    <div class="section-label">
-      <span class="number">
-        01
-      </span>
-
-      <span>
-        {copy.featuredJournal}
-      </span>
-    </div>
-
-    {featuredJournalEntry ? (
-      <div class="featured-content">
-        <h2>
-          {featuredJournalEntry.data.title}
-        </h2>
-
-        <div class="featured-bottom">
-          <p>
-            {
-              featuredJournalEntry.data.description ||
-              copy.featuredFallback
-            }
-          </p>
-
-          <a
-            href={localizedPath(
-              `/journal/${getPublicSlug(featuredJournalEntry.id, featuredJournalEntry.data.lang)}/`,
-            )}
-          >
-            {copy.readArticle}
-          </a>
-        </div>
-      </div>
-    ) : (
-      <p class="muted">
-        {copy.noJournal}
-      </p>
-    )}
-  </section>
-
-
-  <!-- DESCENDING -->
-
-  <section
-    class="
-      home-section
-      home-flow-section
-    "
-  >
-    <div
-      class="
-        section-label
-        section-label-link
-      "
-    >
-      <div>
-        <span class="number">
-          02
-        </span>
-
-        <span>
-          {copy.latestJournal}
-        </span>
+    <section class="home-section home-flow-section" id="journal">
+      <div class="section-heading-row">
+        <h2 class="section-heading">{copy.journal}</h2>
+        <a href={localizedPath('/journal/')}>
+          {copy.viewAll}
+        </a>
       </div>
 
-      <a href={localizedPath('/journal/')}>
-        {copy.viewAll}
-      </a>
-    </div>
+      {featuredJournalEntry ? (
+        <div class="featured-content">
+          <h3 class="featured-title editorial-title">
+            {featuredJournalEntry.data.title}
+          </h3>
 
-    {latestJournalEntries.length > 0 ? (
-      <div class="journal-list">
-        {latestJournalEntries.map(
-          (post) => (
+          <div class="featured-bottom">
+            <p>
+              {
+                featuredJournalEntry.data.description ||
+                copy.featuredFallback
+              }
+            </p>
+
             <a
               href={localizedPath(
-                `/journal/${getPublicSlug(post.id, post.data.lang)}/`,
+                `/journal/${getPublicSlug(featuredJournalEntry.id, featuredJournalEntry.data.lang)}/`,
               )}
-              class="journal-row"
             >
-              <div>
-                <span class="post-date">
-                  {
-                    post.data.date
-                      .toLocaleDateString(
-                        dateLocale,
-                        {
-                          year:
-                            'numeric',
-                          month:
-                            'short',
-                          day:
-                            'numeric',
-                        }
-                      )
-                  }
-                </span>
-
-                <h3>
-                  {post.data.title}
-                </h3>
-              </div>
-
-              <span class="arrow">
-                ↗
-              </span>
+              {copy.readArticle}
             </a>
-          )
-        )}
-      </div>
-    ) : (
-      <p class="muted">
-        {copy.moreJournal}
-      </p>
-    )}
-  </section>
+          </div>
+        </div>
+      ) : (
+        <p class="muted">{copy.noJournal}</p>
+      )}
+      {featuredJournalEntry && (
+        <div class="journal-list">
+          {latestJournalEntries.map(
+            (post) => (
+              <a
+                href={localizedPath(
+                  `/journal/${getPublicSlug(post.id, post.data.lang)}/`,
+                )}
+                class="journal-row"
+              >
+                <div>
+                  <span class="post-date">
+                    {
+                      post.data.date
+                        .toLocaleDateString(
+                          dateLocale,
+                          {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          }
+                        )
+                    }
+                  </span>
+
+                  <h3 class="editorial-title">{post.data.title}</h3>
+                </div>
+
+                <span class="arrow">↗</span>
+              </a>
+            )
+          )}
+          {latestJournalEntries.length === 0 && (
+            <p class="muted journal-empty">{copy.moreJournal}</p>
+          )}
+        </div>
+      )}
+    </section>
 
 
   <!-- MID WATER -->
 
   {podcastRail.length > 0 && (
     <section class="home-section home-flow-section media-section" data-carousel>
-      <div class="media-section-heading">
-        <div class="section-label">
-          <span class="number">03</span>
-          <span>{copy.podcast}</span>
-        </div>
-      </div>
+      <h2 class="section-heading">{copy.podcast}</h2>
 
       <div class="media-rail-frame">
         <div class="media-rail-controls" hidden>
@@ -362,11 +271,11 @@ const featuredApp =
         {podcastRail.map((post) => (
           <article class="media-rail-item podcast-rail-item">
             {post.data.episode && <span class="media-episode">EP. {post.data.episode}</span>}
-            <h2>
+            <h3 class="media-card-title">
               <a class="media-card-link" href={localizedPath(`/podcast/${getPublicSlug(post.id, post.data.lang)}/`)}>
                 {post.data.title}
               </a>
-            </h2>
+            </h3>
             {post.data.description && <p>{post.data.description}</p>}
             <time datetime={post.data.date.toISOString()}>
               {post.data.date.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -385,12 +294,7 @@ const featuredApp =
 
   {videoRail.length > 0 && (
     <section class="home-section home-flow-section media-section" data-carousel>
-      <div class="media-section-heading">
-        <div class="section-label">
-          <span class="number">04</span>
-          <span>{copy.youtube}</span>
-        </div>
-      </div>
+      <h2 class="section-heading">{copy.youtube}</h2>
 
       <div class="media-rail-frame">
         <div class="media-rail-controls" hidden>
@@ -407,11 +311,11 @@ const featuredApp =
                   <img src={thumbnail} alt="" loading="lazy" width="480" height="360" />
                 </a>
               )}
-              <h2>
+              <h3 class="media-card-title">
                 <a class="media-card-link" href={localizedPath(`/youtube/${getPublicSlug(post.id, post.data.lang)}/`)}>
                   {post.data.title}
                 </a>
-              </h2>
+              </h3>
               {post.data.description && <p>{post.data.description}</p>}
             </article>
           );
@@ -430,24 +334,16 @@ const featuredApp =
       home-flow-section
     "
   >
-    <div class="section-label">
-      <span class="number">
-        05
-      </span>
-
-      <span>
-        {copy.apps}
-      </span>
-    </div>
+    <h2 class="section-heading">{copy.apps}</h2>
 
     <div class="apps-layout">
-      <h2>
+      <h3 class="apps-title editorial-title">
         {
           featuredApp
             ? featuredApp.data.title
             : copy.appsFallback
         }
-      </h2>
+      </h3>
 
       <div class="side-copy">
         <p>
@@ -467,22 +363,19 @@ const featuredApp =
   <section
     class="
       newsletter
+      home-section
       home-flow-section
     "
     id="subscribe"
   >
     <div>
       <div class="section-label">
-        <span class="number">
-          06
-        </span>
-
         <span>
           {copy.newsletter}
         </span>
       </div>
 
-      <h2>
+      <h2 class="editorial-title">
         {copy.newsletterTitle.split('\n').map((line, index) => (
           <>{index > 0 && <br />}{line}</>
         ))}
@@ -569,17 +462,13 @@ const featuredApp =
     "
   >
     <div class="section-label">
-      <span class="number">
-        07
-      </span>
-
       <span>
         {copy.about}
       </span>
     </div>
 
     <div class="about-layout">
-      <h2>
+      <h2 class="editorial-title">
         {copy.aboutTitle.split('\n').map((line, index) => (
           <>{index > 0 && <br />}{line}</>
         ))}
@@ -601,6 +490,7 @@ const featuredApp =
     </div>
   </section>
 
+  </div>
 </BaseLayout>
 
 <script>
@@ -644,17 +534,36 @@ const featuredApp =
 
 
 <style is:global>
+  .home-hero,
+  .home-content-sections > .home-section {
+    --home-content-inline-padding: 64px;
+  }
+
   /*
     HERO / SURFACE
   */
 
   .home-hero {
+    position: relative;
+    isolation: isolate;
     min-height: 84vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    padding: 64px;
+    padding: 64px var(--home-content-inline-padding);
+  }
+
+  .home-hero::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    pointer-events: none;
     background:
       linear-gradient(
         90deg,
@@ -683,6 +592,10 @@ const featuredApp =
     text-shadow: 0 6px 46px rgba(0, 0, 0, 0.92);
   }
 
+  .home-hero .site-intro-title {
+    font-size: clamp(2.9rem, 4.5vw, 4.8rem);
+  }
+
   .hero-bottom {
     display: grid;
     grid-template-columns: minmax(0, 580px) auto;
@@ -704,32 +617,68 @@ const featuredApp =
     text-shadow: 0 3px 22px rgba(0, 0, 0, 0.95);
   }
 
+  .hero-bottom--single {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   /*
     EDITORIAL FLOW
   */
 
-  .home-flow-section {
+  .home-content-sections > .home-section {
+    --section-heading-color: #c9d4db;
+    --section-divider: 183, 201, 214;
     position: relative;
+    isolation: isolate;
     width: 100%;
-    max-width: 1100px;
     margin-inline: auto;
-    padding: 84px 24px;
+    padding-block: 84px;
+    padding-inline: var(--home-content-inline-padding);
   }
 
-  .home-flow-section::before {
+  /* Only rendered sections below the hero participate in this sequence. */
+  .home-content-sections > .home-section:nth-of-type(odd) {
+    --section-tint: 42, 74, 99;
+  }
+
+  .home-content-sections > .home-section:nth-of-type(even) {
+    --section-tint: 8, 20, 34;
+  }
+
+  .home-content-sections > .home-section::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(var(--section-tint), 0.12),
+      rgba(var(--section-tint), 0.4) 20%,
+      rgba(var(--section-tint), 0.4) 80%,
+      rgba(var(--section-tint), 0.12)
+    );
+  }
+
+  .home-content-sections > .home-section::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 24px;
-    right: 24px;
+    left: var(--home-content-inline-padding);
+    right: var(--home-content-inline-padding);
     height: 1px;
     background:
       linear-gradient(
         90deg,
         transparent 0%,
-        rgba(220, 230, 240, 0.08) 12%,
-        rgba(220, 230, 240, 0.18) 50%,
-        rgba(220, 230, 240, 0.08) 88%,
+        rgba(var(--section-divider), 0.1) 12%,
+        rgba(var(--section-divider), 0.22) 50%,
+        rgba(var(--section-divider), 0.1) 88%,
         transparent 100%
       );
   }
@@ -739,41 +688,50 @@ const featuredApp =
     align-items: center;
     gap: 18px;
     margin-bottom: 58px;
-    color: #cbd4dd;
+    color: var(--section-heading-color);
     font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
-  .number {
-    display: inline-block;
-    width: 30px;
+  .section-heading {
+    margin-bottom: 58px;
+    color: var(--section-heading-color);
+    font-family: var(--font-editorial);
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    font-weight: var(--editorial-title-weight);
+    line-height: var(--editorial-title-leading);
+    letter-spacing: var(--editorial-title-tracking);
   }
 
-  .section-label-link {
-    justify-content: space-between;
-  }
-
-  .section-label-link > div {
+  .section-heading-row {
     display: flex;
-    align-items: center;
-    gap: 18px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 58px;
   }
 
-  .section-label-link > a {
+  .section-heading-row .section-heading {
+    margin-bottom: 0;
+  }
+
+  .section-heading-row > a {
     color: var(--text);
-    letter-spacing: 0;
-    text-transform: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
   }
 
   /*
     FEATURED JOURNAL
   */
 
-  .featured-content h2 {
+  .featured-content .featured-title {
     max-width: 1050px;
     margin-bottom: 72px;
+    font-size: clamp(2.7rem, 5vw, 5rem);
   }
 
   .featured-bottom {
@@ -800,7 +758,13 @@ const featuredApp =
 
   .journal-list {
     position: relative;
+    margin-top: 72px;
     padding-top: 1px;
+  }
+
+  .journal-empty {
+    margin: 0;
+    padding: 34px 0;
   }
 
   .journal-list::before,
@@ -862,10 +826,6 @@ const featuredApp =
     PODCAST / YOUTUBE RAILS
   */
 
-  .media-section-heading {
-    display: block;
-  }
-
   .media-rail-frame {
     position: relative;
   }
@@ -923,6 +883,8 @@ const featuredApp =
       display: grid;
       grid-template-columns: 64px minmax(0, 1fr) 64px;
       align-items: center;
+      width: calc(100% + 128px);
+      margin-inline: -64px;
     }
 
     .media-rail-frame.has-controls .media-rail-controls:not([hidden]) {
@@ -949,8 +911,8 @@ const featuredApp =
     }
 
     .media-rail-frame.has-controls .media-rail-item {
-      /* Preserve the card width formerly calculated inside 44px rail padding. */
-      flex-basis: clamp(320px, calc(42% + 16.8px), 460px);
+      /* Match the former 1100px section's card widths while using the hero rail. */
+      flex-basis: clamp(320px, calc(42% - 3.36px), 404.88px);
     }
 
     .media-rail.fade-left:not(.fade-right) {
@@ -1039,17 +1001,17 @@ const featuredApp =
       );
   }
 
-  .media-rail-item h2 {
+  .media-rail-item .media-card-title {
     max-width: 780px;
     margin-bottom: 0;
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-family: var(--font-editorial);
     font-size: clamp(1.7rem, 2.8vw, 2.9rem);
-    font-weight: 500;
-    line-height: 1.14;
-    letter-spacing: -0.015em;
+    font-weight: var(--editorial-title-weight);
+    line-height: var(--editorial-title-leading);
+    letter-spacing: var(--editorial-title-tracking);
   }
 
-  .media-rail-item h2 a {
+  .media-rail-item .media-card-title a {
     font-weight: inherit;
   }
 
@@ -1083,7 +1045,7 @@ const featuredApp =
     object-fit: cover;
   }
 
-  .youtube-rail-item h2 {
+  .youtube-rail-item .media-card-title {
     margin-top: 24px;
     font-size: clamp(1.45rem, 2.1vw, 2rem);
   }
@@ -1103,9 +1065,10 @@ const featuredApp =
     gap: 100px;
   }
 
-  .apps-layout h2 {
+  .apps-layout .apps-title {
     max-width: 920px;
     margin-bottom: 0;
+    font-size: clamp(2.7rem, 5vw, 5rem);
   }
 
   .side-copy {
@@ -1272,9 +1235,14 @@ const featuredApp =
   */
 
   @media (max-width: 760px) {
+    .home-hero,
+    .home-content-sections > .home-section {
+      --home-content-inline-padding: 18px;
+    }
+
     .home-hero {
       min-height: 72vh;
-      padding: 36px 18px;
+      padding: 36px var(--home-content-inline-padding);
     }
 
     .hero-top {
@@ -1286,13 +1254,12 @@ const featuredApp =
       margin: 58px 0 54px;
     }
 
-    .home-flow-section {
-      padding: 72px 18px;
+    .home-hero .site-intro-title {
+      font-size: clamp(2.15rem, 8.5vw, 3.4rem);
     }
 
-    .home-flow-section::before {
-      left: 18px;
-      right: 18px;
+    .home-content-sections > .home-section {
+      padding-block: 72px;
     }
 
     .hero-bottom,
@@ -1307,6 +1274,16 @@ const featuredApp =
     .section-label {
       margin-bottom: 38px;
       font-size: 0.76rem;
+    }
+
+    .section-heading,
+    .section-heading-row {
+      margin-bottom: 38px;
+    }
+
+    .featured-content .featured-title,
+    .apps-layout .apps-title {
+      font-size: clamp(2.3rem, 12vw, 4rem);
     }
 
     .media-rail {

@@ -1,6 +1,7 @@
 ---
 title: “All You Need is Two Hours a Day.”
 date: 2026-09-14
+createdAt: "2026-09-14T15:53:11+10:00"
 description: AI promises that anyone can build—and make money—in just a few hours. But when making gets easy, choosing what is worth making becomes the real work.
 tags: []
 draft: false
