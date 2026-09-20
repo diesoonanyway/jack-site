@@ -20,11 +20,11 @@ const copy = isKorean
       heroCopy: '아이디어는 글쓰기에서 시작합니다. 가장 강한 아이디어는 대화, 영상 그리고 유용한 제품으로 성장합니다.',
       heroCta: 'Journal 둘러보기 →',
       journal: 'Journal',
-      featuredFallback: '더 오래 생각해 볼 가치가 있는 아이디어입니다.',
       readArticle: '글 읽기 →',
       noJournal: '아직 발행된 Journal 항목이 없습니다.',
       viewAll: '모두 보기 →',
-      moreJournal: '새로운 Journal 항목이 이곳에 표시됩니다.',
+      previousArticles: '이전 글',
+      nextArticles: '다음 글',
       podcast: '팟캐스트',
       listenSpotify: 'Spotify에서 듣기 →',
       previousPodcasts: '이전 팟캐스트',
@@ -57,11 +57,11 @@ const copy = isKorean
       heroCopy: null,
       heroCta: 'Explore ↓',
       journal: 'Journal',
-      featuredFallback: 'An idea worth spending more time with.',
       readArticle: 'Read article →',
       noJournal: 'No published journal entries yet.',
       viewAll: 'View all →',
-      moreJournal: 'More journal entries will appear here.',
+      previousArticles: 'Previous articles',
+      nextArticles: 'Next articles',
       podcast: 'Podcast',
       listenSpotify: 'Listen on Spotify →',
       previousPodcasts: 'Previous podcasts',
@@ -116,21 +116,6 @@ const apps =
         a.data.date.valueOf()
     );
 
-const featuredJournalEntry =
-  journalEntries.find(
-    (post) =>
-      post.data.featured
-  ) ?? journalEntries[0];
-
-const latestJournalEntries =
-  journalEntries
-    .filter(
-      (post) =>
-        post.id !==
-        featuredJournalEntry?.id
-    )
-    .slice(0, 3);
-
 const podcastRail = podcasts;
 const videoRail = videos;
 
@@ -182,7 +167,7 @@ const featuredApp =
   <div class="home-content-sections">
     <!-- JOURNAL -->
 
-    <section class="home-section home-flow-section" id="journal">
+    <section class="home-section home-flow-section media-section" id="journal" data-carousel>
       <div class="section-heading-row">
         <h2 class="section-heading">{copy.journal}</h2>
         <a href={localizedPath('/journal/')}>
@@ -190,68 +175,32 @@ const featuredApp =
         </a>
       </div>
 
-      {featuredJournalEntry ? (
-        <div class="featured-content">
-          <h3 class="featured-title editorial-title">
-            {featuredJournalEntry.data.title}
-          </h3>
-
-          <div class="featured-bottom">
-            <p>
-              {
-                featuredJournalEntry.data.description ||
-                copy.featuredFallback
-              }
-            </p>
-
-            <a
-              href={localizedPath(
-                `/journal/${getPublicSlug(featuredJournalEntry.id, featuredJournalEntry.data.lang)}/`,
-              )}
-            >
-              {copy.readArticle}
-            </a>
+      {journalEntries.length > 0 ? (
+        <div class="media-rail-frame">
+          <div class="media-rail-controls" hidden>
+            <button type="button" data-carousel-direction="previous" aria-label={copy.previousArticles}>←</button>
+            <button type="button" data-carousel-direction="next" aria-label={copy.nextArticles}>→</button>
+          </div>
+          <div class="media-rail journal-rail" role="region" aria-roledescription="carousel" aria-label={copy.journal} data-carousel-track>
+            {journalEntries.map((post) => {
+              const articlePath = localizedPath(`/journal/${getPublicSlug(post.id, post.data.lang)}/`);
+              return (
+                <article class="media-rail-item journal-rail-item">
+                  <time datetime={post.data.date.toISOString()}>
+                    {post.data.date.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </time>
+                  <h3 class="media-card-title">
+                    <a class="media-card-link" href={articlePath}>{post.data.title}</a>
+                  </h3>
+                  {post.data.description && <p>{post.data.description}</p>}
+                  <a class="journal-read-link" href={articlePath}>{copy.readArticle}</a>
+                </article>
+              );
+            })}
           </div>
         </div>
       ) : (
         <p class="muted">{copy.noJournal}</p>
-      )}
-      {featuredJournalEntry && (
-        <div class="journal-list">
-          {latestJournalEntries.map(
-            (post) => (
-              <a
-                href={localizedPath(
-                  `/journal/${getPublicSlug(post.id, post.data.lang)}/`,
-                )}
-                class="journal-row"
-              >
-                <div>
-                  <span class="post-date">
-                    {
-                      post.data.date
-                        .toLocaleDateString(
-                          dateLocale,
-                          {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          }
-                        )
-                    }
-                  </span>
-
-                  <h3 class="editorial-title">{post.data.title}</h3>
-                </div>
-
-                <span class="arrow">↗</span>
-              </a>
-            )
-          )}
-          {latestJournalEntries.length === 0 && (
-            <p class="muted journal-empty">{copy.moreJournal}</p>
-          )}
-        </div>
       )}
     </section>
 
@@ -844,105 +793,7 @@ const featuredApp =
   }
 
   /*
-    FEATURED JOURNAL
-  */
-
-  .featured-content .featured-title {
-    max-width: 1050px;
-    margin-bottom: 72px;
-    font-size: clamp(2.7rem, 5vw, 5rem);
-  }
-
-  .featured-bottom {
-    display: grid;
-    grid-template-columns: minmax(0, 580px) auto;
-    justify-content: space-between;
-    align-items: end;
-    gap: 40px;
-  }
-
-  .featured-bottom p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 1.05rem;
-  }
-
-  .featured-bottom a {
-    font-weight: 700;
-  }
-
-  /*
-    JOURNAL LIST
-  */
-
-  .journal-list {
-    position: relative;
-    margin-top: 72px;
-    padding-top: 1px;
-  }
-
-  .journal-empty {
-    margin: 0;
-    padding: 34px 0;
-  }
-
-  .journal-list::before,
-  .journal-row:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background:
-      linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(220, 230, 240, 0.06) 10%,
-        rgba(220, 230, 240, 0.14) 50%,
-        rgba(220, 230, 240, 0.06) 90%,
-        transparent 100%
-      );
-  }
-
-  .journal-list::before {
-    top: 0;
-  }
-
-  .journal-row {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 20px;
-    padding: 34px 0;
-  }
-
-  .journal-row:not(:last-child)::after {
-    bottom: 0;
-  }
-
-  .journal-row:hover {
-    color: var(--accent);
-  }
-
-  .journal-row h3 {
-    margin-bottom: 0;
-  }
-
-  .post-date {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--muted);
-    font-size: 0.86rem;
-  }
-
-  .arrow {
-    color: var(--muted);
-    font-size: 1.8rem;
-  }
-
-  /*
-    PODCAST / YOUTUBE RAILS
+    JOURNAL / PODCAST / YOUTUBE RAILS
   */
 
   .media-rail-frame {
@@ -1090,6 +941,16 @@ const featuredApp =
 
   .media-rail-item time {
     margin-top: 24px;
+  }
+
+  .journal-rail-item time {
+    margin-top: 0;
+    margin-bottom: 24px;
+  }
+
+  .journal-rail-item .journal-read-link {
+    position: relative;
+    z-index: 1;
   }
 
   .media-rail-item .media-external-link {
@@ -1479,7 +1340,6 @@ const featuredApp =
     }
 
     .hero-bottom,
-    .featured-bottom,
     .apps-layout,
     .newsletter,
     .about-layout {
@@ -1497,7 +1357,6 @@ const featuredApp =
       margin-bottom: 38px;
     }
 
-    .featured-content .featured-title,
     .apps-layout .apps-title {
       font-size: clamp(2.3rem, 12vw, 4rem);
     }
