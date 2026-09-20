@@ -869,11 +869,6 @@ const featuredApp =
       right: -58px;
     }
 
-    .media-rail-frame.has-controls .media-rail-item {
-      /* Match the former 1100px section's card widths while using the hero rail. */
-      flex-basis: clamp(320px, calc(42% - 3.36px), 404.88px);
-    }
-
     .media-rail.fade-left:not(.fade-right) {
       -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.45), #000 76px, #000);
       mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.45), #000 76px, #000);
@@ -905,7 +900,7 @@ const featuredApp =
 
   .media-rail-item {
     position: relative;
-    flex: 0 0 clamp(320px, 42%, 460px);
+    flex: 0 0 clamp(320px, calc(42% - 3.36px), 404.88px);
     min-width: 0;
     padding-right: 48px;
     scroll-snap-align: start;
