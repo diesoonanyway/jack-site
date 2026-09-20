@@ -491,6 +491,35 @@ const featuredApp =
   </section>
 
   </div>
+
+  {!isKorean && (
+    <div class="newsletter-modal" data-newsletter-modal hidden>
+      <div
+        class="newsletter-modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="newsletter-modal-title"
+      >
+        <button
+          class="newsletter-modal-close"
+          type="button"
+          data-newsletter-close
+          aria-label="Close newsletter signup"
+        >
+          &times;
+        </button>
+        <p class="newsletter-modal-label">{copy.newsletter}</p>
+        <h2 id="newsletter-modal-title" class="editorial-title">
+          If it all ends anyway, what is still worth paying attention to?
+        </h2>
+        <p class="newsletter-modal-description">
+          Occasional letters for people who still like to think slowly — about what it means to stay human, keep learning, and notice what still matters as the world keeps accelerating.
+        </p>
+        <div data-newsletter-form-slot></div>
+        <p class="newsletter-note">{copy.newsletterNote}</p>
+      </div>
+    </div>
+  )}
 </BaseLayout>
 
 <script>
@@ -530,6 +559,96 @@ const featuredApp =
     new ResizeObserver(updateControls).observe(track);
     updateControls();
   });
+
+  const modal = document.querySelector<HTMLElement>('[data-newsletter-modal]');
+  const form = document.querySelector<HTMLFormElement>('#subscribe .newsletter-form');
+  const formSlot = modal?.querySelector<HTMLElement>('[data-newsletter-form-slot]');
+  const closeButton = modal?.querySelector<HTMLButtonElement>('[data-newsletter-close]');
+  const panel = modal?.querySelector<HTMLElement>('[role="dialog"]');
+
+  if (modal && form && formSlot && closeButton && panel) {
+    const dismissedUntilKey = 'jack-site:newsletter-modal:dismissed-until';
+    const subscribedKey = 'jack-site:newsletter-modal:subscribed';
+    const dismissDuration = 30 * 24 * 60 * 60 * 1000;
+    const originalParent = form.parentNode;
+    const originalNextSibling = form.nextSibling;
+    let previousFocus: HTMLElement | null = null;
+    let previousBodyOverflow = '';
+    let submitted = false;
+    let closing = false;
+
+    const readStorage = (key: string) => {
+      try { return localStorage.getItem(key); }
+      catch { return null; }
+    };
+
+    const writeStorage = (key: string, value: string) => {
+      try { localStorage.setItem(key, value); }
+      catch { /* Storage can be unavailable in private browsing. */ }
+    };
+
+    form.addEventListener('submit', () => {
+      submitted = form.checkValidity();
+    });
+
+    const successObserver = new MutationObserver(() => {
+      if (!submitted) return;
+      const success = panel.querySelector<HTMLElement>('.formkit-alert-success, [data-element="success"]');
+      if (success?.textContent?.trim() && success.getClientRects().length > 0) {
+        writeStorage(subscribedKey, 'true');
+        successObserver.disconnect();
+      }
+    });
+
+    const closeModal = () => {
+      if (modal.hidden || closing) return;
+      closing = true;
+      writeStorage(dismissedUntilKey, String(Date.now() + dismissDuration));
+      modal.classList.remove('is-open');
+      window.setTimeout(() => {
+        modal.hidden = true;
+        if (originalParent) originalParent.insertBefore(form, originalNextSibling);
+        successObserver.disconnect();
+        document.body.style.overflow = previousBodyOverflow;
+        previousFocus?.focus();
+      }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 260);
+    };
+
+    closeButton.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (modal.hidden) return;
+      if (event.key === 'Escape') closeModal();
+      if (event.key !== 'Tab') return;
+      const focusable = [...panel.querySelectorAll<HTMLElement>('input, button, a[href]')]
+        .filter((element) => !element.hasAttribute('disabled') && element.getClientRects().length > 0);
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    });
+
+    if (readStorage(subscribedKey) !== 'true' && Date.now() >= Number(readStorage(dismissedUntilKey) || 0)) {
+      window.setTimeout(() => {
+        if (readStorage(subscribedKey) === 'true' || Date.now() < Number(readStorage(dismissedUntilKey) || 0)) return;
+        previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        previousBodyOverflow = document.body.style.overflow;
+        formSlot.append(form);
+        successObserver.observe(panel, { subtree: true, childList: true, characterData: true, attributes: true });
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(() => modal.classList.add('is-open'));
+        closeButton.focus();
+      }, 1000);
+    }
+  }
 </script>
 
 
@@ -1196,6 +1315,103 @@ const featuredApp =
   .formkit-alert-success {
     color: #d7ffe8;
     background: rgba(20, 100, 60, 0.26);
+  }
+
+  .newsletter-modal {
+    position: fixed;
+    z-index: 100;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    overflow-y: auto;
+    background: radial-gradient(circle at 50% 40%, rgba(3, 11, 21, 0.42), rgba(0, 4, 10, 0.72) 80%);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 260ms ease;
+  }
+
+  .newsletter-modal[hidden] {
+    display: none;
+  }
+
+  .newsletter-modal.is-open {
+    opacity: 1;
+  }
+
+  .newsletter-modal-panel {
+    position: relative;
+    width: min(700px, 100%);
+    max-height: calc(100dvh - 32px);
+    padding: clamp(28px, 4vw, 48px);
+    overflow-y: auto;
+    border: 1px solid rgba(183, 201, 214, 0.18);
+    border-radius: 14px;
+    color: var(--text);
+    background: rgba(8, 20, 34, 0.97);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+    transform: translateY(10px);
+    transition: transform 260ms ease;
+  }
+
+  .newsletter-modal.is-open .newsletter-modal-panel {
+    transform: translateY(0);
+  }
+
+  .newsletter-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    color: var(--text);
+    background: transparent;
+    font: inherit;
+    font-size: 1.8rem;
+    cursor: pointer;
+  }
+
+  .newsletter-modal-close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .newsletter-modal-label {
+    margin-bottom: 18px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .newsletter-modal-panel h2 {
+    max-width: 600px;
+    margin-bottom: 20px;
+    padding-right: 20px;
+    font-size: clamp(2rem, 4vw, 3.1rem);
+  }
+
+  .newsletter-modal-description {
+    max-width: 58ch;
+    margin-bottom: 0;
+    color: #dce2e9;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .newsletter-modal .newsletter-form {
+    max-width: none;
+    margin-top: 28px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .newsletter-modal,
+    .newsletter-modal-panel {
+      transition: none;
+    }
   }
 
   .visually-hidden {
