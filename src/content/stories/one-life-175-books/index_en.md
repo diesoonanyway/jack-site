@@ -11,6 +11,8 @@ relatedPodcast: ""
 relatedYoutube: ""
 relatedApp: ""
 lang: en
+formats:
+  - read
 translation: /ko/stories/one-life-175-books/
 ---
 

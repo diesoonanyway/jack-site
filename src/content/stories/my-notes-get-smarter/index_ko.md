@@ -6,6 +6,8 @@ date: 2026-09-18
 createdAt: "2026-09-18T09:29:28+10:00"
 draft: false
 lang: ko
+formats:
+  - read
 translation: /stories/my-notes-get-smarter/
 ---
 요즘 노트는 점점 똑똑해지는데,  

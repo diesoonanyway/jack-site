@@ -8,6 +8,8 @@ date: 2026-09-19
 createdAt: "2026-09-19T15:54:45+10:00"
 draft: false
 lang: en
+formats:
+  - listen
 episode: "6"
 spotifyUrl: https://open.spotify.com/episode/22qbo3QwdngMBnWdFUZVUM?si=TqU6iyoFSuKXcYowMOL6Ig
 ---

@@ -7,6 +7,8 @@ date: 2026-09-19
 createdAt: "2026-09-19T13:03:30+10:00"
 draft: false
 lang: en
+formats:
+  - listen
 episode: "1"
 spotifyUrl: https://open.spotify.com/episode/25hmnsNnD2Hghzg96i3wuN?si=urhTvcuESKudIP6oHe7jVA
 ---

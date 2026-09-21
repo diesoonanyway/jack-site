@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { sortByCreatedAt } from '../../lib/content-sort';
 import { getPublicSlug } from '../../lib/content-slug';
-import '../../styles/editorial.css';
+import { getYouTubeThumbnailUrl } from '../../lib/youtube';
 
 const { lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
@@ -11,45 +11,357 @@ const pathPrefix = isKorean ? '/ko' : '';
 const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
 const posts = sortByCreatedAt((await getCollection('stories'))
   .filter((post) => !post.data.draft && post.data.lang === lang));
+
+const copy = isKorean
+  ? {
+      title: '스토리',
+      intro: '읽고, 듣고, 볼 수 있는 이야기.',
+      all: '전체',
+      read: '읽기',
+      listen: '듣기',
+      watch: '보기',
+      filtersLabel: '스토리 형식 필터',
+      noStories: '아직 발행된 스토리가 없습니다.',
+    }
+  : {
+      title: 'Stories',
+      intro: 'Stories to read, listen to and watch.',
+      all: 'All',
+      read: 'Read',
+      listen: 'Listen',
+      watch: 'Watch',
+      filtersLabel: 'Filter stories by format',
+      noStories: 'No published stories yet.',
+    };
+
+const storyPath = (post) => `${pathPrefix}/stories/${getPublicSlug(post.id, post.data.lang)}/`;
+const storyVisual = (post) => post.data.heroImage || getYouTubeThumbnailUrl(post.data.youtubeUrl);
+const storyFormats = (post) => post.data.formats
+  .map((format) => format.toUpperCase())
+  .join(' · ');
 ---
 
 <BaseLayout
   title={isKorean ? '스토리 — Jack' : 'Stories — Jack'}
-  description={isKorean ? '글로 읽고, 듣고, 볼 수 있는 이야기.' : 'Stories to read, listen to and watch.'}
+  description={copy.intro}
   {lang}
   alternatePath={isKorean ? '/stories/' : '/ko/stories/'}
 >
-  <section class="editorial-intro">
-    <h1>{isKorean ? '스토리' : 'Stories'}</h1>
-    <p class="muted">
-      {isKorean ? '읽고, 듣고, 볼 수 있는 이야기.' : 'Stories to read, listen to and watch.'}
-    </p>
-  </section>
+  <div class="stories-archive" data-story-archive>
+    <header class="stories-archive-intro">
+      <p class="archive-kicker">IF IT ALL ENDS</p>
+      <h1 class="editorial-title">{copy.title}</h1>
+      <p class="stories-archive-description">{copy.intro}</p>
+    </header>
 
-  <section class="editorial-list-section">
+    <div class="story-filters" role="group" aria-label={copy.filtersLabel}>
+      <button type="button" data-story-filter="all" aria-pressed="true">{copy.all}</button>
+      <button type="button" data-story-filter="read" aria-pressed="false">{copy.read}</button>
+      <button type="button" data-story-filter="listen" aria-pressed="false">{copy.listen}</button>
+      <button type="button" data-story-filter="watch" aria-pressed="false">{copy.watch}</button>
+    </div>
+
     {posts.length > 0 ? (
-      <div class="editorial-list">
-        {posts.map((post) => (
-          <article class="editorial-entry">
-            <p class="eyebrow">
-              {post.data.date.toLocaleDateString(dateLocale, {
-                year: 'numeric', month: 'long', day: 'numeric',
-              })}
-            </p>
-            <h2>
-              <a href={`${pathPrefix}/stories/${getPublicSlug(post.id, post.data.lang)}/`}>
-                {post.data.title}
-              </a>
-            </h2>
-            {post.data.description && <p class="muted entry-description">{post.data.description}</p>}
-            <a class="text-link" href={`${pathPrefix}/stories/${getPublicSlug(post.id, post.data.lang)}/`}>
-              {isKorean ? '읽기' : 'Read'} →
-            </a>
-          </article>
-        ))}
+      <div class="stories-archive-list">
+        {posts.map((post, index) => {
+          const visual = storyVisual(post);
+          const youtubeThumbnail = getYouTubeThumbnailUrl(post.data.youtubeUrl);
+
+          return (
+            <article
+              class="story-archive-entry"
+              data-story-entry
+              data-formats={post.data.formats.join(' ')}
+            >
+              {visual && (
+                <a class="story-archive-visual" href={storyPath(post)} aria-label={post.data.title}>
+                  <img src={visual} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
+                  {youtubeThumbnail && !post.data.heroImage && (
+                    <span class="archive-play-cue" aria-hidden="true">▶</span>
+                  )}
+                </a>
+              )}
+
+              <div class="story-archive-copy">
+                <p class="story-formats">{storyFormats(post)}</p>
+                <h2 class="editorial-title">
+                  <a href={storyPath(post)}>{post.data.title}</a>
+                </h2>
+                {post.data.description && (
+                  <p class="story-archive-summary">{post.data.description}</p>
+                )}
+                <time datetime={post.data.date.toISOString()}>
+                  {post.data.date.toLocaleDateString(dateLocale, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              </div>
+            </article>
+          );
+        })}
       </div>
     ) : (
-      <p class="empty-state">{isKorean ? '아직 발행된 스토리가 없습니다.' : 'No published stories yet.'}</p>
+      <p class="empty-state">{copy.noStories}</p>
     )}
-  </section>
+  </div>
 </BaseLayout>
+
+<script>
+  const archive = document.querySelector<HTMLElement>('[data-story-archive]');
+
+  if (archive) {
+    const buttons = Array.from(archive.querySelectorAll<HTMLButtonElement>('[data-story-filter]'));
+    const entries = Array.from(archive.querySelectorAll<HTMLElement>('[data-story-entry]'));
+
+    const applyFilter = (filter: string) => {
+      buttons.forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.storyFilter === filter));
+      });
+
+      entries.forEach((entry) => {
+        const formats = entry.dataset.formats?.split(' ') ?? [];
+        const visible = filter === 'all'
+          || formats.includes(filter);
+        entry.hidden = !visible;
+      });
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => applyFilter(button.dataset.storyFilter ?? 'all'));
+    });
+  }
+</script>
+
+<style>
+  .stories-archive {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding: 52px 32px 60px;
+  }
+
+  .stories-archive-intro {
+    max-width: 980px;
+    padding-block: clamp(52px, 8vw, 118px) clamp(62px, 9vw, 132px);
+  }
+
+  .archive-kicker,
+  .story-formats,
+  .story-archive-copy time {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .archive-kicker {
+    margin-bottom: 28px;
+  }
+
+  .stories-archive-intro h1 {
+    margin-bottom: 34px;
+    font-size: clamp(5rem, 11vw, 10.5rem);
+    line-height: 0.88;
+  }
+
+  .stories-archive-description {
+    max-width: 640px;
+    margin-bottom: 0;
+    color: var(--body-text);
+    font-size: clamp(1.08rem, 1.7vw, 1.3rem);
+    line-height: 1.75;
+  }
+
+  .story-filters {
+    display: flex;
+    gap: 30px;
+    max-width: 100%;
+    padding-bottom: 18px;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(220, 230, 240, 0.14);
+    scrollbar-width: thin;
+  }
+
+  .story-filters button {
+    position: relative;
+    flex: 0 0 auto;
+    padding: 8px 0;
+    border: 0;
+    color: var(--muted);
+    background: transparent;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .story-filters button::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -19px;
+    left: 0;
+    height: 2px;
+    background: transparent;
+  }
+
+  .story-filters button[aria-pressed='true'] {
+    color: var(--text);
+  }
+
+  .story-filters button[aria-pressed='true']::after {
+    background: currentColor;
+  }
+
+  .story-filters button:focus-visible,
+  .story-archive-entry a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 5px;
+  }
+
+  .stories-archive-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(70px, 8vw, 112px) clamp(28px, 3vw, 44px);
+    width: 100%;
+    padding-block: clamp(76px, 9vw, 124px);
+  }
+
+  .story-archive-entry {
+    display: flex;
+    min-width: 0;
+    height: 100%;
+    flex-direction: column;
+    padding-top: 26px;
+    border-top: 1px solid rgba(220, 230, 240, 0.12);
+  }
+
+  .story-archive-entry[hidden] {
+    display: none;
+  }
+
+  .story-archive-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .story-archive-visual {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 30px;
+    overflow: hidden;
+    background: rgba(1, 8, 15, 0.48);
+  }
+
+  .story-archive-visual img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .archive-play-cue {
+    position: absolute;
+    right: 22px;
+    bottom: 22px;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(246, 244, 239, 0.45);
+    border-radius: 50%;
+    color: var(--text);
+    background: rgba(1, 8, 15, 0.7);
+    font-size: 0.75rem;
+    pointer-events: none;
+  }
+
+  .story-formats {
+    margin-bottom: 20px;
+  }
+
+  .story-archive-copy h2 {
+    margin-bottom: 22px;
+    font-size: clamp(1.65rem, 2.4vw, 2.1rem);
+    line-height: 1.08;
+  }
+
+  .story-archive-copy h2 a {
+    color: inherit;
+  }
+
+  .story-archive-summary {
+    display: -webkit-box;
+    margin-bottom: 26px;
+    overflow: hidden;
+    color: var(--body-text);
+    font-size: 0.98rem;
+    line-height: 1.7;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+  }
+
+  .story-archive-copy time {
+    display: block;
+    margin-top: auto;
+    line-height: 1.6;
+  }
+
+  .empty-state {
+    padding-block: 100px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 1020px) {
+    .stories-archive-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 760px) {
+    .stories-archive {
+      padding: 30px 18px 40px;
+    }
+
+    .stories-archive-intro {
+      padding-block: 48px 70px;
+    }
+
+    .stories-archive-intro h1 {
+      margin-bottom: 26px;
+      font-size: clamp(4rem, 22vw, 6.4rem);
+    }
+
+    .story-filters {
+      gap: 24px;
+    }
+
+    .story-archive-entry {
+      padding-top: 22px;
+    }
+
+    .story-archive-copy h2 {
+      font-size: clamp(1.55rem, 8vw, 2rem);
+    }
+
+    .story-archive-summary {
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .stories-archive-list {
+      grid-template-columns: 1fr;
+      gap: 64px;
+      padding-block: 68px;
+    }
+  }
+</style>

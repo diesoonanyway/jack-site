@@ -11,6 +11,8 @@ relatedPodcast: ""
 relatedYoutube: ""
 relatedApp: ""
 lang: ko
+formats:
+  - read
 translation: /stories/all-you-need-is-two-hours-a-day/
 ---
 ![what Excites Me?](what-excites-me-1.png)

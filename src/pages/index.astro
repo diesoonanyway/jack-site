@@ -76,11 +76,9 @@ const recentStories = featuredStory
 
 const storyPath = (story) => localizedPath(`/stories/${getPublicSlug(story.id, story.data.lang)}/`);
 const storyVisual = (story) => story.data.heroImage || getYouTubeThumbnailUrl(story.data.youtubeUrl);
-const storyFormats = (story) => [
-  'READ',
-  story.data.spotifyUrl ? 'LISTEN' : null,
-  story.data.youtubeUrl ? 'WATCH' : null,
-].filter(Boolean).join(' · ');
+const storyFormats = (story) => story.data.formats
+  .map((format) => format.toUpperCase())
+  .join(' · ');
 ---
 
 <BaseLayout

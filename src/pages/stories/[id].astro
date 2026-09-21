@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../../lib/content-slug';
 import { getSafeExternalAudioUrl, getSpotifyEpisodeId, getSpotifyExternalUrl } from '../../lib/spotify';
-import { getYouTubeVideoId } from '../../lib/youtube';
+import { getYouTubeThumbnailUrl, getYouTubeVideoId } from '../../lib/youtube';
 
 export async function getStaticPaths() {
   const posts = await getCollection('stories');
@@ -17,7 +17,6 @@ export async function getStaticPaths() {
 
 const { post, lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
-const pathPrefix = isKorean ? '/ko' : '';
 const slug = getPublicSlug(post.id, post.data.lang);
 const counterpart = (await getCollection('stories')).find((entry) =>
   !entry.data.draft && entry.data.lang !== lang &&
@@ -30,6 +29,12 @@ const spotifyId = getSpotifyEpisodeId(post.data.spotifyUrl);
 const spotifyExternalUrl = getSpotifyExternalUrl(post.data.spotifyUrl);
 const audioUrl = getSafeExternalAudioUrl(post.data.spotifyUrl);
 const youtubeId = getYouTubeVideoId(post.data.youtubeUrl);
+const youtubeThumbnail = getYouTubeThumbnailUrl(post.data.youtubeUrl);
+const heroVisual = post.data.heroImage || youtubeThumbnail;
+const storyDescription = post.data.intro || post.data.description;
+const storyFormats = post.data.formats
+  .map((format) => format.toUpperCase())
+  .join(' · ');
 const { Content } = await render(post);
 ---
 
@@ -40,18 +45,28 @@ const { Content } = await render(post);
   {lang}
   {alternatePath}
 >
-  <article class="story-detail">
-    <p class="eyebrow"><a href={`${pathPrefix}/stories/`}>{isKorean ? '스토리' : 'Stories'}</a></p>
-    <h1 class="editorial-title">{post.data.title}</h1>
-    <p class="muted article-date">
-      {post.data.date.toLocaleDateString(isKorean ? 'ko-KR' : 'en-AU', {
-        year: 'numeric', month: 'long', day: 'numeric',
-      })}
-    </p>
-    {post.data.intro && <p class="story-intro">{post.data.intro}</p>}
-    {post.data.heroImage && <img class="story-hero-image" src={post.data.heroImage} alt="" loading="lazy" />}
+  <article class:list={['story-detail', { 'story-detail--text-only': !heroVisual }]}>
+    {heroVisual && (
+      <figure class="story-hero-visual">
+        <img src={heroVisual} alt="" loading="eager" />
+        {youtubeThumbnail && !post.data.heroImage && (
+          <span class="story-play-cue" aria-hidden="true">▶</span>
+        )}
+      </figure>
+    )}
 
-    <div class="article-body"><Content /></div>
+    <header class:list={['story-detail-header', { 'story-detail-header--with-media': audioUrl || youtubeId }]}>
+      <p class="story-formats">{storyFormats}</p>
+      <h1 class="editorial-title">{post.data.title}</h1>
+      {storyDescription && <p class="story-description">{storyDescription}</p>}
+      <time class="story-date" datetime={post.data.date.toISOString()}>
+        {post.data.date.toLocaleDateString(isKorean ? 'ko-KR' : 'en-AU', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
+      </time>
+    </header>
 
     {(audioUrl || youtubeId) && (
       <div class="story-media">
@@ -69,13 +84,14 @@ const { Content } = await render(post);
                 allowfullscreen
               ></iframe>
             )}
-            <a href={audioUrl} target="_blank" rel="noopener noreferrer">
+            <a class="media-external-link" href={audioUrl} target="_blank" rel="noopener noreferrer">
               {spotifyExternalUrl
                 ? (isKorean ? 'Spotify에서 열기 →' : 'Open in Spotify →')
                 : (isKorean ? '오디오 링크 열기 →' : 'Open audio link →')}
             </a>
           </section>
         )}
+
         {youtubeId && (
           <section class="story-media-item">
             <div class="video-embed">
@@ -87,43 +103,313 @@ const { Content } = await render(post);
                 allowfullscreen
               ></iframe>
             </div>
-            <a href={`https://www.youtube.com/watch?v=${youtubeId}`} target="_blank" rel="noopener noreferrer">
+            <a
+              class="media-external-link"
+              href={`https://www.youtube.com/watch?v=${youtubeId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {isKorean ? 'YouTube에서 보기 →' : 'Watch on YouTube →'}
             </a>
           </section>
         )}
       </div>
     )}
+
+    <div class="article-body"><Content /></div>
   </article>
 </BaseLayout>
 
 <style>
   .story-detail {
     width: 100%;
-    max-width: 1100px;
-    padding-inline: 24px;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding: 54px 32px 80px;
+  }
+
+  .story-hero-visual {
+    position: relative;
+    width: 100%;
+    margin: 0 0 clamp(58px, 7vw, 96px);
+    overflow: hidden;
+    background: rgba(1, 8, 15, 0.48);
+  }
+
+  .story-hero-visual img {
+    display: block;
+    width: 100%;
+    max-height: min(72vh, 760px);
+    height: auto;
+    object-fit: contain;
     margin-inline: auto;
   }
 
-  .story-detail h1 { font-size: clamp(3.4rem, 6vw, 6.2rem); }
-  .story-detail .article-date { margin-bottom: 0; padding-bottom: 4rem; }
-  .story-detail .article-body { max-width: 860px; }
+  .story-play-cue {
+    position: absolute;
+    right: 26px;
+    bottom: 26px;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgba(246, 244, 239, 0.45);
+    border-radius: 50%;
+    color: var(--text);
+    background: rgba(1, 8, 15, 0.72);
+    font-size: 0.8rem;
+    pointer-events: none;
+  }
+
+  .story-detail-header {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto clamp(68px, 8vw, 108px);
+  }
+
+  .story-detail--text-only .story-detail-header {
+    padding-top: clamp(44px, 6vw, 80px);
+  }
+
+  .story-detail-header--with-media {
+    margin-bottom: clamp(32px, 4vw, 48px);
+  }
+
+  .story-formats,
+  .story-date {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .story-formats {
+    margin-bottom: 30px;
+  }
+
+  .story-detail h1 {
+    max-width: 1000px;
+    margin-bottom: 32px;
+    font-size: clamp(3.25rem, 5.2vw, 4.75rem);
+    line-height: 1.04;
+  }
+
+  .story-description {
+    max-width: 800px;
+    margin-bottom: 30px;
+    color: var(--body-text);
+    font-size: clamp(1.12rem, 1.7vw, 1.32rem);
+    line-height: 1.75;
+  }
+
+  .story-date {
+    display: block;
+    line-height: 1.6;
+  }
+
+  .media-external-link {
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: rgba(246, 244, 239, 0.34);
+    text-underline-offset: 0.32em;
+  }
+
+  .media-external-link:focus-visible,
+  .article-body :global(a:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 5px;
+  }
+
+  .story-media {
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto clamp(56px, 7vw, 88px);
+  }
+
+  .story-media-item {
+    padding-bottom: 36px;
+    border-bottom: 1px solid rgba(220, 230, 240, 0.13);
+  }
+
+  .story-media-item + .story-media-item {
+    padding-top: 36px;
+  }
+
+  .story-media-item iframe {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    border: 0;
+  }
+
+  .media-external-link {
+    display: inline-block;
+    margin-top: 18px;
+  }
+
+  .video-embed {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-embed iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .story-detail .article-body {
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
+    color: var(--body-text);
+    font-size: clamp(1.08rem, 1.25vw, 1.17rem);
+    line-height: 1.9;
+  }
+
+  .story-detail .article-body :global(p) {
+    margin-bottom: 1.7em;
+  }
+
+  .story-detail .article-body :global(h2),
+  .story-detail .article-body :global(h3) {
+    font-family: var(--font-editorial);
+    font-weight: var(--editorial-title-weight);
+    letter-spacing: var(--editorial-title-tracking);
+  }
+
+  .story-detail .article-body :global(h2) {
+    margin: 2.5em 0 0.85em;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    line-height: 1.1;
+  }
+
+  .story-detail .article-body :global(h3) {
+    margin: 2.2em 0 0.8em;
+    font-size: clamp(1.65rem, 3vw, 2.3rem);
+    line-height: 1.18;
+  }
+
+  .story-detail .article-body :global(a) {
+    text-decoration: underline;
+    text-decoration-color: rgba(246, 244, 239, 0.38);
+    text-underline-offset: 0.24em;
+  }
+
+  .story-detail .article-body :global(blockquote) {
+    margin: clamp(42px, 6vw, 68px) 0;
+    padding: 6px 0 6px clamp(22px, 4vw, 38px);
+    border-left: 1px solid rgba(220, 230, 240, 0.34);
+    color: #e4e8ec;
+    font-family: var(--font-editorial);
+    font-size: clamp(1.3rem, 2.3vw, 1.7rem);
+    line-height: 1.65;
+  }
+
+  .story-detail .article-body :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .story-detail .article-body :global(ul),
+  .story-detail .article-body :global(ol) {
+    margin: 0 0 1.8em;
+    padding-left: 1.4em;
+  }
+
+  .story-detail .article-body :global(li) {
+    margin-bottom: 0.65em;
+  }
+
   .story-detail .article-body :global(img) {
     display: block;
     width: 100%;
     max-width: 100%;
     height: auto;
-    margin-inline: auto;
+    margin: clamp(44px, 7vw, 72px) auto;
   }
-  .story-intro { max-width: 860px; color: var(--body-text); font-size: 1.12rem; }
-  .story-hero-image { display: block; max-width: 100%; height: auto; margin-bottom: 2rem; }
-  .story-media { display: grid; gap: 2rem; max-width: 860px; margin-top: 3rem; }
-  .story-media-item iframe { display: block; width: 100%; max-width: 100%; border: 0; }
-  .story-media-item a { display: inline-block; margin-top: 12px; }
-  .video-embed { width: 100%; aspect-ratio: 16 / 9; }
-  .video-embed iframe { width: 100%; height: 100%; }
+
+  .story-detail .article-body :global(figure) {
+    width: 100%;
+    max-width: 100%;
+    margin: clamp(44px, 7vw, 72px) 0;
+  }
+
+  .story-detail .article-body :global(figure img) {
+    margin: 0;
+  }
+
+  .story-detail .article-body :global(figcaption) {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.6;
+  }
+
+  .story-detail .article-body :global(pre) {
+    max-width: 100%;
+    margin: 2.5em 0;
+    padding: 22px;
+    overflow-x: auto;
+    background: rgba(1, 8, 15, 0.62);
+  }
+
   @media (max-width: 760px) {
-    .story-detail { padding-inline: 18px; }
-    .story-detail .article-date { padding-bottom: 2.5rem; }
+    .story-detail {
+      padding: 30px 18px 56px;
+    }
+
+    .story-hero-visual {
+      margin-bottom: 52px;
+    }
+
+    .story-hero-visual img {
+      max-height: none;
+    }
+
+    .story-play-cue {
+      right: 16px;
+      bottom: 16px;
+      width: 44px;
+      height: 44px;
+    }
+
+    .story-detail-header,
+    .story-detail--text-only .story-detail-header {
+      margin-bottom: 62px;
+      padding-top: 28px;
+    }
+
+    .story-detail-header--with-media,
+    .story-detail--text-only .story-detail-header--with-media {
+      margin-bottom: 32px;
+    }
+
+    .story-detail h1 {
+      margin-bottom: 26px;
+      font-size: clamp(2.125rem, 10vw, 2.75rem);
+      line-height: 1.06;
+    }
+
+    .story-description {
+      font-size: 1.08rem;
+    }
+
+    .story-media {
+      margin-bottom: 60px;
+    }
+
+    .story-media-item {
+      padding-bottom: 30px;
+    }
+
+    .story-media-item + .story-media-item {
+      padding-top: 30px;
+    }
+
+    .story-detail .article-body {
+      font-size: 1.07rem;
+      line-height: 1.82;
+    }
   }
 </style>

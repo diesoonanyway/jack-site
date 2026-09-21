@@ -7,6 +7,8 @@ date: 2026-09-18
 createdAt: "2026-09-18T09:21:25+10:00"
 draft: false
 lang: en
+formats:
+  - read
 translation: /ko/stories/my-notes-get-smarter/
 ---
 I saved everything.  

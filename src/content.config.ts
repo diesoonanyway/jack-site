@@ -24,6 +24,7 @@ const stories = defineCollection({
     heroImage: z.string().optional(),
     spotifyUrl: z.string().optional(),
     youtubeUrl: z.string().optional(),
+    formats: z.array(z.enum(['read', 'listen', 'watch'])).default([]),
     featured: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
     episode: z.union([z.string(), z.number()]).optional(),

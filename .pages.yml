@@ -99,6 +99,20 @@ content:
         type: string
         description: Optional watch, youtu.be, Shorts or embed URL.
 
+      - name: formats
+        label: Formats
+        type: select
+        description: Choose every way this Story can be experienced.
+        options:
+          multiple: true
+          values:
+            - name: read
+              label: Read
+            - name: listen
+              label: Listen
+            - name: watch
+              label: Watch
+
       - name: episode
         label: Episode (optional)
         type: string
