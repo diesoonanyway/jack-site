@@ -9,24 +9,20 @@ const { lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
 const pathPrefix = isKorean ? '/ko' : '';
 const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
-
-const posts = sortByCreatedAt((await getCollection('journal'))
+const posts = sortByCreatedAt((await getCollection('stories'))
   .filter((post) => !post.data.draft && post.data.lang === lang));
 ---
 
 <BaseLayout
-  title="Journal — Jack"
-  description={isKorean ? '에세이, 아이디어 그리고 유용한 글.' : 'Essays, ideas and useful writing.'}
+  title={isKorean ? '스토리 — Jack' : 'Stories — Jack'}
+  description={isKorean ? '글로 읽고, 듣고, 볼 수 있는 이야기.' : 'Stories to read, listen to and watch.'}
   {lang}
-  alternatePath={isKorean ? '/journal/' : '/ko/journal/'}
+  alternatePath={isKorean ? '/stories/' : '/ko/stories/'}
 >
   <section class="editorial-intro">
-    <h1>Journal</h1>
-
+    <h1>{isKorean ? '스토리' : 'Stories'}</h1>
     <p class="muted">
-      {isKorean
-        ? '발전시킬 가치가 있는 에세이, 관찰 그리고 아이디어입니다.'
-        : 'Essays, observations and ideas worth developing.'}
+      {isKorean ? '읽고, 듣고, 볼 수 있는 이야기.' : 'Stories to read, listen to and watch.'}
     </p>
   </section>
 
@@ -37,35 +33,23 @@ const posts = sortByCreatedAt((await getCollection('journal'))
           <article class="editorial-entry">
             <p class="eyebrow">
               {post.data.date.toLocaleDateString(dateLocale, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
+                year: 'numeric', month: 'long', day: 'numeric',
               })}
             </p>
-
             <h2>
-              <a href={`${pathPrefix}/journal/${getPublicSlug(post.id, post.data.lang)}/`}>
+              <a href={`${pathPrefix}/stories/${getPublicSlug(post.id, post.data.lang)}/`}>
                 {post.data.title}
               </a>
             </h2>
-
-            {post.data.description && (
-              <p class="muted entry-description">
-                {post.data.description}
-              </p>
-            )}
-
-            <a
-              class="text-link"
-              href={`${pathPrefix}/journal/${getPublicSlug(post.id, post.data.lang)}/`}
-            >
+            {post.data.description && <p class="muted entry-description">{post.data.description}</p>}
+            <a class="text-link" href={`${pathPrefix}/stories/${getPublicSlug(post.id, post.data.lang)}/`}>
               {isKorean ? '읽기' : 'Read'} →
             </a>
           </article>
         ))}
       </div>
     ) : (
-      <p>{isKorean ? '아직 발행된 Journal 항목이 없습니다.' : 'No published journal entries yet.'}</p>
+      <p class="empty-state">{isKorean ? '아직 발행된 스토리가 없습니다.' : 'No published stories yet.'}</p>
     )}
   </section>
 </BaseLayout>

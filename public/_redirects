@@ -1,0 +1,25 @@
+# Legacy content routes; static destinations retain the original slug.
+/journal /stories/ 301
+/journal/ /stories/ 301
+/journal/* /stories/:splat 301
+/ko/journal /ko/stories/ 301
+/ko/journal/ /ko/stories/ 301
+/ko/journal/* /ko/stories/:splat 301
+/podcast /stories/ 301
+/podcast/ /stories/ 301
+/podcast/* /stories/:splat 301
+/ko/podcast /ko/stories/ 301
+/ko/podcast/ /ko/stories/ 301
+/ko/podcast/* /ko/stories/:splat 301
+/youtube /stories/ 301
+/youtube/ /stories/ 301
+/youtube/* /stories/:splat 301
+/ko/youtube /ko/stories/ 301
+/ko/youtube/ /ko/stories/ 301
+/ko/youtube/* /ko/stories/:splat 301
+/writing /stories/ 301
+/writing/ /stories/ 301
+/writing/* /stories/:splat 301
+/ko/writing /ko/stories/ 301
+/ko/writing/ /ko/stories/ 301
+/ko/writing/* /ko/stories/:splat 301

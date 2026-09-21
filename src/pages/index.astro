@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../lib/content-slug';
 import { sortByCreatedAt } from '../lib/content-sort';
+import { getSpotifyExternalUrl } from '../lib/spotify';
 import { getYouTubeThumbnailUrl } from '../lib/youtube';
 
 const { lang = 'en' } = Astro.props;
@@ -13,15 +14,15 @@ const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
 
 const copy = isKorean
   ? {
-      description: 'Journal, 대화, 영상 그리고 유용한 것들.',
-      heroEyebrow: 'Journal',
+      description: 'Stories, 대화, 영상 그리고 유용한 것들.',
+      heroEyebrow: 'Stories',
       heroMeta: '아이디어 → 미디어 → 제품',
       heroTitle: '발전시킬 가치가\n있는 아이디어.',
       heroCopy: '아이디어는 글쓰기에서 시작합니다. 가장 강한 아이디어는 대화, 영상 그리고 유용한 제품으로 성장합니다.',
-      heroCta: 'Journal 둘러보기 →',
-      journal: 'Journal',
+      heroCta: 'Stories 둘러보기 →',
+      journal: 'Stories',
       readArticle: '글 읽기 →',
-      noJournal: '아직 발행된 Journal 항목이 없습니다.',
+      noJournal: '아직 발행된 스토리가 없습니다.',
       viewAll: '모두 보기 →',
       previousArticles: '이전 글',
       nextArticles: '다음 글',
@@ -50,15 +51,15 @@ const copy = isKorean
       aboutJack: 'Jack 소개 →',
     }
   : {
-      description: 'Journal, conversations, videos and useful things.',
+      description: 'Stories, conversations, videos and useful things.',
       heroEyebrow: 'IF IT ALL ENDS',
       heroMeta: null,
       heroTitle: 'A Korean writer studying what it means to remain human in a faster, smarter world. If it all ends anyway...',
       heroCopy: null,
       heroCta: 'Explore ↓',
-      journal: 'Journal',
+      journal: 'Stories',
       readArticle: 'Read article →',
-      noJournal: 'No published journal entries yet.',
+      noJournal: 'No published stories yet.',
       viewAll: 'View all →',
       previousArticles: 'Previous articles',
       nextArticles: 'Next articles',
@@ -87,20 +88,8 @@ const copy = isKorean
       aboutJack: 'About Jack →',
     };
 
-const journalEntries =
-  sortByCreatedAt((await getCollection('journal'))
-    .filter(
-      (post) => !post.data.draft && post.data.lang === lang
-    ));
-
-const podcasts =
-  sortByCreatedAt((await getCollection('podcast'))
-    .filter(
-      (post) => !post.data.draft && post.data.lang === lang
-    ));
-
-const videos =
-  sortByCreatedAt((await getCollection('youtube'))
+const stories =
+  sortByCreatedAt((await getCollection('stories'))
     .filter(
       (post) => !post.data.draft && post.data.lang === lang
     ));
@@ -116,8 +105,8 @@ const apps =
         a.data.date.valueOf()
     );
 
-const podcastRail = podcasts;
-const videoRail = videos;
+const podcastRail = stories.filter((post) => getSpotifyExternalUrl(post.data.spotifyUrl));
+const videoRail = stories.filter((post) => getYouTubeThumbnailUrl(post.data.youtubeUrl));
 
 const featuredApp =
   apps.find(
@@ -157,7 +146,7 @@ const featuredApp =
     <div class={copy.heroCopy ? 'hero-bottom' : 'hero-bottom hero-bottom--single'}>
       {copy.heroCopy && <p>{copy.heroCopy}</p>}
 
-      <a href={isKorean ? localizedPath('/journal/') : '#journal'}>
+      <a href={isKorean ? localizedPath('/stories/') : '#stories'}>
         {copy.heroCta}
       </a>
     </div>
@@ -167,23 +156,23 @@ const featuredApp =
   <div class="home-content-sections">
     <!-- JOURNAL -->
 
-    <section class="home-section home-flow-section media-section" id="journal" data-carousel>
+    <section class="home-section home-flow-section media-section" id="stories" data-carousel>
       <div class="section-heading-row">
         <h2 class="section-heading">{copy.journal}</h2>
-        <a href={localizedPath('/journal/')}>
+        <a href={localizedPath('/stories/')}>
           {copy.viewAll}
         </a>
       </div>
 
-      {journalEntries.length > 0 ? (
+      {stories.length > 0 ? (
         <div class="media-rail-frame">
           <div class="media-rail-controls" hidden>
             <button type="button" data-carousel-direction="previous" aria-label={copy.previousArticles}>←</button>
             <button type="button" data-carousel-direction="next" aria-label={copy.nextArticles}>→</button>
           </div>
           <div class="media-rail journal-rail" role="region" aria-roledescription="carousel" aria-label={copy.journal} data-carousel-track>
-            {journalEntries.map((post) => {
-              const articlePath = localizedPath(`/journal/${getPublicSlug(post.id, post.data.lang)}/`);
+            {stories.map((post) => {
+              const articlePath = localizedPath(`/stories/${getPublicSlug(post.id, post.data.lang)}/`);
               return (
                 <article class="media-rail-item journal-rail-item">
                   <time datetime={post.data.date.toISOString()}>
@@ -221,7 +210,7 @@ const featuredApp =
           <article class="media-rail-item podcast-rail-item">
             {post.data.episode && <span class="media-episode">EP. {post.data.episode}</span>}
             <h3 class="media-card-title">
-              <a class="media-card-link" href={localizedPath(`/podcast/${getPublicSlug(post.id, post.data.lang)}/`)}>
+              <a class="media-card-link" href={localizedPath(`/stories/${getPublicSlug(post.id, post.data.lang)}/`)}>
                 {post.data.title}
               </a>
             </h3>
@@ -229,8 +218,8 @@ const featuredApp =
             <time datetime={post.data.date.toISOString()}>
               {post.data.date.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
             </time>
-            {post.data.audioUrl && (
-              <a class="media-external-link" href={post.data.audioUrl} target="_blank" rel="noopener noreferrer">
+            {getSpotifyExternalUrl(post.data.spotifyUrl) && (
+              <a class="media-external-link" href={getSpotifyExternalUrl(post.data.spotifyUrl)} target="_blank" rel="noopener noreferrer">
                 {copy.listenSpotify}
               </a>
             )}
@@ -252,16 +241,16 @@ const featuredApp =
         </div>
         <div class="media-rail youtube-rail" role="region" aria-roledescription="carousel" aria-label={copy.youtube} data-carousel-track>
         {videoRail.map((post) => {
-          const thumbnail = getYouTubeThumbnailUrl(post.data.youtubeId);
+          const thumbnail = getYouTubeThumbnailUrl(post.data.youtubeUrl);
           return (
             <article class="media-rail-item youtube-rail-item">
               {thumbnail && (
-                <a class="media-thumbnail" href={localizedPath(`/youtube/${getPublicSlug(post.id, post.data.lang)}/`)} tabIndex={-1} aria-hidden="true">
+                <a class="media-thumbnail" href={localizedPath(`/stories/${getPublicSlug(post.id, post.data.lang)}/`)} tabIndex={-1} aria-hidden="true">
                   <img src={thumbnail} alt="" loading="lazy" width="480" height="360" />
                 </a>
               )}
               <h3 class="media-card-title">
-                <a class="media-card-link" href={localizedPath(`/youtube/${getPublicSlug(post.id, post.data.lang)}/`)}>
+                <a class="media-card-link" href={localizedPath(`/stories/${getPublicSlug(post.id, post.data.lang)}/`)}>
                   {post.data.title}
                 </a>
               </h3>

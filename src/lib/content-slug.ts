@@ -20,13 +20,13 @@ function assertMatchingLanguage(
   }
 }
 
-export function getJournalEntryId(entry: string, lang: unknown): string {
+export function getPairedEntryId(entry: string, lang: unknown): string {
   const normalizedEntry = entry.replace(/\\/g, '/');
   const match = /^(.*)\/index_(en|ko)\.md$/.exec(normalizedEntry);
 
   if (!match?.[1] || !match[2]) {
     throw new Error(
-      `Invalid Journal entry path: "${entry}". Expected <slug>/index_en.md or <slug>/index_ko.md.`,
+      `Invalid paired entry path: "${entry}". Expected <slug>/index_en.md or <slug>/index_ko.md.`,
     );
   }
 
@@ -38,10 +38,10 @@ export function getJournalEntryId(entry: string, lang: unknown): string {
 
 export function getPublicSlug(id: string, lang: ContentLanguage): string {
   const normalizedId = id.replace(/\\/g, '/');
-  const journalMatch = /^(.*)\/index_(en|ko)$/.exec(normalizedId);
+  const pairedMatch = /^(.*)\/index_(en|ko)$/.exec(normalizedId);
 
-  if (journalMatch?.[1] && journalMatch[2]) {
-    const [, publicSlug, fileLanguage] = journalMatch;
+  if (pairedMatch?.[1] && pairedMatch[2]) {
+    const [, publicSlug, fileLanguage] = pairedMatch;
     assertMatchingLanguage(normalizedId, fileLanguage, lang);
     return publicSlug;
   }

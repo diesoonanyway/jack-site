@@ -1,0 +1,129 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublicSlug } from '../../lib/content-slug';
+import { getSafeExternalAudioUrl, getSpotifyEpisodeId, getSpotifyExternalUrl } from '../../lib/spotify';
+import { getYouTubeVideoId } from '../../lib/youtube';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('stories');
+  return posts
+    .filter((post) => !post.data.draft && post.data.lang === 'en')
+    .map((post) => ({
+      params: { id: getPublicSlug(post.id, post.data.lang) },
+      props: { post },
+    }));
+}
+
+const { post, lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
+const slug = getPublicSlug(post.id, post.data.lang);
+const counterpart = (await getCollection('stories')).find((entry) =>
+  !entry.data.draft && entry.data.lang !== lang &&
+  getPublicSlug(entry.id, entry.data.lang) === slug
+);
+const alternatePath = counterpart
+  ? `${isKorean ? '' : '/ko'}/stories/${slug}/`
+  : undefined;
+const spotifyId = getSpotifyEpisodeId(post.data.spotifyUrl);
+const spotifyExternalUrl = getSpotifyExternalUrl(post.data.spotifyUrl);
+const audioUrl = getSafeExternalAudioUrl(post.data.spotifyUrl);
+const youtubeId = getYouTubeVideoId(post.data.youtubeUrl);
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  title={`${post.data.title} — Jack`}
+  description={post.data.description || post.data.title}
+  image={post.data.heroImage || undefined}
+  {lang}
+  {alternatePath}
+>
+  <article class="story-detail">
+    <p class="eyebrow"><a href={`${pathPrefix}/stories/`}>{isKorean ? '스토리' : 'Stories'}</a></p>
+    <h1 class="editorial-title">{post.data.title}</h1>
+    <p class="muted article-date">
+      {post.data.date.toLocaleDateString(isKorean ? 'ko-KR' : 'en-AU', {
+        year: 'numeric', month: 'long', day: 'numeric',
+      })}
+    </p>
+    {post.data.intro && <p class="story-intro">{post.data.intro}</p>}
+    {post.data.heroImage && <img class="story-hero-image" src={post.data.heroImage} alt="" loading="lazy" />}
+
+    <div class="article-body"><Content /></div>
+
+    {(audioUrl || youtubeId) && (
+      <div class="story-media">
+        {audioUrl && (
+          <section class="story-media-item">
+            {spotifyId && (
+              <iframe
+                title={isKorean ? `${post.data.title} Spotify 재생기` : `${post.data.title} Spotify player`}
+                src={`https://open.spotify.com/embed/episode/${spotifyId}`}
+                width="100%"
+                height="152"
+                frameborder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                allowfullscreen
+              ></iframe>
+            )}
+            <a href={audioUrl} target="_blank" rel="noopener noreferrer">
+              {spotifyExternalUrl
+                ? (isKorean ? 'Spotify에서 열기 →' : 'Open in Spotify →')
+                : (isKorean ? '오디오 링크 열기 →' : 'Open audio link →')}
+            </a>
+          </section>
+        )}
+        {youtubeId && (
+          <section class="story-media-item">
+            <div class="video-embed">
+              <iframe
+                title={isKorean ? `${post.data.title} YouTube 영상` : `${post.data.title} YouTube video`}
+                src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <a href={`https://www.youtube.com/watch?v=${youtubeId}`} target="_blank" rel="noopener noreferrer">
+              {isKorean ? 'YouTube에서 보기 →' : 'Watch on YouTube →'}
+            </a>
+          </section>
+        )}
+      </div>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .story-detail {
+    width: 100%;
+    max-width: 1100px;
+    padding-inline: 24px;
+    margin-inline: auto;
+  }
+
+  .story-detail h1 { font-size: clamp(3.4rem, 6vw, 6.2rem); }
+  .story-detail .article-date { margin-bottom: 0; padding-bottom: 4rem; }
+  .story-detail .article-body { max-width: 860px; }
+  .story-detail .article-body :global(img) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+  }
+  .story-intro { max-width: 860px; color: var(--body-text); font-size: 1.12rem; }
+  .story-hero-image { display: block; max-width: 100%; height: auto; margin-bottom: 2rem; }
+  .story-media { display: grid; gap: 2rem; max-width: 860px; margin-top: 3rem; }
+  .story-media-item iframe { display: block; width: 100%; max-width: 100%; border: 0; }
+  .story-media-item a { display: inline-block; margin-top: 12px; }
+  .video-embed { width: 100%; aspect-ratio: 16 / 9; }
+  .video-embed iframe { width: 100%; height: 100%; }
+  @media (max-width: 760px) {
+    .story-detail { padding-inline: 18px; }
+    .story-detail .article-date { padding-bottom: 2.5rem; }
+  }
+</style>

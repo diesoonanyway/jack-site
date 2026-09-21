@@ -12,10 +12,10 @@ settings:
     merge: true
 
 content:
-  - name: journal
-    label: Journal
+  - name: stories
+    label: Stories
     type: collection
-    path: src/content/journal
+    path: src/content/stories
     format: yaml-frontmatter
     subfolders: true
 
@@ -25,7 +25,7 @@ content:
       delete: false
 
     filename:
-      template: "{primary}.md"
+      template: "index_{lang}.md"
       field: create
 
     view:
@@ -46,88 +46,8 @@ content:
         label: Description
         type: text
 
-      - name: date
-        label: Date
-        type: date
-        required: true
-        options:
-          format: yyyy-MM-dd
-
-      - name: createdAt
-        label: Created At
-        type: date
-        hidden: true
-        options:
-          time: true
-          step: 1
-          format: "yyyy-MM-dd'T'HH:mm:ssXXX"
-
-      - name: draft
-        label: Draft
-        type: boolean
-        default: true
-
-      - name: lang
-        label: Language
-        type: select
-        required: true
-        description: Must match the filename, index_en.md or index_ko.md.
-        options:
-          values:
-            - name: en
-              label: English
-            - name: ko
-              label: Korean
-
-      - name: translation
-        label: Translation
-        type: string
-        description: Add the matching EN or KO Journal URL after both language files exist.
-
-      - name: body
-        label: Body
-        type: rich-text
-        options:
-          format: markdown
-          media: media
-          switcher: true
-
-  - name: podcast
-    label: Podcast
-    type: collection
-    path: src/content/podcast
-    format: yaml-frontmatter
-    subfolders: true
-
-    operations:
-      create: true
-      rename: false
-      delete: false
-
-    filename:
-      template: "{primary}/index.md"
-      field: false
-
-    view:
-      layout: tree
-      node:
-        filename: index.md
-        hideDirs: others
-      fields: [title, lang, date, draft]
-      primary: title
-      sort: [createdAt, date, title]
-      default:
-        sort: createdAt
-        order: desc
-
-    fields:
-      - name: title
-        label: Title
-        type: string
-        required: true
-
-      - name: description
-        label: Description
+      - name: intro
+        label: Intro / representative sentence
         type: text
 
       - name: date
@@ -155,7 +75,7 @@ content:
         label: Language
         type: select
         required: true
-        description: Each language is a separate Podcast entry with its own folder and index.md.
+        description: Create the file inside its story slug folder; language must match index_en.md or index_ko.md.
         options:
           values:
             - name: en
@@ -163,98 +83,30 @@ content:
             - name: ko
               label: Korean
 
-      - name: episode
-        label: Episode
-        type: string
+      - name: heroImage
+        label: Hero image
+        type: image
+        options:
+          media: media
 
-      - name: audioUrl
+      - name: spotifyUrl
         label: Spotify URL
         type: string
+        description: Optional Spotify episode URL.
 
-      - name: body
-        label: Body
-        type: rich-text
-        options:
-          format: markdown
-          media: media
-          switcher: true
-
-  - name: youtube
-    label: YouTube
-    type: collection
-    path: src/content/youtube
-    format: yaml-frontmatter
-    subfolders: true
-
-    operations:
-      create: true
-      rename: false
-      delete: false
-
-    filename:
-      template: "{primary}/index.md"
-      field: false
-
-    view:
-      layout: tree
-      node:
-        filename: index.md
-        hideDirs: others
-      fields: [title, lang, date, draft]
-      primary: title
-      sort: [createdAt, date, title]
-      default:
-        sort: createdAt
-        order: desc
-
-    fields:
-      - name: title
-        label: Title
-        type: string
-        required: true
-
-      - name: description
-        label: Description
-        type: text
-
-      - name: date
-        label: Date
-        type: date
-        required: true
-        options:
-          format: yyyy-MM-dd
-
-      - name: createdAt
-        label: Created At
-        type: date
-        hidden: true
-        options:
-          time: true
-          step: 1
-          format: "yyyy-MM-dd'T'HH:mm:ssXXX"
-
-      - name: draft
-        label: Draft
-        type: boolean
-        default: true
-
-      - name: lang
-        label: Language
-        type: select
-        required: true
-        description: Each language is an independent YouTube entry with its own folder and index.md.
-        options:
-          values:
-            - name: en
-              label: English
-            - name: ko
-              label: Korean
-
-      - name: youtubeId
+      - name: youtubeUrl
         label: YouTube URL
         type: string
-        required: true
-        description: Paste a watch, youtu.be, Shorts, or embed URL.
+        description: Optional watch, youtu.be, Shorts or embed URL.
+
+      - name: episode
+        label: Episode (optional)
+        type: string
+
+      - name: featured
+        label: Featured
+        type: boolean
+        default: false
 
       - name: body
         label: Body

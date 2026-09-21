@@ -3,7 +3,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 
 const {
   title = 'Jack',
-  description = 'Journal, ideas and useful things.',
+  description = 'Stories, ideas and useful things.',
   image = '/images/moon-ocean.png',
   type = 'website',
   noindex = false,
@@ -29,26 +29,22 @@ const pathPrefix = lang === 'ko' ? '/ko' : '';
 const homePath = lang === 'ko' ? '/ko/' : '/';
 const navigation = lang === 'ko'
   ? {
-      journal: 'Journal',
-      podcast: '팟캐스트',
-      youtube: '유튜브',
+      stories: '스토리',
       apps: '앱',
       about: '소개',
       subscribe: '구독',
       privacy: '개인정보 처리방침',
       contact: '연락처',
-      tagline: 'Journal → 대화 → 제품',
+      tagline: 'Stories → 대화 → 제품',
     }
   : {
-      journal: 'Journal',
-      podcast: 'Podcast',
-      youtube: 'YouTube',
+      stories: 'Stories',
       apps: 'Apps',
       about: 'About',
       subscribe: 'Subscribe',
       privacy: 'Privacy',
       contact: 'Contact',
-      tagline: 'Journal → Conversation → Product',
+      tagline: 'Stories → Conversation → Product',
     };
 
 const socialImageURL = Astro.site
@@ -595,16 +591,8 @@ const measurementId = 'G-Z9K72KWHGP';
         </a>
 
         <nav class="nav">
-          <a href={`${pathPrefix}/journal/`}>
-            {navigation.journal}
-          </a>
-
-          <a href={`${pathPrefix}/podcast/`}>
-            {navigation.podcast}
-          </a>
-
-          <a href={`${pathPrefix}/youtube/`}>
-            {navigation.youtube}
+          <a href={`${pathPrefix}/stories/`}>
+            {navigation.stories}
           </a>
 
           <a href={`${pathPrefix}/apps/`}>

@@ -4,118 +4,39 @@ import { glob } from 'astro/loaders';
 
 import { z } from 'astro/zod';
 
-import { getJournalEntryId } from './lib/content-slug';
+import { getPairedEntryId } from './lib/content-slug';
+
+const stories = defineCollection({
+  loader: glob({
+    pattern: '**/index_{en,ko}.md',
+    base: './src/content/stories',
+    generateId: ({ entry, data }) => getPairedEntryId(entry, data.lang),
+  }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    intro: z.string().optional(),
+    date: z.coerce.date(),
+    createdAt: z.coerce.date().optional(),
+    draft: z.boolean().default(true),
+    lang: z.enum(['en', 'ko']).default('en'),
+    translation: z.string().optional(),
+    heroImage: z.string().optional(),
+    spotifyUrl: z.string().optional(),
+    youtubeUrl: z.string().optional(),
+    featured: z.boolean().default(false),
+    tags: z.array(z.string()).default([]),
+    episode: z.union([z.string(), z.number()]).optional(),
+    relatedPodcast: z.string().optional(),
+    relatedYoutube: z.string().optional(),
+    relatedApp: z.string().optional(),
+  }),
+});
 
 const languageFields = {
   lang: z.enum(['en', 'ko']).default('en'),
   translation: z.string().optional(),
 };
-
-const journal = defineCollection({
-  loader: glob({
-    pattern: '**/index_{en,ko}.md',
-    base: './src/content/journal',
-    generateId: ({ entry, data }) => getJournalEntryId(entry, data.lang),
-  }),
-
-  schema: z.object({
-    title: z.string(),
-
-    date: z.coerce.date(),
-
-    createdAt: z.coerce.date().optional(),
-
-    description: z.string().optional(),
-
-    tags: z.array(z.string()).default([]),
-
-    draft: z.boolean().default(true),
-
-    image: z.string().optional(),
-
-    featured: z.boolean().default(false),
-
-    ...languageFields,
-
-    relatedPodcast: z.string().optional(),
-
-    relatedYoutube: z.string().optional(),
-
-    relatedApp: z.string().optional(),
-  }),
-});
-
-const podcast = defineCollection({
-  loader: glob({
-    pattern: '**/index.md',
-    base: './src/content/podcast',
-  }),
-
-  schema: z.object({
-    title: z.string(),
-
-    date: z.coerce.date(),
-
-    createdAt: z.coerce.date().optional(),
-
-    description: z.string().optional(),
-
-    tags: z.array(z.string()).default([]),
-
-    draft: z.boolean().default(true),
-
-    image: z.string().optional(),
-
-    featured: z.boolean().default(false),
-
-    ...languageFields,
-
-    episode: z.union([z.string(), z.number()]).optional(),
-
-    audioUrl: z.string().optional(),
-
-    relatedJournal: z.string().optional(),
-
-    relatedYoutube: z.string().optional(),
-
-    relatedApp: z.string().optional(),
-  }),
-});
-
-const youtube = defineCollection({
-  loader: glob({
-    pattern: '**/index.md',
-    base: './src/content/youtube',
-  }),
-
-  schema: z.object({
-    title: z.string(),
-
-    date: z.coerce.date(),
-
-    createdAt: z.coerce.date().optional(),
-
-    description: z.string().optional(),
-
-    tags: z.array(z.string()).default([]),
-
-    draft: z.boolean().default(true),
-
-    image: z.string().optional(),
-
-    featured: z.boolean().default(false),
-
-    ...languageFields,
-
-    youtubeId: z.string().optional(),
-
-    relatedJournal: z.string().optional(),
-
-    relatedPodcast: z.string().optional(),
-
-    relatedApp: z.string().optional(),
-  }),
-});
 
 const apps = defineCollection({
   loader: glob({
@@ -147,11 +68,6 @@ const apps = defineCollection({
 });
 
 export const collections = {
-  journal,
-
-  podcast,
-
-  youtube,
-
+  stories,
   apps,
 };
