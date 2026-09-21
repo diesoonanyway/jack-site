@@ -25,7 +25,7 @@ content:
       delete: true
 
     filename:
-      template: "index_{lang}.md"
+      template: "{slug}/index_{lang}.md"
       field: false
 
     view:
