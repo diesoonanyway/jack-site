@@ -21,12 +21,12 @@ content:
 
     operations:
       create: true
-      rename: false
-      delete: false
+      rename: true
+      delete: true
 
     filename:
       template: "index_{lang}.md"
-      field: create
+      field: false
 
     view:
       fields: [title, lang, date, draft]
