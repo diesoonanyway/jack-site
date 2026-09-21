@@ -30,18 +30,16 @@ const homePath = lang === 'ko' ? '/ko/' : '/';
 const navigation = lang === 'ko'
   ? {
       stories: '스토리',
-      apps: '앱',
       about: '소개',
-      subscribe: '구독',
+      newsletter: '뉴스레터',
       privacy: '개인정보 처리방침',
       contact: '연락처',
       tagline: 'Stories → 대화 → 제품',
     }
   : {
       stories: 'Stories',
-      apps: 'Apps',
       about: 'About',
-      subscribe: 'Subscribe',
+      newsletter: 'Newsletter',
       privacy: 'Privacy',
       contact: 'Contact',
       tagline: 'Stories → Conversation → Product',
@@ -595,10 +593,6 @@ const measurementId = 'G-Z9K72KWHGP';
             {navigation.stories}
           </a>
 
-          <a href={`${pathPrefix}/apps/`}>
-            {navigation.apps}
-          </a>
-
           <a href={`${pathPrefix}/about/`}>
             {navigation.about}
           </a>
@@ -607,7 +601,7 @@ const measurementId = 'G-Z9K72KWHGP';
             href={`${homePath}#subscribe`}
             class="subscribe-link"
           >
-            {navigation.subscribe}
+            {navigation.newsletter}
           </a>
 
           <LanguageSwitcher

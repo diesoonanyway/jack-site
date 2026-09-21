@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../lib/content-slug';
 import { sortByCreatedAt } from '../lib/content-sort';
-import { getSpotifyExternalUrl } from '../lib/spotify';
 import { getYouTubeThumbnailUrl } from '../lib/youtube';
 
 const { lang = 'en' } = Astro.props;
@@ -14,29 +13,17 @@ const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
 
 const copy = isKorean
   ? {
-      description: 'Stories, 대화, 영상 그리고 유용한 것들.',
-      heroEyebrow: 'Stories',
-      heroMeta: '아이디어 → 미디어 → 제품',
+      description: '읽고, 듣고, 볼 수 있는 이야기.',
+      heroEyebrow: 'IF IT ALL ENDS',
       heroTitle: '발전시킬 가치가\n있는 아이디어.',
-      heroCopy: '아이디어는 글쓰기에서 시작합니다. 가장 강한 아이디어는 대화, 영상 그리고 유용한 제품으로 성장합니다.',
       heroCta: 'Stories 둘러보기 →',
-      journal: 'Stories',
+      stories: '스토리',
       readArticle: '글 읽기 →',
-      noJournal: '아직 발행된 스토리가 없습니다.',
+      noStories: '아직 발행된 스토리가 없습니다.',
       viewAll: '모두 보기 →',
-      previousArticles: '이전 글',
-      nextArticles: '다음 글',
-      podcast: '팟캐스트',
-      listenSpotify: 'Spotify에서 듣기 →',
-      previousPodcasts: '이전 팟캐스트',
-      nextPodcasts: '다음 팟캐스트',
-      youtube: '유튜브',
-      previousVideos: '이전 동영상',
-      nextVideos: '다음 동영상',
-      apps: '앱',
-      appsFallback: '실제 문제에서 출발한 유용한 것들입니다.',
-      appsCopy: '아이디어가 해결할 가치가 있는 문제를 가리킬 때 제품이 될 수 있습니다.',
-      exploreApps: '앱 둘러보기 →',
+      recentStories: '최근 스토리',
+      previousStories: '이전 스토리',
+      nextStories: '다음 스토리',
       newsletter: '뉴스레터',
       newsletterTitle: '새로운 아이디어를\n가끔 전합니다.',
       newsletterCopy: '읽거나 보거나 사용해 볼 가치가 있는 것이 생기면 짧은 이메일을 보냅니다.',
@@ -51,29 +38,17 @@ const copy = isKorean
       aboutJack: 'Jack 소개 →',
     }
   : {
-      description: 'Stories, conversations, videos and useful things.',
+      description: 'Stories to read, listen to and watch.',
       heroEyebrow: 'IF IT ALL ENDS',
-      heroMeta: null,
       heroTitle: 'A Korean writer studying what it means to remain human in a faster, smarter world. If it all ends anyway...',
-      heroCopy: null,
       heroCta: 'Explore ↓',
-      journal: 'Stories',
+      stories: 'Stories',
       readArticle: 'Read article →',
-      noJournal: 'No published stories yet.',
+      noStories: 'No published stories yet.',
       viewAll: 'View all →',
-      previousArticles: 'Previous articles',
-      nextArticles: 'Next articles',
-      podcast: 'Podcast',
-      listenSpotify: 'Listen on Spotify →',
-      previousPodcasts: 'Previous podcasts',
-      nextPodcasts: 'Next podcasts',
-      youtube: 'YouTube',
-      previousVideos: 'Previous videos',
-      nextVideos: 'Next videos',
-      apps: 'Apps',
-      appsFallback: 'Useful things built from real problems.',
-      appsCopy: 'When an idea points to a problem worth solving, it may become a product.',
-      exploreApps: 'Explore Apps →',
+      recentStories: 'Recent Stories',
+      previousStories: 'Previous stories',
+      nextStories: 'Next stories',
       newsletter: 'Newsletter',
       newsletterTitle: 'New ideas,\noccasionally.',
       newsletterCopy: 'A short email when there is something worth reading, watching or trying.',
@@ -94,25 +69,18 @@ const stories =
       (post) => !post.data.draft && post.data.lang === lang
     ));
 
-const apps =
-  (await getCollection('apps'))
-    .filter(
-      (app) => !app.data.draft && app.data.lang === lang
-    )
-    .sort(
-      (a, b) =>
-        b.data.date.valueOf() -
-        a.data.date.valueOf()
-    );
+const featuredStory = stories.find((story) => story.data.featured) ?? stories[0];
+const recentStories = featuredStory
+  ? stories.filter((story) => story.id !== featuredStory.id)
+  : [];
 
-const podcastRail = stories.filter((post) => getSpotifyExternalUrl(post.data.spotifyUrl));
-const videoRail = stories.filter((post) => getYouTubeThumbnailUrl(post.data.youtubeUrl));
-
-const featuredApp =
-  apps.find(
-    (app) =>
-      app.data.featured
-  ) ?? apps[0];
+const storyPath = (story) => localizedPath(`/stories/${getPublicSlug(story.id, story.data.lang)}/`);
+const storyVisual = (story) => story.data.heroImage || getYouTubeThumbnailUrl(story.data.youtubeUrl);
+const storyFormats = (story) => [
+  'READ',
+  story.data.spotifyUrl ? 'LISTEN' : null,
+  story.data.youtubeUrl ? 'WATCH' : null,
+].filter(Boolean).join(' · ');
 ---
 
 <BaseLayout
@@ -121,20 +89,9 @@ const featuredApp =
   {lang}
   alternatePath={isKorean ? '/' : '/ko/'}
 >
-
-  <!-- SURFACE -->
-
-  <section
-    class="
-      home-hero
-    "
-  >
+  <section class="home-hero">
     <div class="hero-top">
-      <span>
-        {copy.heroEyebrow}
-      </span>
-
-      {copy.heroMeta && <span>{copy.heroMeta}</span>}
+      <span>{copy.heroEyebrow}</span>
     </div>
 
     <h1 class={isKorean ? 'editorial-title' : 'editorial-title site-intro-title'}>
@@ -143,157 +100,110 @@ const featuredApp =
       ))}
     </h1>
 
-    <div class={copy.heroCopy ? 'hero-bottom' : 'hero-bottom hero-bottom--single'}>
-      {copy.heroCopy && <p>{copy.heroCopy}</p>}
-
-      <a href={isKorean ? localizedPath('/stories/') : '#stories'}>
-        {copy.heroCta}
-      </a>
+    <div class="hero-bottom hero-bottom--single">
+      <a href="#featured-story">{copy.heroCta}</a>
     </div>
   </section>
-
 
   <div class="home-content-sections">
-    <!-- JOURNAL -->
+    {featuredStory ? (
+      <section
+        class="home-section featured-story"
+        id="featured-story"
+      >
+        {storyVisual(featuredStory) && (
+          <a
+            class="featured-visual"
+            href={storyPath(featuredStory)}
+            aria-label={featuredStory.data.title}
+          >
+            <img
+              src={storyVisual(featuredStory)}
+              alt=""
+              loading="eager"
+            />
+            {featuredStory.data.youtubeUrl && (
+              <span class="play-cue" aria-hidden="true">▶</span>
+            )}
+          </a>
+        )}
 
-    <section class="home-section home-flow-section media-section" id="stories" data-carousel>
-      <div class="section-heading-row">
-        <h2 class="section-heading">{copy.journal}</h2>
-        <a href={localizedPath('/stories/')}>
-          {copy.viewAll}
-        </a>
-      </div>
+        <div class:list={['featured-copy', { 'featured-copy--text-only': !storyVisual(featuredStory) }]}>
+          <p class="story-formats">{storyFormats(featuredStory)}</p>
+          <h2 class="editorial-title">
+            <a href={storyPath(featuredStory)}>{featuredStory.data.title}</a>
+          </h2>
+          {featuredStory.data.description && (
+            <p class="featured-description">{featuredStory.data.description}</p>
+          )}
+          <time datetime={featuredStory.data.date.toISOString()}>
+            {featuredStory.data.date.toLocaleDateString(dateLocale, {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </time>
+        </div>
+      </section>
+    ) : (
+      <section class="home-section" id="featured-story">
+        <p class="muted">{copy.noStories}</p>
+      </section>
+    )}
 
-      {stories.length > 0 ? (
+    {recentStories.length > 0 && (
+      <section class="home-section recent-stories" data-carousel>
+        <div class="section-heading-row">
+          <h2 class="section-heading">{copy.recentStories}</h2>
+          <a href={localizedPath('/stories/')}>{copy.viewAll}</a>
+        </div>
+
         <div class="media-rail-frame">
           <div class="media-rail-controls" hidden>
-            <button type="button" data-carousel-direction="previous" aria-label={copy.previousArticles}>←</button>
-            <button type="button" data-carousel-direction="next" aria-label={copy.nextArticles}>→</button>
+            <button type="button" data-carousel-direction="previous" aria-label={copy.previousStories}>←</button>
+            <button type="button" data-carousel-direction="next" aria-label={copy.nextStories}>→</button>
           </div>
-          <div class="media-rail journal-rail" role="region" aria-roledescription="carousel" aria-label={copy.journal} data-carousel-track>
-            {stories.map((post) => {
-              const articlePath = localizedPath(`/stories/${getPublicSlug(post.id, post.data.lang)}/`);
-              return (
-                <article class="media-rail-item journal-rail-item">
-                  <time datetime={post.data.date.toISOString()}>
-                    {post.data.date.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
-                  </time>
-                  <h3 class="media-card-title">
-                    <a class="media-card-link" href={articlePath}>{post.data.title}</a>
-                  </h3>
-                  {post.data.description && <p>{post.data.description}</p>}
-                  <a class="journal-read-link" href={articlePath}>{copy.readArticle}</a>
-                </article>
-              );
-            })}
+
+          <div
+            class="media-rail"
+            role="region"
+            aria-roledescription="carousel"
+            aria-label={copy.recentStories}
+            data-carousel-track
+          >
+            {recentStories.map((story) => (
+              <article class="media-rail-item story-rail-item">
+                {storyVisual(story) && (
+                  <a
+                    class="story-rail-visual"
+                    href={storyPath(story)}
+                    tabindex="-1"
+                    aria-hidden="true"
+                  >
+                    <img src={storyVisual(story)} alt="" loading="lazy" />
+                    {story.data.youtubeUrl && (
+                      <span class="play-cue play-cue--small" aria-hidden="true">▶</span>
+                    )}
+                  </a>
+                )}
+                <p class="story-formats">{storyFormats(story)}</p>
+                <h3 class="media-card-title">
+                  <a class="media-card-link" href={storyPath(story)}>{story.data.title}</a>
+                </h3>
+                {story.data.description && <p class="story-card-description">{story.data.description}</p>}
+                <time datetime={story.data.date.toISOString()}>
+                  {story.data.date.toLocaleDateString(dateLocale, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              </article>
+            ))}
           </div>
         </div>
-      ) : (
-        <p class="muted">{copy.noJournal}</p>
-      )}
-    </section>
-
-
-  <!-- MID WATER -->
-
-  {podcastRail.length > 0 && (
-    <section class="home-section home-flow-section media-section" data-carousel>
-      <h2 class="section-heading">{copy.podcast}</h2>
-
-      <div class="media-rail-frame">
-        <div class="media-rail-controls" hidden>
-          <button type="button" data-carousel-direction="previous" aria-label={copy.previousPodcasts}>←</button>
-          <button type="button" data-carousel-direction="next" aria-label={copy.nextPodcasts}>→</button>
-        </div>
-        <div class="media-rail podcast-rail" role="region" aria-roledescription="carousel" aria-label={copy.podcast} data-carousel-track>
-        {podcastRail.map((post) => (
-          <article class="media-rail-item podcast-rail-item">
-            {post.data.episode && <span class="media-episode">EP. {post.data.episode}</span>}
-            <h3 class="media-card-title">
-              <a class="media-card-link" href={localizedPath(`/stories/${getPublicSlug(post.id, post.data.lang)}/`)}>
-                {post.data.title}
-              </a>
-            </h3>
-            {post.data.description && <p>{post.data.description}</p>}
-            <time datetime={post.data.date.toISOString()}>
-              {post.data.date.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
-            </time>
-            {getSpotifyExternalUrl(post.data.spotifyUrl) && (
-              <a class="media-external-link" href={getSpotifyExternalUrl(post.data.spotifyUrl)} target="_blank" rel="noopener noreferrer">
-                {copy.listenSpotify}
-              </a>
-            )}
-          </article>
-        ))}
-        </div>
-      </div>
-    </section>
-  )}
-
-  {videoRail.length > 0 && (
-    <section class="home-section home-flow-section media-section" data-carousel>
-      <h2 class="section-heading">{copy.youtube}</h2>
-
-      <div class="media-rail-frame">
-        <div class="media-rail-controls" hidden>
-          <button type="button" data-carousel-direction="previous" aria-label={copy.previousVideos}>←</button>
-          <button type="button" data-carousel-direction="next" aria-label={copy.nextVideos}>→</button>
-        </div>
-        <div class="media-rail youtube-rail" role="region" aria-roledescription="carousel" aria-label={copy.youtube} data-carousel-track>
-        {videoRail.map((post) => {
-          const thumbnail = getYouTubeThumbnailUrl(post.data.youtubeUrl);
-          return (
-            <article class="media-rail-item youtube-rail-item">
-              {thumbnail && (
-                <a class="media-thumbnail" href={localizedPath(`/stories/${getPublicSlug(post.id, post.data.lang)}/`)} tabIndex={-1} aria-hidden="true">
-                  <img src={thumbnail} alt="" loading="lazy" width="480" height="360" />
-                </a>
-              )}
-              <h3 class="media-card-title">
-                <a class="media-card-link" href={localizedPath(`/stories/${getPublicSlug(post.id, post.data.lang)}/`)}>
-                  {post.data.title}
-                </a>
-              </h3>
-              {post.data.description && <p>{post.data.description}</p>}
-            </article>
-          );
-        })}
-        </div>
-      </div>
-    </section>
-  )}
-
-
-  <!-- DEEP WATER -->
-
-  <section
-    class="
-      home-section
-      home-flow-section
-    "
-  >
-    <h2 class="section-heading">{copy.apps}</h2>
-
-    <div class="apps-layout">
-      <h3 class="apps-title editorial-title">
-        {
-          featuredApp
-            ? featuredApp.data.title
-            : copy.appsFallback
-        }
-      </h3>
-
-      <div class="side-copy">
-        <p>
-          {copy.appsCopy}
-        </p>
-
-        <a href={localizedPath('/apps/')}>
-          {copy.exploreApps}
-        </a>
-      </div>
-    </div>
-  </section>
+      </section>
+    )}
 
 
   <!-- NEWSLETTER -->
@@ -782,7 +692,80 @@ const featuredApp =
   }
 
   /*
-    JOURNAL / PODCAST / YOUTUBE RAILS
+    FEATURED STORY
+  */
+
+  .featured-story {
+    display: grid;
+    gap: clamp(42px, 6vw, 88px);
+  }
+
+  .featured-visual {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 8;
+    overflow: hidden;
+    background: rgba(1, 8, 15, 0.5);
+  }
+
+  .featured-visual img,
+  .story-rail-visual img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .featured-copy {
+    max-width: 1050px;
+  }
+
+  .featured-copy--text-only {
+    padding-block: clamp(54px, 7vw, 110px);
+  }
+
+  .featured-copy h2 {
+    max-width: 1000px;
+    margin: 22px 0 28px;
+    font-size: clamp(3rem, 6vw, 6.6rem);
+  }
+
+  .featured-description {
+    max-width: 760px;
+    margin-bottom: 28px;
+    color: var(--body-text);
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    line-height: 1.75;
+  }
+
+  .featured-copy time,
+  .story-formats {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .play-cue {
+    position: absolute;
+    right: 28px;
+    bottom: 28px;
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border: 1px solid rgba(246, 244, 239, 0.42);
+    border-radius: 50%;
+    color: var(--text);
+    background: rgba(1, 8, 15, 0.66);
+    font-size: 0.88rem;
+    pointer-events: none;
+  }
+
+  /*
+    RECENT STORIES RAIL
   */
 
   .media-rail-frame {
@@ -893,6 +876,42 @@ const featuredApp =
     min-width: 0;
     padding-right: 48px;
     scroll-snap-align: start;
+  }
+
+  .story-rail-visual {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    margin: 0 0 26px;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: rgba(1, 8, 15, 0.5);
+  }
+
+  .play-cue--small {
+    right: 14px;
+    bottom: 14px;
+    width: 38px;
+    height: 38px;
+    font-size: 0.68rem;
+  }
+
+  .story-rail-item .story-formats {
+    margin: 0 0 18px;
+    font-size: 0.72rem;
+  }
+
+  .story-rail-item .story-card-description {
+    display: -webkit-box;
+    margin-top: 22px;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .story-rail-item time {
+    margin-top: 24px;
   }
 
   .media-rail-item a {
@@ -1306,6 +1325,25 @@ const featuredApp =
 
     .home-hero .site-intro-title {
       font-size: clamp(2.15rem, 8.5vw, 3.4rem);
+    }
+
+    .featured-visual {
+      aspect-ratio: 4 / 3;
+    }
+
+    .featured-copy--text-only {
+      padding-block: 24px;
+    }
+
+    .featured-copy h2 {
+      font-size: clamp(2.5rem, 12vw, 4.2rem);
+    }
+
+    .play-cue {
+      right: 16px;
+      bottom: 16px;
+      width: 44px;
+      height: 44px;
     }
 
     .home-content-sections > .home-section {
