@@ -2,7 +2,7 @@
 title: “Who works because they enjoy it? You just put up with it.”
 date: 2026-09-22
 createdAt: 2026-09-22T09:52:00Z
-draft: true
+draft: false
 lang: en
 heroImage: /media/1geozysrsklfhb3bspjjb5a-1.webp
 formats:
