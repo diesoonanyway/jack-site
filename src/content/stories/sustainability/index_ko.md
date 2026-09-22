@@ -3,7 +3,7 @@ title: ' "내가 이 짓을 얼마 동안 할 수 있을까?"'
 intro: '"그 시간을 살아가는 나는 행복할까? "'
 date: 2026-09-22
 createdAt: 2026-09-22T09:46:00Z
-draft: true
+draft: false
 lang: ko
 heroImage: /media/1geozysrsklfhb3bspjjb5a-1.webp
 formats:
