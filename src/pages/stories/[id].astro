@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../../lib/content-slug';
 import { getSafeExternalAudioUrl, getSpotifyEpisodeId, getSpotifyExternalUrl } from '../../lib/spotify';
 import { getYouTubeThumbnailUrl, getYouTubeVideoId } from '../../lib/youtube';
+import { createArticleStructuredData } from '../../lib/seo';
 
 export async function getStaticPaths() {
   const posts = await getCollection('stories');
@@ -35,13 +36,34 @@ const storyDescription = post.data.intro || post.data.description;
 const storyFormats = post.data.formats
   .map((format) => format.toUpperCase())
   .join(' · ');
+const isWrittenArticle = post.data.formats.includes('read');
+const seoDescription = post.data.description || post.data.title;
+const canonicalURL = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site).toString()
+  : undefined;
+const articleImageURL = post.data.heroImage && Astro.site
+  ? new URL(post.data.heroImage, Astro.site).toString()
+  : undefined;
+const articleStructuredData = isWrittenArticle && canonicalURL
+  ? createArticleStructuredData({
+      title: post.data.title,
+      description: seoDescription,
+      datePublished: post.data.date.toISOString(),
+      canonicalURL,
+      lang,
+      imageURL: articleImageURL,
+    })
+  : undefined;
 const { Content } = await render(post);
 ---
 
 <BaseLayout
-  title={`${post.data.title} — Jack`}
-  description={post.data.description || post.data.title}
+  title={`${post.data.title} — If It All Ends`}
+  description={seoDescription}
   image={post.data.heroImage || undefined}
+  type={isWrittenArticle ? 'article' : 'website'}
+  publishedTime={isWrittenArticle ? post.data.date.toISOString() : undefined}
+  structuredData={articleStructuredData}
   {lang}
   {alternatePath}
 >

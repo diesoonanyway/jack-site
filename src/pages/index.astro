@@ -4,12 +4,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../lib/content-slug';
 import { sortByCreatedAt } from '../lib/content-sort';
 import { getYouTubeThumbnailUrl } from '../lib/youtube';
+import { createWebsiteStructuredData } from '../lib/seo';
 
 const { lang = 'en' } = Astro.props;
 const isKorean = lang === 'ko';
 const pathPrefix = isKorean ? '/ko' : '';
 const localizedPath = (path) => `${pathPrefix}${path}`;
 const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
+const websiteStructuredData = Astro.site
+  ? createWebsiteStructuredData(Astro.site)
+  : undefined;
 
 const copy = isKorean
   ? {
@@ -82,10 +86,13 @@ const storyFormats = (story) => story.data.formats
 ---
 
 <BaseLayout
-  title="Jack"
+  title={isKorean
+    ? 'If It All Ends — 인간답게 살아가는 이야기'
+    : 'If It All Ends — Stories About Being Human'}
   description={copy.description}
   {lang}
   alternatePath={isKorean ? '/' : '/ko/'}
+  structuredData={websiteStructuredData}
 >
   <section class="home-hero">
     <div class="hero-top">

@@ -14,12 +14,13 @@ const posts = (await getCollection('apps'))
 ---
 
 <BaseLayout
-  title={isKorean ? '앱 — Jack' : 'Apps — Jack'}
+  title={isKorean ? '앱 — If It All Ends' : 'Apps — If It All Ends'}
   description={
     isKorean
       ? '아이디어를 실제로 사용할 수 있는 것으로 만듭니다.'
       : 'Ideas turned into things people can actually use.'
   }
+  noindex
   {lang}
   alternatePath={isKorean ? '/apps/' : '/ko/apps/'}
 >

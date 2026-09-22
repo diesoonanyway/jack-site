@@ -5,6 +5,11 @@ export default defineConfig({
   site: 'https://ifitallends.com',
 
   integrations: [
-    sitemap(),
+    sitemap({
+      filter: (page) => ![
+        'https://ifitallends.com/apps/',
+        'https://ifitallends.com/ko/apps/',
+      ].includes(page),
+    }),
   ],
 });
