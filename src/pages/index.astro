@@ -488,7 +488,14 @@ const storyFormats = (story) => story.data.formats
       }
     });
 
-    if (readStorage(subscribedKey) !== 'true' && Date.now() >= Number(readStorage(dismissedUntilKey) || 0)) {
+    let newsletterTimerStarted = false;
+
+    const scheduleNewsletterModal = () => {
+      if (newsletterTimerStarted) return;
+      newsletterTimerStarted = true;
+
+      if (readStorage(subscribedKey) === 'true' || Date.now() < Number(readStorage(dismissedUntilKey) || 0)) return;
+
       window.setTimeout(() => {
         if (readStorage(subscribedKey) === 'true' || Date.now() < Number(readStorage(dismissedUntilKey) || 0)) return;
         previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -500,6 +507,13 @@ const storyFormats = (story) => story.data.formats
         requestAnimationFrame(() => modal.classList.add('is-open'));
         closeButton.focus();
       }, 1000);
+    };
+
+    const consentWindow = window as Window & { __ifitallendsConsentReady?: boolean };
+    if (consentWindow.__ifitallendsConsentReady) {
+      scheduleNewsletterModal();
+    } else {
+      document.addEventListener('ifitallends:consent-ready', scheduleNewsletterModal, { once: true });
     }
   }
 </script>

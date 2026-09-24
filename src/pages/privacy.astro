@@ -18,7 +18,7 @@ const isKorean = lang === 'ko';
     <article class="privacy-page editorial-page">
       <header class="privacy-header editorial-page-intro">
         <h1>개인정보 처리방침</h1>
-        <p class="last-updated editorial-page-meta">최종 업데이트: 2026년 9월 8일</p>
+        <p class="last-updated editorial-page-meta">최종 업데이트: 2026년 9월 24일</p>
         <p class="intro editorial-page-intro-text">
           이 개인정보 처리방침은 사용자가 이 웹사이트를 방문하거나 뉴스레터를 구독할 때 If It All Ends가 정보를 수집, 이용 및 처리하는 방식을 설명합니다.
         </p>
@@ -68,20 +68,25 @@ const isKorean = lang === 'ko';
           <p>구독 시 사용자의 이메일 주소는 구독 관리와 이메일 발송을 위해 Kit에서 처리하고 저장할 수 있습니다.</p>
           <p>당사는 구독했거나 이메일 수신에 동의한 사람에게만 뉴스레터 이메일을 보냅니다.</p>
           <p>모든 마케팅 이메일에는 구독 해지 옵션이 포함되며 언제든지 구독을 해지할 수 있습니다.</p>
+          <p>영문 홈페이지에서는 표시 조건에 해당하는 방문자에게 뉴스레터 안내창이 자동으로 표시될 수 있습니다. 안내창을 닫으면 다시 표시할 시점을 정하기 위한 기록이 브라우저의 로컬 저장소에 30일 동안 보관됩니다.</p>
+          <p>구독 성공이 감지되면 해당 브라우저에 구독 표시가 자동 만료 기간 없이 저장됩니다. 이 표시는 실제 Kit 구독 상태와 동기화되지 않으며 브라우저 저장소를 삭제할 때까지 남을 수 있습니다. 두 로컬 저장소 값 모두 이메일 주소를 포함하지 않습니다.</p>
         </section>
 
         <section>
           <h2>5. Google Analytics</h2>
-          <p>이 웹사이트는 방문자가 사이트를 찾고 이용하는 방식을 이해하기 위해 Google Analytics를 사용합니다.</p>
-          <p>Google Analytics는 페이지 조회, 세션, 대략적인 위치, 브라우저 및 기기 정보, 스크롤, 외부 링크 상호작용 및 기타 참여 이벤트 등의 정보를 수집할 수 있습니다.</p>
+          <p>이 웹사이트는 방문자가 분석 사용에 동의한 경우에만 Google Analytics 4를 불러와 방문자가 사이트를 찾고 이용하는 방식을 이해합니다. 동의하지 않았거나 아직 선택하지 않은 경우 분석 태그를 다운로드하거나 Google Analytics 측정 요청을 보내지 않습니다.</p>
+          <p>Google Analytics 4는 페이지 조회, 세션 정보, 대략적인 위치, 브라우저 및 기기 정보 등을 수집할 수 있습니다.</p>
+          <p>스크롤, 외부 링크 상호작용 및 기타 향상된 측정 이벤트의 수집 여부는 Google Analytics 속성 설정에 따라 달라집니다.</p>
           <p>Google Analytics는 웹사이트 활동을 측정하기 위해 쿠키 및 유사 기술을 사용할 수 있습니다.</p>
           <p>분석 정보는 웹사이트 성능을 이해하고 사이트의 콘텐츠와 경험을 개선하는 데 사용됩니다.</p>
         </section>
 
         <section>
           <h2>6. 쿠키 및 유사 기술</h2>
-          <p>이 웹사이트는 분석, 기능, 보안 및 측정을 위해 쿠키 또는 유사 기술을 사용할 수 있습니다.</p>
-          <p>브라우저 설정을 통해 쿠키를 관리하거나 삭제할 수 있습니다. 거주 지역에 따라 필요한 경우 추가 동의 옵션이 제공될 수도 있습니다.</p>
+          <p>Google Analytics 4는 웹사이트 활동을 측정하기 위해 쿠키를 사용할 수 있습니다. Spotify와 Google/YouTube의 내장 재생기도 콘텐츠 제공과 상호작용 처리를 위해 쿠키 또는 유사 기술을 사용할 수 있습니다.</p>
+          <p>이 웹사이트는 뉴스레터 안내창의 표시 여부를 기억하기 위해 쿠키와는 별개의 브라우저 로컬 저장소도 사용합니다. 이 로컬 저장소 값에는 이메일 주소가 포함되지 않습니다.</p>
+          <p>분석 동의 선택도 별도의 버전이 지정된 브라우저 로컬 저장소에 보관됩니다. 방문자는 동의 배너에서 분석을 허용하거나 거부할 수 있으며 아래 개인정보 설정 링크에서 나중에 선택을 변경할 수 있습니다.</p>
+          <p>브라우저 설정을 통해 쿠키와 로컬 저장소를 관리하거나 삭제할 수도 있습니다. 다만 브라우저 설정은 관련 법률에서 요구하는 동의를 대신하지 않습니다.</p>
         </section>
 
         <section>
@@ -92,7 +97,11 @@ const isKorean = lang === 'ko';
             <li>웹사이트 분석 및 측정을 위한 Google Analytics</li>
             <li>뉴스레터 구독 및 이메일 발송을 위한 Kit</li>
             <li>웹사이트 호스팅, 전송, 보안, DNS 및 이메일 라우팅을 위한 Cloudflare</li>
+            <li>게시된 Story의 오디오 재생기 제공을 위한 Spotify</li>
+            <li>YouTube URL이 포함된 Story의 선택적 동영상 재생을 위한 Google/YouTube</li>
           </ul>
+          <p>Spotify와 YouTube 내장 재생기는 방문자가 해당 외부 콘텐츠를 불러오는 버튼을 선택하기 전에는 생성되지 않습니다. YouTube 재생기는 Story에 YouTube URL이 포함된 경우에만 제공되며 개인정보 보호 강화 도메인인 youtube-nocookie.com을 사용합니다. 재생기 URL은 자동 재생을 요청하지 않습니다.</p>
+          <p>방문자가 외부 콘텐츠를 불러오거나 제공업체 링크를 선택하면 해당 제공업체는 IP 주소, 브라우저 및 기기 정보, 콘텐츠가 포함된 페이지에 관한 정보, 재생기 상호작용 정보 등의 기술 정보를 처리할 수 있습니다. youtube-nocookie.com을 사용하더라도 Google이 방문자 정보를 전혀 처리하지 않는다는 의미는 아닙니다.</p>
           <p>이들 제공업체는 서비스 제공에 필요한 범위에서 정보를 처리할 수 있으며 각자의 개인정보 보호 및 데이터 보호 정책에 따라 운영됩니다.</p>
         </section>
 
@@ -118,6 +127,8 @@ const isKorean = lang === 'ko';
           <h2>11. 사용자의 선택권</h2>
           <p>거주 지역에 따라 사용자는 개인정보에 대한 열람, 정정 또는 삭제 요청을 포함한 권리를 가질 수 있습니다.</p>
           <p>이메일에 포함된 구독 해지 링크를 사용해 언제든지 뉴스레터 구독을 해지할 수도 있습니다.</p>
+          <p>분석 동의를 철회하면 이후 Google Analytics 측정이 중지되며, 이 웹사이트는 가능한 범위에서 관련 분석 쿠키를 삭제합니다.</p>
+          <p><a href="#privacy-settings" data-consent-settings>분석 개인정보 설정 변경</a></p>
           <p>개인정보 관련 요청은 다음 주소로 문의해 주세요.</p>
           <p><a href="mailto:hello@ifitallends.com">hello@ifitallends.com</a></p>
         </section>
@@ -135,7 +146,7 @@ const isKorean = lang === 'ko';
       <h1>Privacy Policy</h1>
 
       <p class="last-updated editorial-page-meta">
-        Last updated: September 8, 2026
+        Last updated: 24 September 2026
       </p>
 
       <p class="intro editorial-page-intro-text">
@@ -242,22 +253,48 @@ const isKorean = lang === 'ko';
           Every marketing email includes an unsubscribe
           option. You may unsubscribe at any time.
         </p>
+
+        <p>
+          On the English homepage, eligible visitors may be
+          shown a newsletter prompt automatically. If the
+          prompt is dismissed, a record used to determine
+          when it may be shown again is kept in browser local
+          storage for 30 days.
+        </p>
+
+        <p>
+          When a successful subscription is detected, a
+          subscription indicator is stored in that browser
+          without automatic expiry. This indicator is not
+          synchronised with the actual Kit subscription
+          status and may remain until browser storage is
+          cleared. Neither local storage value contains your
+          email address.
+        </p>
       </section>
 
       <section>
         <h2>5. Google Analytics</h2>
 
         <p>
-          This website uses Google Analytics to understand
-          how visitors find and interact with the site.
+          This website loads Google Analytics 4 only when a
+          visitor consents to analytics, so we can understand
+          how visitors find and interact with the site. If
+          you decline or have not yet made a choice, the
+          analytics tag is not downloaded and no Google
+          Analytics measurement request is sent.
         </p>
 
         <p>
           Google Analytics may collect information such as
-          page views, sessions, approximate location,
-          browser and device information, scrolling,
-          outbound link interactions, and other engagement
-          events.
+          page views, session information, approximate
+          location, and browser and device information.
+        </p>
+
+        <p>
+          Whether scrolling, outbound-link interactions, and
+          other enhanced measurement events are collected
+          depends on the Google Analytics property settings.
         </p>
 
         <p>
@@ -276,16 +313,33 @@ const isKorean = lang === 'ko';
         <h2>6. Cookies and similar technologies</h2>
 
         <p>
-          This website may use cookies or similar
-          technologies for analytics, functionality,
-          security, and measurement.
+          Google Analytics 4 may use cookies to measure
+          website activity. Embedded players from Spotify
+          and Google/YouTube may also use cookies or similar
+          technologies to provide content and process player
+          interactions.
         </p>
 
         <p>
-          You can control or delete cookies through your
-          browser settings. Depending on where you live,
-          additional consent options may also be provided
-          where required.
+          This website also uses browser local storage,
+          which is distinct from cookies, to remember whether
+          to show the newsletter prompt. These local storage
+          values do not contain your email address.
+        </p>
+
+        <p>
+          Your analytics choice is also kept separately in
+          versioned browser local storage. You can allow or
+          decline analytics in the consent banner and change
+          your choice later using the privacy-settings link
+          below.
+        </p>
+
+        <p>
+          You can also manage or delete cookies and local
+          storage through your browser settings. Browser
+          settings do not replace consent where it is
+          required by law.
         </p>
       </section>
 
@@ -316,7 +370,35 @@ const isKorean = lang === 'ko';
             Cloudflare for website hosting, delivery,
             security, DNS, and email routing.
           </li>
+
+          <li>
+            Spotify for audio players in published Stories;
+          </li>
+
+          <li>
+            Google/YouTube for optional video players when a
+            Story includes a YouTube URL.
+          </li>
         </ul>
+
+        <p>
+          Spotify and YouTube embedded players are not
+          created until you choose to load that external
+          content. YouTube players are provided only when a
+          Story includes a YouTube URL and use the privacy-
+          enhanced youtube-nocookie.com domain. The player
+          URLs do not request autoplay.
+        </p>
+
+        <p>
+          When you load external content or follow a provider
+          link, the provider may process technical
+          information such as your IP address, browser and
+          device information, information about the page
+          containing the content, and player interaction
+          information. Use of youtube-nocookie.com does not
+          mean that Google processes no visitor information.
+        </p>
 
         <p>
           These providers may process information as
@@ -387,6 +469,18 @@ const isKorean = lang === 'ko';
           You can also unsubscribe from newsletter emails
           at any time using the unsubscribe link included
           in those emails.
+        </p>
+
+        <p>
+          If you withdraw analytics consent, further Google
+          Analytics measurement is stopped and this website
+          removes related analytics cookies where possible.
+        </p>
+
+        <p>
+          <a href="#privacy-settings" data-consent-settings>
+            Change analytics privacy settings
+          </a>
         </p>
 
         <p>

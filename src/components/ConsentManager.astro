@@ -1,0 +1,429 @@
+---
+const {
+  lang = 'en',
+  measurementId,
+  enableAnalytics = false,
+} = Astro.props;
+
+const isKorean = lang === 'ko';
+const privacyPath = isKorean ? '/ko/privacy/' : '/privacy/';
+
+const copy = isKorean
+  ? {
+      label: '개인정보 설정',
+      title: '분석 데이터 사용을 선택해 주세요',
+      description: '사이트 개선을 위해 Google Analytics를 사용할 수 있습니다. 동의하기 전에는 분석 태그를 불러오거나 측정 요청을 보내지 않습니다.',
+      accept: '분석 동의',
+      decline: '분석 거부',
+      privacy: '개인정보 처리방침 보기',
+      currentGranted: '현재 선택: 분석 허용',
+      currentDenied: '현재 선택: 분석 거부',
+    }
+  : {
+      label: 'Privacy settings',
+      title: 'Choose whether to allow analytics',
+      description: 'We use Google Analytics to help improve the site. Until you consent, the analytics tag is not loaded and no measurement request is sent.',
+      accept: 'Allow analytics',
+      decline: 'Decline analytics',
+      privacy: 'Read the Privacy Policy',
+      currentGranted: 'Current choice: analytics allowed',
+      currentDenied: 'Current choice: analytics declined',
+    };
+---
+
+<div
+  class="consent-manager"
+  data-consent-manager
+  data-current-granted={copy.currentGranted}
+  data-current-denied={copy.currentDenied}
+  hidden
+>
+  <div
+    class="consent-panel"
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="consent-title"
+    aria-describedby="consent-description"
+  >
+    <p class="consent-label">{copy.label}</p>
+    <h2 id="consent-title" class="editorial-title">{copy.title}</h2>
+    <p id="consent-description" class="consent-description">{copy.description}</p>
+    <p class="consent-status" data-consent-status hidden></p>
+
+    <div class="consent-actions">
+      <button type="button" class="consent-button" data-consent-accept>
+        {copy.accept}
+      </button>
+      <button type="button" class="consent-button" data-consent-decline>
+        {copy.decline}
+      </button>
+    </div>
+
+    <a class="consent-privacy-link" href={privacyPath}>{copy.privacy} →</a>
+  </div>
+</div>
+
+<script is:inline define:vars={{ measurementId, enableAnalytics }}>
+  (() => {
+    const STORAGE_KEY = 'ifitallends-consent-v1';
+    const STORAGE_VERSION = 1;
+    const READY_EVENT = 'ifitallends:consent-ready';
+    const root = document.querySelector('[data-consent-manager]');
+
+    if (!(root instanceof HTMLElement) || root.dataset.initialized === 'true') return;
+    root.dataset.initialized = 'true';
+
+    const panel = root.querySelector('[role="dialog"]');
+    const acceptButton = root.querySelector('[data-consent-accept]');
+    const declineButton = root.querySelector('[data-consent-decline]');
+    const status = root.querySelector('[data-consent-status]');
+
+    if (
+      !(panel instanceof HTMLElement) ||
+      !(acceptButton instanceof HTMLButtonElement) ||
+      !(declineButton instanceof HTMLButtonElement)
+    ) return;
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () {
+      window.dataLayer.push(arguments);
+    };
+
+    const deniedConsent = {
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+    };
+
+    window.gtag('consent', 'default', deniedConsent);
+    window[`ga-disable-${measurementId}`] = true;
+
+    let currentChoice = null;
+    let previousFocus = null;
+    let closing = false;
+
+    const readChoice = () => {
+      try {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (
+          stored?.version === STORAGE_VERSION &&
+          (stored.analytics === 'granted' || stored.analytics === 'denied')
+        ) {
+          return stored.analytics;
+        }
+      } catch {
+        // A missing or invalid preference is treated as no choice.
+      }
+      return null;
+    };
+
+    const writeChoice = (analytics) => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          version: STORAGE_VERSION,
+          analytics,
+          source: 'astro',
+          updatedAt: new Date().toISOString(),
+        }));
+      } catch {
+        // Consent still applies for this page if storage is unavailable.
+      }
+    };
+
+    const clearAnalyticsCookies = () => {
+      const cookieNames = document.cookie
+        .split(';')
+        .map((cookie) => cookie.split('=')[0]?.trim())
+        .filter((name) => name && (
+          name === '_ga' ||
+          name.startsWith('_ga_') ||
+          name === '_gid' ||
+          name.startsWith('_gat')
+        ));
+
+      const hostname = window.location.hostname.replace(/^www\./, '');
+      const domainVariants = hostname && hostname !== 'localhost'
+        ? [hostname, `.${hostname}`]
+        : [];
+
+      cookieNames.forEach((name) => {
+        document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
+        domainVariants.forEach((domain) => {
+          document.cookie = `${name}=; Max-Age=0; path=/; domain=${domain}; SameSite=Lax`;
+        });
+      });
+    };
+
+    const loadAnalytics = () => {
+      window[`ga-disable-${measurementId}`] = false;
+      window.gtag('consent', 'update', {
+        analytics_storage: 'granted',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+      });
+
+      if (!enableAnalytics) return;
+
+      if (!window.__ifitallendsGaConfigured) {
+        window.gtag('js', new Date());
+        window.gtag('config', measurementId);
+        window.__ifitallendsGaConfigured = true;
+      }
+
+      if (!document.querySelector('script[data-consent-ga4]')) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+        script.dataset.consentGa4 = 'true';
+        document.head.append(script);
+      }
+    };
+
+    const disableAnalytics = () => {
+      window[`ga-disable-${measurementId}`] = true;
+      window.gtag('consent', 'update', deniedConsent);
+      clearAnalyticsCookies();
+    };
+
+    const applyChoice = (choice) => {
+      const previousChoice = currentChoice;
+      currentChoice = choice;
+
+      if (choice === 'granted') {
+        const wasConfigured = Boolean(window.__ifitallendsGaConfigured);
+        loadAnalytics();
+        if (previousChoice === 'denied' && wasConfigured) {
+          window.gtag('event', 'page_view');
+        }
+      } else {
+        disableAnalytics();
+      }
+    };
+
+    const announceReady = () => {
+      window.__ifitallendsConsentReady = true;
+      window.__ifitallendsAnalyticsConsent = currentChoice;
+      document.dispatchEvent(new CustomEvent(READY_EVENT, {
+        detail: { analytics: currentChoice, source: 'astro' },
+      }));
+    };
+
+    const updateStatus = () => {
+      if (!(status instanceof HTMLElement) || !currentChoice) return;
+      status.textContent = currentChoice === 'granted'
+        ? root.dataset.currentGranted || ''
+        : root.dataset.currentDenied || '';
+      status.hidden = false;
+    };
+
+    const openDialog = () => {
+      if (!root.hidden) return;
+      closing = false;
+      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      updateStatus();
+      root.hidden = false;
+      requestAnimationFrame(() => root.classList.add('is-open'));
+      acceptButton.focus();
+    };
+
+    const closeDialog = (callback) => {
+      if (root.hidden || closing) {
+        callback?.();
+        return;
+      }
+
+      closing = true;
+      root.classList.remove('is-open');
+      const delay = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220;
+      window.setTimeout(() => {
+        root.hidden = true;
+        previousFocus?.focus();
+        closing = false;
+        callback?.();
+      }, delay);
+    };
+
+    const saveAndClose = (choice) => {
+      if (closing) return;
+      writeChoice(choice);
+      applyChoice(choice);
+      updateStatus();
+      closeDialog(announceReady);
+    };
+
+    acceptButton.addEventListener('click', () => saveAndClose('granted'));
+    declineButton.addEventListener('click', () => saveAndClose('denied'));
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Element)) return;
+      const trigger = event.target.closest('[data-consent-settings]');
+      if (!trigger) return;
+      event.preventDefault();
+      openDialog();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (root.hidden) return;
+
+      if (event.key === 'Escape' && currentChoice) {
+        event.preventDefault();
+        closeDialog();
+        return;
+      }
+
+    });
+
+    window.IfItAllEndsConsent = {
+      open: openDialog,
+      getAnalyticsChoice: () => currentChoice,
+      setAnalyticsChoice: (choice) => {
+        if (choice !== 'granted' && choice !== 'denied') return;
+        writeChoice(choice);
+        applyChoice(choice);
+        announceReady();
+      },
+    };
+
+    const storedChoice = readChoice();
+    if (storedChoice) {
+      applyChoice(storedChoice);
+      announceReady();
+    } else {
+      openDialog();
+    }
+  })();
+</script>
+
+<style is:global>
+  .consent-manager {
+    position: fixed;
+    z-index: 200;
+    left: clamp(16px, 2vw, 28px);
+    bottom: clamp(16px, 2vw, 28px);
+    width: min(390px, calc(100vw - 32px));
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 220ms ease,
+      transform 220ms ease;
+  }
+
+  .consent-manager[hidden] {
+    display: none;
+  }
+
+  .consent-manager.is-open {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .consent-panel {
+    width: 100%;
+    max-height: calc(100dvh - 32px);
+    padding: 24px;
+    overflow-y: auto;
+    border: 1px solid rgba(183, 201, 214, 0.18);
+    border-radius: 12px;
+    color: var(--text);
+    background: rgba(8, 20, 34, 0.98);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  }
+
+  .consent-label {
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .consent-panel h2 {
+    margin-bottom: 12px;
+    font-size: clamp(1.55rem, 3vw, 2rem);
+    line-height: 1.12;
+  }
+
+  .consent-description,
+  .consent-status {
+    color: var(--body-text);
+    font-size: 0.94rem;
+    line-height: 1.6;
+  }
+
+  .consent-status {
+    margin: 18px 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .consent-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .consent-button {
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid rgba(219, 234, 255, 0.28);
+    border-radius: 999px;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.08);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .consent-button:hover {
+    border-color: rgba(219, 234, 255, 0.55);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .consent-button:focus-visible,
+  .consent-privacy-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  .consent-privacy-link {
+    display: inline-block;
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  @media (max-width: 560px) {
+    .consent-manager {
+      right: 12px;
+      bottom: 12px;
+      left: 12px;
+      width: auto;
+    }
+
+    .consent-panel {
+      max-height: calc(100dvh - 24px);
+      padding: 22px 20px;
+    }
+
+    .consent-actions {
+      grid-template-columns: 1fr;
+    }
+
+    .consent-button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .consent-manager,
+    .consent-panel {
+      transition: none;
+    }
+  }
+</style>

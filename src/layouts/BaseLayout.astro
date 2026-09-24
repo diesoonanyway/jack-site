@@ -1,5 +1,6 @@
 ---
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import ConsentManager from '../components/ConsentManager.astro';
 import { serializeJsonLd, SITE_NAME } from '../lib/seo';
 
 const {
@@ -72,28 +73,6 @@ const measurementId = 'G-Z9K72KWHGP';
     />
 
     <meta name="google-adsense-account" content="ca-pub-7011660665339454" />
-
-    {isProduction && (
-      <>
-        <script
-          is:inline
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
-        ></script>
-
-        <script is:inline define:vars={{ measurementId }}>
-          window.dataLayer = window.dataLayer || [];
-
-          function gtag() {
-            dataLayer.push(arguments);
-          }
-
-          gtag('js', new Date());
-
-          gtag('config', measurementId);
-        </script>
-      </>
-    )}
 
     <title>{title}</title>
 
@@ -602,6 +581,12 @@ const measurementId = 'G-Z9K72KWHGP';
       class="page-depth"
       aria-hidden="true"
     ></div>
+
+    <ConsentManager
+      {lang}
+      {measurementId}
+      enableAnalytics={isProduction}
+    />
 
     <div class="site-shell">
       <header class="site-header">
