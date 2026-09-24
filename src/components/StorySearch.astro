@@ -1,0 +1,475 @@
+---
+const { lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+
+const copy = isKorean
+  ? {
+      open: '스토리 검색',
+      title: '스토리 검색',
+      close: '검색 닫기',
+      label: '검색어',
+      placeholder: '제목, 요약 또는 본문 검색',
+      prompt: '검색어를 입력해 주세요.',
+      loading: '검색 인덱스를 불러오는 중입니다…',
+      error: '검색을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      empty: '일치하는 스토리가 없습니다.',
+      countOne: '1개의 스토리',
+      countMany: '{count}개의 스토리',
+    }
+  : {
+      open: 'Search stories',
+      title: 'Search stories',
+      close: 'Close search',
+      label: 'Search term',
+      placeholder: 'Search titles, summaries and articles',
+      prompt: 'Start typing to search stories.',
+      loading: 'Loading the search index…',
+      error: 'Search could not be loaded. Please try again.',
+      empty: 'No matching stories found.',
+      countOne: '1 story',
+      countMany: '{count} stories',
+    };
+---
+
+<div class="story-search">
+  <button
+    type="button"
+    class="story-search-trigger"
+    aria-label={copy.open}
+    aria-haspopup="dialog"
+    aria-controls="story-search-dialog"
+    aria-expanded="false"
+    data-story-search-open
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="6.5"></circle>
+      <path d="m16 16 4.25 4.25"></path>
+    </svg>
+  </button>
+
+  <dialog
+    id="story-search-dialog"
+    class="story-search-dialog"
+    aria-labelledby="story-search-title"
+    data-story-search-dialog
+    data-index-url={`/search/${lang}.json`}
+    data-prompt={copy.prompt}
+    data-loading={copy.loading}
+    data-error={copy.error}
+    data-empty={copy.empty}
+    data-count-one={copy.countOne}
+    data-count-many={copy.countMany}
+  >
+    <div class="story-search-panel">
+      <header class="story-search-header">
+        <h2 id="story-search-title" class="editorial-title">{copy.title}</h2>
+        <button
+          type="button"
+          class="story-search-close"
+          aria-label={copy.close}
+          data-story-search-close
+        >
+          ×
+        </button>
+      </header>
+
+      <label class="visually-hidden" for="story-search-input">{copy.label}</label>
+      <input
+        id="story-search-input"
+        class="story-search-input"
+        type="search"
+        placeholder={copy.placeholder}
+        autocomplete="off"
+        spellcheck="false"
+        data-story-search-input
+      />
+
+      <p class="story-search-status" aria-live="polite" data-story-search-status>
+        {copy.prompt}
+      </p>
+      <ol class="story-search-results" data-story-search-results></ol>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  type SearchEntry = {
+    title: string;
+    description: string;
+    body: string;
+    formats: string[];
+    url: string;
+  };
+
+  type SearchWindow = Window & {
+    __ifitallendsStorySearchOpen?: boolean;
+  };
+
+  const normalize = (value: string) => value.normalize('NFC').toLocaleLowerCase();
+
+  const findMatch = (value: string, query: string, terms: string[]) => {
+    const normalized = normalize(value);
+    const exactIndex = normalized.indexOf(query);
+    if (exactIndex >= 0) return { matches: true, index: exactIndex };
+
+    const firstTermIndex = normalized.indexOf(terms[0] || query);
+    return {
+      matches: terms.length > 0 && terms.every((term) => normalized.includes(term)),
+      index: firstTermIndex,
+    };
+  };
+
+  const createSnippet = (entry: SearchEntry, query: string, terms: string[]) => {
+    const sources = [entry.description, entry.body].filter(Boolean);
+    const matchedSource = sources.find((source) => findMatch(source, query, terms).matches);
+    const source = matchedSource || sources[0] || entry.title;
+    const matchIndex = Math.max(0, findMatch(source, query, terms).index);
+    const radius = 95;
+    const start = Math.max(0, matchIndex - radius);
+    const end = Math.min(source.length, matchIndex + query.length + radius);
+    const prefix = start > 0 ? '…' : '';
+    const suffix = end < source.length ? '…' : '';
+    return `${prefix}${source.slice(start, end).trim()}${suffix}`;
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-story-search-dialog]').forEach((dialogElement) => {
+    if (!(dialogElement instanceof HTMLDialogElement) || dialogElement.dataset.initialized === 'true') return;
+    dialogElement.dataset.initialized = 'true';
+
+    const dialog = dialogElement;
+    const trigger = document.querySelector<HTMLButtonElement>(`[aria-controls="${dialog.id}"]`);
+    const closeButton = dialog.querySelector<HTMLButtonElement>('[data-story-search-close]');
+    const input = dialog.querySelector<HTMLInputElement>('[data-story-search-input]');
+    const status = dialog.querySelector<HTMLElement>('[data-story-search-status]');
+    const results = dialog.querySelector<HTMLOListElement>('[data-story-search-results]');
+    if (!trigger || !closeButton || !input || !status || !results) return;
+
+    let entries: SearchEntry[] | null = null;
+    let loadingPromise: Promise<SearchEntry[]> | null = null;
+
+    const setStatus = (message: string) => {
+      status.textContent = message;
+    };
+
+    const loadIndex = () => {
+      if (entries) return Promise.resolve(entries);
+      if (loadingPromise) return loadingPromise;
+
+      setStatus(dialog.dataset.loading || '');
+      loadingPromise = fetch(dialog.dataset.indexUrl || '')
+        .then((response) => {
+          if (!response.ok) throw new Error(`Search index request failed: ${response.status}`);
+          return response.json() as Promise<SearchEntry[]>;
+        })
+        .then((data) => {
+          entries = data;
+          return data;
+        })
+        .catch((error) => {
+          loadingPromise = null;
+          throw error;
+        });
+
+      return loadingPromise;
+    };
+
+    const renderResults = () => {
+      const query = normalize(input.value.trim());
+      results.replaceChildren();
+
+      if (!query) {
+        setStatus(dialog.dataset.prompt || '');
+        return;
+      }
+
+      const terms = query.split(/\s+/).filter(Boolean);
+      loadIndex()
+        .then((index) => {
+          if (normalize(input.value.trim()) !== query) return;
+
+          const matches = index
+            .map((entry) => {
+              const titleMatch = findMatch(entry.title, query, terms);
+              const descriptionMatch = findMatch(entry.description, query, terms);
+              const bodyMatch = findMatch(entry.body, query, terms);
+              const score = titleMatch.matches ? 0 : descriptionMatch.matches ? 1 : bodyMatch.matches ? 2 : -1;
+              return { entry, score };
+            })
+            .filter((result) => result.score >= 0)
+            .sort((a, b) => a.score - b.score || a.entry.title.localeCompare(b.entry.title));
+
+          if (matches.length === 0) {
+            setStatus(dialog.dataset.empty || '');
+            return;
+          }
+
+          const countTemplate = matches.length === 1
+            ? dialog.dataset.countOne || '1 story'
+            : dialog.dataset.countMany || '{count} stories';
+          setStatus(countTemplate.replace('{count}', String(matches.length)));
+
+          const fragment = document.createDocumentFragment();
+          matches.forEach(({ entry }) => {
+            const item = document.createElement('li');
+            item.className = 'story-search-result';
+
+            const format = document.createElement('p');
+            format.className = 'story-search-format';
+            format.textContent = entry.formats.map((value) => value.toUpperCase()).join(' / ');
+
+            const link = document.createElement('a');
+            link.className = 'story-search-link editorial-title';
+            link.href = entry.url;
+            link.textContent = entry.title;
+
+            const snippet = document.createElement('p');
+            snippet.className = 'story-search-snippet';
+            snippet.textContent = createSnippet(entry, query, terms);
+
+            item.append(format, link, snippet);
+            fragment.append(item);
+          });
+          results.append(fragment);
+        })
+        .catch(() => {
+          if (normalize(input.value.trim()) === query) {
+            results.replaceChildren();
+            setStatus(dialog.dataset.error || '');
+          }
+        });
+    };
+
+    const setOpenState = (open: boolean) => {
+      trigger.setAttribute('aria-expanded', String(open));
+      (window as SearchWindow).__ifitallendsStorySearchOpen = open;
+      document.dispatchEvent(new CustomEvent(
+        open ? 'ifitallends:story-search-open' : 'ifitallends:story-search-close',
+      ));
+    };
+
+    const openSearch = () => {
+      if (dialog.open) return;
+      dialog.showModal();
+      setOpenState(true);
+      setStatus(dialog.dataset.loading || '');
+      loadIndex()
+        .then(() => {
+          if (!input.value) setStatus(dialog.dataset.prompt || '');
+        })
+        .catch(() => setStatus(dialog.dataset.error || ''));
+      input.focus();
+    };
+
+    const closeSearch = () => {
+      if (!dialog.open) return;
+      dialog.close();
+    };
+
+    trigger.addEventListener('click', openSearch);
+    closeButton.addEventListener('click', closeSearch);
+    input.addEventListener('input', renderResults);
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) closeSearch();
+    });
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopPropagation();
+      closeSearch();
+    });
+    dialog.addEventListener('close', () => {
+      setOpenState(false);
+      trigger.focus();
+    });
+  });
+</script>
+
+<style>
+  .story-search {
+    display: flex;
+    align-items: center;
+  }
+
+  .story-search-trigger,
+  .story-search-close {
+    display: grid;
+    place-items: center;
+    border: 0;
+    color: var(--text);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .story-search-trigger {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border-radius: 999px;
+  }
+
+  .story-search-trigger:hover {
+    color: var(--accent);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .story-search-trigger:focus-visible,
+  .story-search-close:focus-visible,
+  .story-search-input:focus-visible,
+  .story-search-dialog :global(.story-search-link:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .story-search-trigger svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 1.6;
+  }
+
+  .story-search-dialog {
+    width: min(720px, calc(100% - 32px));
+    max-width: none;
+    max-height: min(760px, calc(100dvh - 32px));
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(183, 201, 214, 0.2);
+    border-radius: 16px;
+    color: var(--text);
+    background: rgba(4, 14, 25, 0.98);
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.5);
+  }
+
+  .story-search-dialog::backdrop {
+    background: rgba(0, 4, 10, 0.74);
+    backdrop-filter: blur(8px);
+  }
+
+  .story-search-panel {
+    max-height: min(760px, calc(100dvh - 32px));
+    padding: clamp(24px, 5vw, 44px);
+    overflow-y: auto;
+  }
+
+  .story-search-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 26px;
+  }
+
+  .story-search-header h2 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .story-search-close {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    font: inherit;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .story-search-input {
+    width: 100%;
+    min-width: 0;
+    padding: 14px 2px;
+    border: 0;
+    border-bottom: 1px solid rgba(219, 234, 255, 0.38);
+    border-radius: 0;
+    color: var(--text);
+    background: transparent;
+    font: inherit;
+    font-size: clamp(1rem, 2vw, 1.15rem);
+  }
+
+  .story-search-input::placeholder {
+    color: rgba(173, 185, 197, 0.76);
+  }
+
+  .story-search-status {
+    margin: 18px 0 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  .story-search-results {
+    padding: 0;
+    margin: 28px 0 0;
+    list-style: none;
+  }
+
+  .story-search-dialog :global(.story-search-result) {
+    padding: 24px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.11);
+  }
+
+  .story-search-dialog :global(.story-search-format) {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .story-search-dialog :global(.story-search-link) {
+    display: inline;
+    color: var(--text);
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .story-search-dialog :global(.story-search-link:hover) {
+    color: var(--accent);
+  }
+
+  .story-search-dialog :global(.story-search-snippet) {
+    margin: 12px 0 0;
+    color: var(--body-text);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 760px) {
+    .story-search-trigger {
+      width: 38px;
+      height: 38px;
+      padding: 8px;
+    }
+
+    .story-search-dialog {
+      width: calc(100% - 20px);
+      max-height: calc(100dvh - 20px);
+    }
+
+    .story-search-panel {
+      max-height: calc(100dvh - 20px);
+      padding: 24px 20px;
+    }
+
+    .story-search-header {
+      margin-bottom: 20px;
+    }
+
+    .story-search-header h2 {
+      font-size: clamp(1.8rem, 9vw, 2.6rem);
+    }
+
+    .story-search-dialog :global(.story-search-result) {
+      padding: 20px 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .story-search-dialog::backdrop {
+      backdrop-filter: none;
+    }
+  }
+</style>

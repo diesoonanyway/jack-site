@@ -1,6 +1,7 @@
 ---
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 import ConsentManager from '../components/ConsentManager.astro';
+import StorySearch from '../components/StorySearch.astro';
 import { serializeJsonLd, SITE_NAME } from '../lib/seo';
 
 const {
@@ -38,7 +39,6 @@ const navigation = lang === 'ko'
       newsletter: '뉴스레터',
       privacy: '개인정보 처리방침',
       contact: '연락처',
-      tagline: 'Stories → 대화 → 제품',
     }
   : {
       stories: 'Stories',
@@ -46,7 +46,6 @@ const navigation = lang === 'ko'
       newsletter: 'Newsletter',
       privacy: 'Privacy',
       contact: 'Contact',
-      tagline: 'Stories → Conversation → Product',
     };
 
 const socialImageURL = Astro.site
@@ -314,9 +313,13 @@ const measurementId = 'G-Z9K72KWHGP';
       }
 
       .brand {
-        font-size: 1rem;
-        font-weight: 900;
-        letter-spacing: 0.14em;
+        flex: 0 0 auto;
+        font-family: var(--font-editorial);
+        font-size: 1.75rem;
+        font-weight: var(--editorial-title-weight);
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
       }
 
       .nav {
@@ -505,10 +508,6 @@ const measurementId = 'G-Z9K72KWHGP';
           rgba(255, 255, 255, 0.28);
       }
 
-      .footer-tagline {
-        white-space: nowrap;
-      }
-
       @media (max-width: 760px) {
         body {
           background-attachment: scroll;
@@ -529,6 +528,10 @@ const measurementId = 'G-Z9K72KWHGP';
           gap: 16px;
 
           padding: 18px;
+        }
+
+        .brand {
+          font-size: 1.375rem;
         }
 
         .nav {
@@ -568,10 +571,6 @@ const measurementId = 'G-Z9K72KWHGP';
 
           gap: 8px 12px;
         }
-
-        .footer-tagline {
-          white-space: normal;
-        }
       }
     </style>
   </head>
@@ -594,7 +593,7 @@ const measurementId = 'G-Z9K72KWHGP';
           href={homePath}
           class="brand"
         >
-          JACK
+          If It All Ends
         </a>
 
         <nav class="nav">
@@ -613,6 +612,8 @@ const measurementId = 'G-Z9K72KWHGP';
             {navigation.newsletter}
           </a>
 
+          <StorySearch {lang} />
+
           <LanguageSwitcher
             {lang}
             {enPath}
@@ -627,7 +628,7 @@ const measurementId = 'G-Z9K72KWHGP';
 
       <footer class="site-footer">
         <span>
-          © {new Date().getFullYear()} Jack
+          © {new Date().getFullYear()} If It All Ends
         </span>
 
         <div class="footer-right">
@@ -651,17 +652,6 @@ const measurementId = 'G-Z9K72KWHGP';
           >
             {navigation.contact}
           </a>
-
-          <span
-            class="footer-divider"
-            aria-hidden="true"
-          >
-            ·
-          </span>
-
-          <span class="footer-tagline">
-            {navigation.tagline}
-          </span>
         </div>
       </footer>
     </div>
