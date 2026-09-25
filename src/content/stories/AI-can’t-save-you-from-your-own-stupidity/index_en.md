@@ -2,7 +2,7 @@
 title: AI can’t save you from your own stupidity.
 date: 2026-09-25
 createdAt: 2026-09-25T09:11:00Z
-draft: true
+draft: false
 lang: en
 heroImage: /media/download-1.png
 formats:
