@@ -1,4 +1,5 @@
 ---
+slug: from-failure-to-inspiration-the-story-behind-talk-to-me-in-korean-or-dont-study-korean-feel-it
 title: "From Failure to Inspiration: The Story Behind “Talk To Me In Korean” |
   Don’t Study Korean: Feel It"
 description: >

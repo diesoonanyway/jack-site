@@ -1,4 +1,5 @@
 ---
+slug: ejae-the-woman-behind-golden-from-k-pop-demon-hunters-or-dont-study-korean-feel-it
 title: EJAE (이재) – The Woman Behind “Golden” from K-pop Demon Hunters | Don't
   Study Korean. Feel It
 description: >

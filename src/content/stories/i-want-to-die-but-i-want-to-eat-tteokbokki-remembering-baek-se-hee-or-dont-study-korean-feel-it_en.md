@@ -1,4 +1,5 @@
 ---
+slug: i-want-to-die-but-i-want-to-eat-tteokbokki-remembering-baek-se-hee-or-dont-study-korean-feel-it
 title: "“I Want to Die but I Want to Eat Tteokbokki” — Remembering Baek Se-hee |
   Don’t Study Korean: Feel It"
 description: Baek Se-hee (1989–2025) — author of “I Want to Die but I Want to

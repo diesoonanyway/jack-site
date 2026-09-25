@@ -8,12 +8,13 @@ import { getPairedEntryId } from './lib/content-slug';
 
 const stories = defineCollection({
   loader: glob({
-    pattern: '**/index_{en,ko}.md',
+    pattern: '*_{en,ko}.md',
     base: './src/content/stories',
-    generateId: ({ entry, data }) => getPairedEntryId(entry, data.lang),
+    generateId: ({ entry, data }) => getPairedEntryId(entry, data.lang, data.slug),
   }),
   schema: z.object({
     title: z.string(),
+    slug: z.string(),
     description: z.string().optional(),
     intro: z.string().optional(),
     date: z.coerce.date(),

@@ -1,4 +1,5 @@
 ---
+slug: just-hang-in-there-a-bit
 title: Just Hang In There a Bit
 description: Today’s story — about a woman who wanted foreigners to see the real
   Korea. Not the tour buses, not the souvenirs, but the cafés, the sound of

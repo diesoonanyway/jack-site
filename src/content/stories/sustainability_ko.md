@@ -1,4 +1,5 @@
 ---
+slug: sustainability
 title: ' "내가 이 짓을 얼마 동안 할 수 있을까?"'
 intro: '"그 시간을 살아가는 나는 행복할까? "'
 date: 2026-09-22

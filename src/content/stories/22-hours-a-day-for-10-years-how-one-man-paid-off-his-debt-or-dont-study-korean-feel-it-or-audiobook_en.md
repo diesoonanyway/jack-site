@@ -1,4 +1,5 @@
 ---
+slug: 22-hours-a-day-for-10-years-how-one-man-paid-off-his-debt-or-dont-study-korean-feel-it-or-audiobook
 title: "22 Hours a Day for 10 Years: How One Man Paid Off His Debt | Don't Study
   Korean. Feel It | Audiobook"
 description: "This is the story of a Korean man who worked seven part-time jobs

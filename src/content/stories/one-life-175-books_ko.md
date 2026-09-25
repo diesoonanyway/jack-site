@@ -1,4 +1,5 @@
 ---
+slug: one-life-175-books
 title: 175권의 책, 한 번의 삶
 date: 2026-09-12
 createdAt: "2026-09-13T09:37:09+10:00"

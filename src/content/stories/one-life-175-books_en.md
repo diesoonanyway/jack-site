@@ -1,4 +1,5 @@
 ---
+slug: one-life-175-books
 title: One Life, 175 Books
 date: 2026-09-12
 createdAt: "2026-09-13T09:37:09+10:00"

@@ -1,4 +1,5 @@
 ---
+slug: what-almost-destroyed-faker-or-dont-study-korean-feel-it-or-audiobook-or-asmr
 title: What Almost Destroyed FAKER | Don't Study Korean. Feel It | Audiobook | ASMR
 description: We meet a young Korean man who changed the world of esports. His
   name is Faker, born Lee Sang-hyeok, and he’s often called the “Michael Jordan

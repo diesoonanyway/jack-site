@@ -1,4 +1,5 @@
 ---
+slug: what-if-learning-korean-wasnt-about-studying-but-feeling
 title: What if learning Korean wasn’t about studying — but feeling?
 description: This is a story-driven Korean learning podcast for people who don’t
   have time for textbooks, but still want to feel close to Korea — its language,

@@ -1,4 +1,5 @@
 ---
+slug: nowi-will-show-the-world-to-you-dad-or-dont-study-korean-feel-it-or-asmr
 title: "\"Now...I will show the world to you, Dad.\" | Don't Study Korean. Feel
   It. | ASMR"
 description: This is the story of a father who couldn’t see — and a son who lost

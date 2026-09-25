@@ -1,4 +1,5 @@
 ---
+slug: AI-can’t-save-you-from-your-own-stupidity
 title: AI can’t save you from your own stupidity.
 date: 2026-09-25
 createdAt: 2026-09-25T09:11:00Z

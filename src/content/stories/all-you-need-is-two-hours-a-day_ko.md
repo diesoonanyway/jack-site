@@ -1,4 +1,5 @@
 ---
+slug: all-you-need-is-two-hours-a-day
 title: “하루에 딱 두 시간만 하세요.” 너나 하세요...
 date: 2026-09-14
 createdAt: "2026-09-14T15:53:11+10:00"
@@ -15,7 +16,7 @@ formats:
   - read
 translation: /stories/all-you-need-is-two-hours-a-day/
 ---
-![what Excites Me?](what-excites-me-1.png)
+![what Excites Me?](all-you-need-is-two-hours-a-day/what-excites-me-1.png)
 요즘 인터넷에서 자주 보는 문장이다.
 
 'Cursor를 켜고, 프롬프트를 몇 번 입력하고, AI가 코드를 짜는 동안 커피 한 잔 마시면 된다. 코딩을 몰라도 된다. 아이디어만 있으면 된다. 하루 한두 시간이면 된다. 그리고 당연히 돈도 벌 수 있다고 한다.

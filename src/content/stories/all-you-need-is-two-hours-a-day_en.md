@@ -1,4 +1,5 @@
 ---
+slug: all-you-need-is-two-hours-a-day
 title: “All You Need is Two Hours a Day.”
 date: 2026-09-14
 createdAt: "2026-09-14T15:53:11+10:00"
@@ -15,7 +16,7 @@ formats:
   - read
 translation: /ko/stories/all-you-need-is-two-hours-a-day/
 ---
-![What Excites Me?](what-excites-me.png)
+![What Excites Me?](all-you-need-is-two-hours-a-day/what-excites-me.png)
 
 
 I keep seeing the same promise online.

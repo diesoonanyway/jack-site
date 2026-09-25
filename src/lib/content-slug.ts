@@ -20,24 +20,42 @@ function assertMatchingLanguage(
   }
 }
 
-export function getPairedEntryId(entry: string, lang: unknown): string {
-  const normalizedEntry = entry.replace(/\\/g, '/');
-  const match = /^(.*)\/index_(en|ko)\.md$/.exec(normalizedEntry);
+export function getPairedEntryId(
+  entry: string,
+  lang: unknown,
+  frontmatterSlug: unknown,
+): string {
+  const normalizedEntry = entry.replace(/\\/g, '/').replace(/^\.\//, '');
+  const match = /^(.*)_(en|ko)\.md$/.exec(normalizedEntry);
 
   if (!match?.[1] || !match[2]) {
     throw new Error(
-      `Invalid paired entry path: "${entry}". Expected <slug>/index_en.md or <slug>/index_ko.md.`,
+      `Invalid paired entry path: "${entry}". Expected <slug>_en.md or <slug>_ko.md.`,
     );
   }
 
   const [, publicSlug, fileLanguage] = match;
   assertMatchingLanguage(normalizedEntry, fileLanguage, lang);
 
-  return `${publicSlug}/index_${fileLanguage}`;
+  if (typeof frontmatterSlug !== 'string' || frontmatterSlug !== publicSlug) {
+    throw new Error(
+      `Content slug mismatch: entry "${normalizedEntry}" uses slug "${publicSlug}" but frontmatter slug is "${String(frontmatterSlug)}".`,
+    );
+  }
+
+  return `${publicSlug}_${fileLanguage}`;
 }
 
 export function getPublicSlug(id: string, lang: ContentLanguage): string {
   const normalizedId = id.replace(/\\/g, '/');
+  const flatMatch = /^(.*)_(en|ko)$/.exec(normalizedId);
+
+  if (flatMatch?.[1] && flatMatch[2]) {
+    const [, publicSlug, fileLanguage] = flatMatch;
+    assertMatchingLanguage(normalizedId, fileLanguage, lang);
+    return publicSlug;
+  }
+
   const pairedMatch = /^(.*)\/index_(en|ko)$/.exec(normalizedId);
 
   if (pairedMatch?.[1] && pairedMatch[2]) {

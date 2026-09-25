@@ -1,4 +1,5 @@
 ---
+slug: 3-billion-won-in-debt-cancer-pulmonary-fibrosis-or-dont-study-korean-feel-it-or-asmr
 title: "\"3 billion won in debt, cancer, pulmonary fibrosis… \" | Don't Study
   Korean. Feel It. | ASMR"
 description: "This is the story of Dan-Yul Moon — once the most famous English

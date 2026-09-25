@@ -1,4 +1,5 @@
 ---
+slug: AI-can’t-save-you-from-your-own-stupidity
 title: AI는 당신의 무지를 대신 채워주지 않는다
 date: 2026-09-25
 createdAt: 2026-09-25T10:01:00Z

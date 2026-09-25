@@ -1,4 +1,5 @@
 ---
+slug: my-notes-get-smarter
 title: My notes seem to be getting smarter. But, I seem to be getting dumber.
 description: My notes are becoming more organized, connected, and useful. But
   I’m starting to wonder whether the system is getting smarter while I’m relying
