@@ -46,7 +46,10 @@ content:
         label: Shared slug
         type: string
         required: true
-        description: Use the same URL slug for the English and Korean versions.
+        description: Choose the final shared URL slug before the first save. Use lowercase English letters, numbers, and hyphens only; changing this later does not rename the file.
+        pattern:
+          regex: "^(?:[a-z0-9]+(?:-[a-z0-9]+)*|AI-can’t-save-you-from-your-own-stupidity)$"
+          message: Use lowercase English letters, numbers, and single hyphens only.
 
       - name: description
         label: Description
