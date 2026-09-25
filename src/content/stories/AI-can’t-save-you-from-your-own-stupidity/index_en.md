@@ -4,7 +4,7 @@ date: 2026-09-25
 createdAt: 2026-09-25T09:11:00Z
 draft: true
 lang: en
-heroImage: /media/1casip9d07gk2wcolrxtba.webp
+heroImage: /media/download-1.png
 formats:
   - read
 featured: false
