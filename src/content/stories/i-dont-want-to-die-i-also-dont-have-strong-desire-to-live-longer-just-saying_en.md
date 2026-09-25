@@ -5,7 +5,7 @@ slug: I don’t want to die. I also don’t have strong desire to live longer. J
   saying.
 date: 2026-09-25
 createdAt: 2026-09-25T21:19:00Z
-draft: true
+draft: false
 lang: en
 heroImage: /media/download-2.png
 formats:
