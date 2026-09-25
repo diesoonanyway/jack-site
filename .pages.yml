@@ -102,9 +102,11 @@ content:
       - name: formats
         label: Formats
         type: select
+        required: true
         description: Choose every way this Story can be experienced.
         options:
           multiple: true
+          min: 1
           values:
             - name: read
               label: Read
