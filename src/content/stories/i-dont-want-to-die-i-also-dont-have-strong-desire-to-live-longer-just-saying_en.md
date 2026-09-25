@@ -1,8 +1,7 @@
 ---
 title: I don’t want to die. I also don’t have strong desire to live longer. Just
   saying.
-slug: I don’t want to die. I also don’t have strong desire to live longer. Just
-  saying.
+slug: i-dont-want-to-die
 date: 2026-09-25
 createdAt: 2026-09-25T21:19:00Z
 draft: false
