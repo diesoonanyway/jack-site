@@ -172,6 +172,7 @@ const storyFormats = (story) => story.data.formats
           >
             {recentStories.map((story) => (
               <article class="media-rail-item story-rail-item">
+                <p class="story-formats">{storyFormats(story)}</p>
                 {storyVisual(story) && (
                   <a
                     class="story-rail-visual"
@@ -185,7 +186,6 @@ const storyFormats = (story) => story.data.formats
                     )}
                   </a>
                 )}
-                <p class="story-formats">{storyFormats(story)}</p>
                 <h3 class="media-card-title">
                   <a class="media-card-link" href={storyPath(story)}>{story.data.title}</a>
                 </h3>
@@ -718,12 +718,17 @@ const storyFormats = (story) => story.data.formats
     background: rgba(1, 8, 15, 0.5);
   }
 
-  .featured-visual img,
-  .story-rail-visual img {
+  .featured-visual img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .story-rail-visual img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
   .featured-copy {
@@ -832,6 +837,15 @@ const storyFormats = (story) => story.data.formats
   }
 
   @media (min-width: 761px) {
+    .featured-visual {
+      aspect-ratio: auto;
+    }
+
+    .featured-visual img {
+      height: auto;
+      object-fit: contain;
+    }
+
     .media-rail-frame.has-controls .media-rail-controls:not([hidden]) {
       display: contents;
     }
@@ -887,13 +901,12 @@ const storyFormats = (story) => story.data.formats
     scroll-snap-align: start;
   }
 
-  .story-rail-visual {
+  .story-rail-item > .story-rail-visual {
     position: relative;
     z-index: 1;
     display: block;
     width: 100%;
     margin: 0 0 26px;
-    aspect-ratio: 16 / 9;
     overflow: hidden;
     background: rgba(1, 8, 15, 0.5);
   }
@@ -986,13 +999,14 @@ const storyFormats = (story) => story.data.formats
     max-width: 780px;
     margin-bottom: 0;
     font-family: var(--font-editorial);
-    font-size: clamp(1.7rem, 2.8vw, 2.9rem);
+    font-size: 1.5rem;
     font-weight: var(--editorial-title-weight);
-    line-height: var(--editorial-title-leading);
+    line-height: 1.3;
     letter-spacing: var(--editorial-title-tracking);
   }
 
   .media-rail-item .media-card-title a {
+    margin-top: 0;
     font-weight: inherit;
   }
 
@@ -1387,6 +1401,10 @@ const storyFormats = (story) => story.data.formats
       padding-right: 24px;
     }
 
+    .media-rail-item .media-card-title {
+      font-size: 1.3125rem;
+    }
+
     .media-rail-controls {
       display: none;
     }
@@ -1402,6 +1420,19 @@ const storyFormats = (story) => story.data.formats
 
     .about-section {
       min-height: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .featured-copy h2 {
+      font-size: 2rem;
+      line-height: 1.3;
+    }
+  }
+
+  @media (max-width: 390px) {
+    .featured-copy h2 {
+      font-size: 1.75rem;
     }
   }
 </style>

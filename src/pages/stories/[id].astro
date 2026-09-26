@@ -67,7 +67,7 @@ const { Content } = await render(post);
   {lang}
   {alternatePath}
 >
-  <article class:list={['story-detail', { 'story-detail--text-only': !heroVisual }]}>
+  <article class:list={['story-detail', { 'story-detail--text-only': !heroVisual, 'story-detail--ko': isKorean }]}>
     {heroVisual && (
       <figure class="story-hero-visual">
         <img src={heroVisual} alt="" loading="eager" />
@@ -279,18 +279,16 @@ const { Content } = await render(post);
   .story-hero-visual {
     position: relative;
     width: 100%;
-    margin: 0 0 clamp(58px, 7vw, 96px);
+    max-width: 1120px;
+    margin: 0 auto clamp(58px, 7vw, 96px);
     overflow: hidden;
-    background: rgba(1, 8, 15, 0.48);
   }
 
   .story-hero-visual img {
     display: block;
     width: 100%;
-    max-height: min(72vh, 760px);
+    max-width: 100%;
     height: auto;
-    object-fit: contain;
-    margin-inline: auto;
   }
 
   .story-play-cue {
@@ -341,6 +339,10 @@ const { Content } = await render(post);
     margin-bottom: 32px;
     font-size: clamp(3.25rem, 5.2vw, 4.75rem);
     line-height: 1.04;
+  }
+
+  .story-detail.story-detail--ko h1 {
+    line-height: 1.32;
   }
 
   .story-description {
