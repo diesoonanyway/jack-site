@@ -6,8 +6,8 @@ createdAt: 2026-09-27T10:49:00Z
 draft: true
 lang: en
 heroImage: /media/1otwv1sdxhtmkrp0exaccdg.webp
-topics:
-  - learning-methods
+formats:
+  - read
 ---
 When I was at school in Korea, there was a strange teaching method that was not quite a teaching method. If you got into trouble and had to write a letter of reflection, or if you answered questions incorrectly on a test, you might be told to fill page after page of a notebook by writing the same sentence over and over again. In Korea, we called it *kkamji*. After writing the same sentence enough times, you stopped seeing the words altogether. Your mind went blank while your hand kept moving.
 
