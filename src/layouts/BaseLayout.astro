@@ -6,7 +6,7 @@ import { serializeJsonLd, SITE_NAME } from '../lib/seo';
 
 const {
   title = SITE_NAME,
-  description = 'Stories, ideas and useful things.',
+  description = 'What I Feel, What I Learn, and useful things.',
   image = '/images/moon-ocean.png',
   type = 'website',
   noindex = false,
@@ -34,14 +34,16 @@ const pathPrefix = lang === 'ko' ? '/ko' : '';
 const homePath = lang === 'ko' ? '/ko/' : '/';
 const navigation = lang === 'ko'
   ? {
-      stories: '스토리',
+      whatIFeel: 'What I Feel',
+      whatILearn: 'What I Learn',
       about: '소개',
       newsletter: '뉴스레터',
       privacy: '개인정보 처리방침',
       contact: '연락처',
     }
   : {
-      stories: 'Stories',
+      whatIFeel: 'What I Feel',
+      whatILearn: 'What I Learn',
       about: 'About',
       newsletter: 'Newsletter',
       privacy: 'Privacy',
@@ -186,7 +188,10 @@ const measurementId = 'G-Z9K72KWHGP';
         --accent-strong: #ffffff;
         --max: 1480px;
         --reading: 780px;
-        --font-editorial: Georgia, 'Times New Roman', Times, serif;
+        --font-english: Georgia, 'Times New Roman', Times, serif;
+        --font-korean: Batang, '바탕', 'Noto Serif KR', 'Noto Serif CJK KR', AppleMyungjo, serif;
+        --font-site: var(--font-english);
+        --font-editorial: var(--font-site);
         --editorial-title-weight: 500;
         --editorial-title-leading: 1.14;
         --editorial-title-tracking: -0.015em;
@@ -205,6 +210,10 @@ const measurementId = 'G-Z9K72KWHGP';
         background: var(--bg);
       }
 
+      html:lang(ko) {
+        --font-site: var(--font-korean);
+      }
+
       body {
         position: relative;
 
@@ -215,10 +224,7 @@ const measurementId = 'G-Z9K72KWHGP';
 
         color: var(--text);
 
-        font-family:
-          Arial,
-          Helvetica,
-          sans-serif;
+        font-family: var(--font-site);
 
         line-height: 1.6;
 
@@ -597,8 +603,12 @@ const measurementId = 'G-Z9K72KWHGP';
         </a>
 
         <nav class="nav">
-          <a href={`${pathPrefix}/stories/`}>
-            {navigation.stories}
+          <a href={`${pathPrefix}/what-i-feel/`}>
+            {navigation.whatIFeel}
+          </a>
+
+          <a href={`${pathPrefix}/what-i-learn/`}>
+            {navigation.whatILearn}
           </a>
 
           <a href={`${pathPrefix}/about/`}>

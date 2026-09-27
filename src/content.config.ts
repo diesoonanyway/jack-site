@@ -35,6 +35,26 @@ const stories = defineCollection({
   }),
 });
 
+const whatILearn = defineCollection({
+  loader: glob({
+    pattern: '*_{en,ko}.md',
+    base: './src/content/what-i-learn',
+    generateId: ({ entry, data }) => getPairedEntryId(entry, data.lang, data.slug),
+  }),
+  schema: z.object({
+    title: z.string(),
+    slug: z.string(),
+    description: z.string().optional(),
+    date: z.coerce.date(),
+    createdAt: z.coerce.date().optional(),
+    draft: z.boolean().default(true),
+    lang: z.enum(['en', 'ko']).default('en'),
+    translation: z.string().optional(),
+    heroImage: z.string().optional(),
+    topics: z.array(z.string()).default([]),
+  }),
+});
+
 const languageFields = {
   lang: z.enum(['en', 'ko']).default('en'),
   translation: z.string().optional(),
@@ -71,5 +91,6 @@ const apps = defineCollection({
 
 export const collections = {
   stories,
+  whatILearn,
   apps,
 };

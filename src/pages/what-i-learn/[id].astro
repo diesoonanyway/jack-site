@@ -1,0 +1,224 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublicSlug } from '../../lib/content-slug';
+import { createArticleStructuredData } from '../../lib/seo';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('whatILearn');
+  return posts
+    .filter((post) => !post.data.draft && post.data.lang === 'en')
+    .map((post) => ({
+      params: { id: getPublicSlug(post.id, post.data.lang) },
+      props: { post },
+    }));
+}
+
+const { post, lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const slug = getPublicSlug(post.id, post.data.lang);
+const counterpart = (await getCollection('whatILearn')).find((entry) =>
+  !entry.data.draft && entry.data.lang !== lang &&
+  getPublicSlug(entry.id, entry.data.lang) === slug
+);
+const alternatePath = counterpart
+  ? `${isKorean ? '' : '/ko'}/what-i-learn/${slug}/`
+  : undefined;
+const seoDescription = post.data.description || post.data.title;
+const canonicalURL = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site).toString()
+  : undefined;
+const articleImageURL = post.data.heroImage && Astro.site
+  ? new URL(post.data.heroImage, Astro.site).toString()
+  : undefined;
+const articleStructuredData = canonicalURL
+  ? createArticleStructuredData({
+      title: post.data.title,
+      description: seoDescription,
+      datePublished: post.data.date.toISOString(),
+      canonicalURL,
+      lang,
+      imageURL: articleImageURL,
+    })
+  : undefined;
+const topicCopy = isKorean
+  ? {
+      'learning-methods': '학습법',
+      exercise: '운동',
+      'development-study': '개발 공부',
+    }
+  : {
+      'learning-methods': 'Learning methods',
+      exercise: 'Exercise',
+      'development-study': 'Development study',
+    };
+const topicLabels = post.data.topics
+  .map((topic) => topicCopy[topic] || topic.replaceAll('-', ' '))
+  .join(' · ');
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  title={`${post.data.title} — If It All Ends`}
+  description={seoDescription}
+  image={post.data.heroImage || undefined}
+  type="article"
+  publishedTime={post.data.date.toISOString()}
+  structuredData={articleStructuredData}
+  {lang}
+  {alternatePath}
+>
+  <article class:list={['learn-detail', { 'learn-detail--ko': isKorean }]}>
+    {post.data.heroImage && (
+      <figure class="learn-hero-visual">
+        <img src={post.data.heroImage} alt="" loading="eager" />
+      </figure>
+    )}
+
+    <header class="learn-detail-header">
+      {topicLabels && <p class="learn-topics">{topicLabels}</p>}
+      <h1 class="editorial-title">{post.data.title}</h1>
+      {post.data.description && <p class="learn-description">{post.data.description}</p>}
+      <time datetime={post.data.date.toISOString()}>
+        {post.data.date.toLocaleDateString(isKorean ? 'ko-KR' : 'en-AU', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
+      </time>
+    </header>
+
+    <div class="article-body"><Content /></div>
+  </article>
+</BaseLayout>
+
+<style>
+  .learn-detail {
+    width: 100%;
+    max-width: 1184px;
+    margin-inline: auto;
+    padding: 54px 32px 96px;
+  }
+
+  .learn-hero-visual {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto clamp(58px, 7vw, 96px);
+    overflow: hidden;
+  }
+
+  .learn-hero-visual img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .learn-detail-header,
+  .article-body {
+    width: 100%;
+    max-width: 1120px;
+    margin-inline: auto;
+  }
+
+  .learn-detail-header {
+    padding-block: clamp(36px, 5vw, 72px) clamp(54px, 7vw, 88px);
+  }
+
+  .learn-topics,
+  .learn-detail-header time {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .learn-topics {
+    margin-bottom: 26px;
+  }
+
+  .learn-detail-header h1 {
+    max-width: 100%;
+    margin-bottom: 34px;
+    font-size: clamp(3.6rem, 8vw, 7rem);
+    line-height: 1.05;
+  }
+
+  .learn-detail--ko .learn-detail-header h1 {
+    line-height: 1.3;
+  }
+
+  .learn-description {
+    max-width: 860px;
+    margin-bottom: 30px;
+    color: var(--body-text);
+    font-size: clamp(1.05rem, 1.6vw, 1.28rem);
+    line-height: 1.75;
+  }
+
+  .learn-detail-header time {
+    display: block;
+  }
+
+  .article-body {
+    color: var(--body-text);
+    font-size: 1.08rem;
+    line-height: 1.85;
+  }
+
+  .article-body :global(h2),
+  .article-body :global(h3) {
+    color: var(--text);
+    font-family: var(--font-editorial);
+    font-weight: var(--editorial-title-weight);
+  }
+
+  .article-body :global(h2) {
+    margin: 2.3em 0 0.85em;
+    font-size: clamp(1.9rem, 4vw, 3.1rem);
+    line-height: 1.18;
+  }
+
+  .article-body :global(h3) {
+    margin: 2em 0 0.75em;
+    font-size: clamp(1.45rem, 2.8vw, 2rem);
+    line-height: 1.25;
+  }
+
+  .article-body :global(p),
+  .article-body :global(ul),
+  .article-body :global(ol),
+  .article-body :global(blockquote) {
+    margin: 0 0 1.55em;
+  }
+
+  .article-body :global(img),
+  .article-body :global(figure) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+  }
+
+  @media (max-width: 760px) {
+    .learn-detail {
+      padding: 30px 18px 72px;
+    }
+
+    .learn-detail-header {
+      padding-block: 42px 58px;
+    }
+
+    .learn-detail-header h1 {
+      margin-bottom: 26px;
+      font-size: clamp(2.7rem, 13vw, 4.4rem);
+    }
+
+    .article-body {
+      font-size: 1rem;
+      line-height: 1.78;
+    }
+  }
+</style>

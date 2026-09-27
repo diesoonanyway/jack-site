@@ -24,7 +24,7 @@ const counterpart = (await getCollection('stories')).find((entry) =>
   getPublicSlug(entry.id, entry.data.lang) === slug
 );
 const alternatePath = counterpart
-  ? `${isKorean ? '' : '/ko'}/stories/${slug}/`
+  ? `${isKorean ? '' : '/ko'}/what-i-feel/${slug}/`
   : undefined;
 const spotifyId = getSpotifyEpisodeId(post.data.spotifyUrl);
 const spotifyExternalUrl = getSpotifyExternalUrl(post.data.spotifyUrl);

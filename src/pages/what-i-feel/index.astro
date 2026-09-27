@@ -14,27 +14,27 @@ const posts = sortByCreatedAt((await getCollection('stories'))
 
 const copy = isKorean
   ? {
-      title: '스토리',
-      intro: '읽고, 듣고, 볼 수 있는 이야기.',
+      title: 'What I Feel',
+      intro: '경험하고, 읽고, 듣고, 오래 생각한 것들.',
       all: '전체',
       read: '읽기',
       listen: '듣기',
       watch: '보기',
-      filtersLabel: '스토리 형식 필터',
-      noStories: '아직 발행된 스토리가 없습니다.',
+      filtersLabel: 'What I Feel 형식 필터',
+      noStories: '아직 발행된 What I Feel 글이 없습니다.',
     }
   : {
-      title: 'Stories',
-      intro: 'Stories to read, listen to and watch.',
+      title: 'What I Feel',
+      intro: "Things I've experienced, read, heard, and kept thinking about.",
       all: 'All',
       read: 'Read',
       listen: 'Listen',
       watch: 'Watch',
-      filtersLabel: 'Filter stories by format',
-      noStories: 'No published stories yet.',
+      filtersLabel: 'Filter What I Feel by format',
+      noStories: 'No published What I Feel entries yet.',
     };
 
-const storyPath = (post) => `${pathPrefix}/stories/${getPublicSlug(post.id, post.data.lang)}/`;
+const storyPath = (post) => `${pathPrefix}/what-i-feel/${getPublicSlug(post.id, post.data.lang)}/`;
 const storyVisual = (post) => post.data.heroImage || getYouTubeThumbnailUrl(post.data.youtubeUrl);
 const storyFormats = (post) => post.data.formats
   .map((format) => format.toUpperCase())
@@ -42,10 +42,10 @@ const storyFormats = (post) => post.data.formats
 ---
 
 <BaseLayout
-  title={isKorean ? '스토리 — If It All Ends' : 'Stories — If It All Ends'}
+  title={`What I Feel — If It All Ends`}
   description={copy.intro}
   {lang}
-  alternatePath={isKorean ? '/stories/' : '/ko/stories/'}
+  alternatePath={isKorean ? '/what-i-feel/' : '/ko/what-i-feel/'}
 >
   <div class="stories-archive" data-story-archive>
     <header class="stories-archive-intro">
@@ -329,6 +329,16 @@ const storyFormats = (post) => post.data.formats
   @media (max-width: 760px) {
     .stories-archive {
       padding: 30px 18px 40px;
+    }
+
+    .story-archive-visual {
+      aspect-ratio: auto;
+      overflow: visible;
+    }
+
+    .story-archive-visual img {
+      height: auto;
+      object-fit: contain;
     }
 
     .stories-archive-intro {

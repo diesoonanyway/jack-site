@@ -13,7 +13,7 @@ settings:
 
 content:
   - name: stories
-    label: Stories
+    label: What I Feel
     type: collection
     path: src/content/stories
     format: yaml-frontmatter
@@ -112,7 +112,7 @@ content:
         label: Formats
         type: select
         required: true
-        description: Choose every way this Story can be experienced.
+        description: Choose every way this What I Feel entry can be experienced.
         options:
           multiple: true
           min: 1
@@ -132,6 +132,112 @@ content:
         label: Featured
         type: boolean
         default: false
+
+      - name: body
+        label: Body
+        type: rich-text
+        options:
+          format: markdown
+          media: media
+          switcher: true
+
+  - name: what-i-learn
+    label: What I Learn
+    type: collection
+    path: src/content/what-i-learn
+    format: yaml-frontmatter
+    subfolders: false
+
+    operations:
+      create: true
+      rename: true
+      delete: true
+
+    filename:
+      template: "{fields.slug}_{fields.lang}.md"
+      field: false
+
+    view:
+      fields: [title, lang, topics, date, draft]
+      primary: title
+      sort: [createdAt, date, title]
+      default:
+        sort: date
+        order: desc
+
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+
+      - name: slug
+        label: Shared slug
+        type: string
+        required: true
+        description: Choose the final shared URL slug before the first save. Use lowercase English letters, numbers, and hyphens only; changing this later does not rename the file.
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: Use lowercase English letters, numbers, and single hyphens only.
+
+      - name: description
+        label: Description
+        type: text
+
+      - name: date
+        label: Date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+
+      - name: createdAt
+        label: Created At
+        type: date
+        hidden: true
+        options:
+          time: true
+          step: 1
+          format: "yyyy-MM-dd'T'HH:mm:ssXXX"
+
+      - name: draft
+        label: Draft
+        type: boolean
+        default: true
+
+      - name: lang
+        label: Language
+        type: select
+        required: true
+        description: Language must match the filename suffix _en.md or _ko.md.
+        options:
+          values:
+            - name: en
+              label: English
+            - name: ko
+              label: Korean
+
+      - name: heroImage
+        label: Hero image
+        type: image
+        options:
+          media: media
+
+      - name: topics
+        label: Topics
+        type: select
+        required: true
+        description: Choose one or more learning topics. More options can be added later.
+        options:
+          multiple: true
+          min: 1
+          values:
+            - name: learning-methods
+              label: Learning methods
+            - name: exercise
+              label: Exercise
+            - name: development-study
+              label: Development study
 
       - name: body
         label: Body

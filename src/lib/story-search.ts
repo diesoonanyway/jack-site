@@ -7,6 +7,7 @@ export type StorySearchEntry = {
   description: string;
   body: string;
   formats: string[];
+  section: 'what-i-feel' | 'what-i-learn';
   url: string;
 };
 
@@ -38,16 +39,31 @@ export function markdownToSearchText(markdown: string): string {
 export async function getStorySearchIndex(lang: ContentLanguage): Promise<StorySearchEntry[]> {
   const pathPrefix = lang === 'ko' ? '/ko' : '';
   const stories = await getCollection('stories');
+  const whatILearn = await getCollection('whatILearn');
 
-  return stories
+  const feelEntries = stories
     .filter((story) => !story.data.draft && story.data.lang === lang)
     .map((story) => ({
       title: story.data.title,
       description: story.data.intro || story.data.description || '',
       body: markdownToSearchText(story.body || ''),
       formats: story.data.formats,
-      url: `${pathPrefix}/stories/${getPublicSlug(story.id, story.data.lang)}/`,
+      section: 'what-i-feel' as const,
+      url: `${pathPrefix}/what-i-feel/${getPublicSlug(story.id, story.data.lang)}/`,
     }));
+
+  const learnEntries = whatILearn
+    .filter((entry) => !entry.data.draft && entry.data.lang === lang)
+    .map((entry) => ({
+      title: entry.data.title,
+      description: entry.data.description || '',
+      body: markdownToSearchText(entry.body || ''),
+      formats: [],
+      section: 'what-i-learn' as const,
+      url: `${pathPrefix}/what-i-learn/${getPublicSlug(entry.id, entry.data.lang)}/`,
+    }));
+
+  return [...feelEntries, ...learnEntries];
 }
 
 export async function createStorySearchResponse(lang: ContentLanguage): Promise<Response> {

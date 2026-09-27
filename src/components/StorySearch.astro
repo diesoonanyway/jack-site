@@ -4,30 +4,30 @@ const isKorean = lang === 'ko';
 
 const copy = isKorean
   ? {
-      open: '스토리 검색',
-      title: '스토리 검색',
+      open: '글 검색',
+      title: '글 검색',
       close: '검색 닫기',
       label: '검색어',
       placeholder: '제목, 요약 또는 본문 검색',
       prompt: '검색어를 입력해 주세요.',
       loading: '검색 인덱스를 불러오는 중입니다…',
       error: '검색을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
-      empty: '일치하는 스토리가 없습니다.',
-      countOne: '1개의 스토리',
-      countMany: '{count}개의 스토리',
+      empty: '일치하는 글이 없습니다.',
+      countOne: '1개의 글',
+      countMany: '{count}개의 글',
     }
   : {
-      open: 'Search stories',
-      title: 'Search stories',
+      open: 'Search',
+      title: 'Search',
       close: 'Close search',
       label: 'Search term',
       placeholder: 'Search titles, summaries and articles',
-      prompt: 'Start typing to search stories.',
+      prompt: 'Start typing to search What I Feel and What I Learn.',
       loading: 'Loading the search index…',
       error: 'Search could not be loaded. Please try again.',
-      empty: 'No matching stories found.',
-      countOne: '1 story',
-      countMany: '{count} stories',
+      empty: 'No matching entries found.',
+      countOne: '1 entry',
+      countMany: '{count} entries',
     };
 ---
 
@@ -98,6 +98,7 @@ const copy = isKorean
     description: string;
     body: string;
     formats: string[];
+    section: 'what-i-feel' | 'what-i-learn';
     url: string;
   };
 
@@ -204,8 +205,8 @@ const copy = isKorean
           }
 
           const countTemplate = matches.length === 1
-            ? dialog.dataset.countOne || '1 story'
-            : dialog.dataset.countMany || '{count} stories';
+            ? dialog.dataset.countOne || '1 entry'
+            : dialog.dataset.countMany || '{count} entries';
           setStatus(countTemplate.replace('{count}', String(matches.length)));
 
           const fragment = document.createDocumentFragment();
@@ -215,7 +216,11 @@ const copy = isKorean
 
             const format = document.createElement('p');
             format.className = 'story-search-format';
-            format.textContent = entry.formats.map((value) => value.toUpperCase()).join(' / ');
+            const sectionLabel = entry.section === 'what-i-learn' ? 'WHAT I LEARN' : 'WHAT I FEEL';
+            format.textContent = [
+              sectionLabel,
+              ...entry.formats.map((value) => value.toUpperCase()),
+            ].join(' / ');
 
             const link = document.createElement('a');
             link.className = 'story-search-link editorial-title';

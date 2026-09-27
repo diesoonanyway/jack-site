@@ -1,0 +1,231 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { sortByCreatedAt } from '../../lib/content-sort';
+import { getPublicSlug } from '../../lib/content-slug';
+
+const { lang = 'en' } = Astro.props;
+const isKorean = lang === 'ko';
+const pathPrefix = isKorean ? '/ko' : '';
+const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
+const posts = sortByCreatedAt((await getCollection('whatILearn'))
+  .filter((post) => !post.data.draft && post.data.lang === lang));
+
+const copy = isKorean
+  ? {
+      intro: '배우고 싶은 것들이 아직 많다는 것. 그것만으로도 살아갈 이유는 충분하지 않을까...',
+      noEntries: '아직 발행된 What I Learn 글이 없습니다.',
+      topics: {
+        'learning-methods': '학습법',
+        exercise: '운동',
+        'development-study': '개발 공부',
+      },
+    }
+  : {
+      intro: 'There is still so much I want to learn. Could that alone be reason enough to keep living...',
+      noEntries: 'No published What I Learn entries yet.',
+      topics: {
+        'learning-methods': 'Learning methods',
+        exercise: 'Exercise',
+        'development-study': 'Development study',
+      },
+    };
+
+const entryPath = (post) => `${pathPrefix}/what-i-learn/${getPublicSlug(post.id, post.data.lang)}/`;
+const topicLabels = (topics) => topics
+  .map((topic) => copy.topics[topic] || topic.replaceAll('-', ' '))
+  .join(' · ');
+---
+
+<BaseLayout
+  title="What I Learn — If It All Ends"
+  description={copy.intro}
+  {lang}
+  alternatePath={isKorean ? '/what-i-learn/' : '/ko/what-i-learn/'}
+>
+  <div class="learn-archive">
+    <header class="learn-archive-intro">
+      <p class="archive-kicker">IF IT ALL ENDS</p>
+      <h1 class="editorial-title">What I Learn</h1>
+      <p class="learn-archive-description">{copy.intro}</p>
+    </header>
+
+    {posts.length > 0 ? (
+      <div class="learn-archive-list">
+        {posts.map((post, index) => (
+          <article class="learn-archive-entry">
+            {post.data.heroImage && (
+              <a class="learn-archive-visual" href={entryPath(post)} aria-label={post.data.title}>
+                <img src={post.data.heroImage} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
+              </a>
+            )}
+
+            <div class="learn-archive-copy">
+              {post.data.topics.length > 0 && (
+                <p class="learn-topics">{topicLabels(post.data.topics)}</p>
+              )}
+              <h2 class="editorial-title">
+                <a href={entryPath(post)}>{post.data.title}</a>
+              </h2>
+              {post.data.description && (
+                <p class="learn-archive-summary">{post.data.description}</p>
+              )}
+              <time datetime={post.data.date.toISOString()}>
+                {post.data.date.toLocaleDateString(dateLocale, {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </time>
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-state">{copy.noEntries}</p>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .learn-archive {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding: 52px 32px 60px;
+  }
+
+  .learn-archive-intro {
+    max-width: 980px;
+    padding-block: clamp(52px, 8vw, 118px) clamp(62px, 9vw, 132px);
+  }
+
+  .archive-kicker,
+  .learn-topics,
+  .learn-archive-copy time {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .archive-kicker {
+    margin-bottom: 28px;
+  }
+
+  .learn-archive-intro h1 {
+    margin-bottom: 34px;
+    font-size: clamp(4.4rem, 10vw, 9rem);
+    line-height: 0.92;
+  }
+
+  .learn-archive-description {
+    max-width: 640px;
+    margin-bottom: 0;
+    color: var(--body-text);
+    font-size: clamp(1.08rem, 1.7vw, 1.3rem);
+    line-height: 1.75;
+  }
+
+  .learn-archive-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(70px, 8vw, 112px) clamp(28px, 3vw, 44px);
+    width: 100%;
+    padding-block: clamp(76px, 9vw, 124px);
+    border-top: 1px solid rgba(220, 230, 240, 0.14);
+  }
+
+  .learn-archive-entry {
+    display: flex;
+    min-width: 0;
+    height: 100%;
+    flex-direction: column;
+    padding-top: 26px;
+    border-top: 1px solid rgba(220, 230, 240, 0.12);
+  }
+
+  .learn-archive-visual {
+    display: block;
+    width: 100%;
+    margin-bottom: 30px;
+    overflow: hidden;
+    background: rgba(1, 8, 15, 0.48);
+  }
+
+  .learn-archive-visual img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .learn-archive-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .learn-topics {
+    margin-bottom: 20px;
+  }
+
+  .learn-archive-copy h2 {
+    margin-bottom: 22px;
+    font-size: clamp(1.65rem, 2.4vw, 2.1rem);
+    line-height: 1.18;
+  }
+
+  .learn-archive-copy h2 a {
+    color: inherit;
+  }
+
+  .learn-archive-summary {
+    margin-bottom: 26px;
+    color: var(--body-text);
+    font-size: 0.98rem;
+    line-height: 1.7;
+  }
+
+  .learn-archive-copy time {
+    display: block;
+    margin-top: auto;
+    line-height: 1.6;
+  }
+
+  .empty-state {
+    margin: 0;
+    padding-block: 100px;
+    border-top: 1px solid rgba(220, 230, 240, 0.14);
+    color: var(--muted);
+  }
+
+  @media (max-width: 1020px) {
+    .learn-archive-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 760px) {
+    .learn-archive {
+      padding: 30px 18px 40px;
+    }
+
+    .learn-archive-intro {
+      padding-block: 48px 70px;
+    }
+
+    .learn-archive-intro h1 {
+      margin-bottom: 26px;
+      font-size: clamp(3.4rem, 18vw, 5.4rem);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .learn-archive-list {
+      grid-template-columns: 1fr;
+      gap: 64px;
+      padding-block: 68px;
+    }
+  }
+</style>

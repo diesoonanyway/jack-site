@@ -18,15 +18,20 @@ const websiteStructuredData = Astro.site
 const copy = isKorean
   ? {
       description: '읽고, 듣고, 볼 수 있는 이야기.',
-      heroTitle: '발전시킬 가치가\n있는 아이디어.',
-      heroCta: 'Stories 둘러보기 →',
-      stories: '스토리',
+      heroLabel: undefined,
+      heroParagraphs: [
+        ['바쁘게 돌아가는 세상에서', '쫄지 않고,', '나만의 속도로 살아가고 싶다.'],
+        ['깊이 생각하고,', '솔직하게 쓰고,', '기꺼이 나누면서.'],
+      ],
+      heroClosing: '어차피 곧 끝날 인생이라면…',
+      heroCta: 'What I Feel 둘러보기 →',
+      stories: 'What I Feel',
       readArticle: '글 읽기 →',
-      noStories: '아직 발행된 스토리가 없습니다.',
+      noStories: '아직 발행된 What I Feel 글이 없습니다.',
       viewAll: '모두 보기 →',
-      recentStories: '최근 스토리',
-      previousStories: '이전 스토리',
-      nextStories: '다음 스토리',
+      recentStories: '최근 What I Feel',
+      previousStories: '이전 What I Feel',
+      nextStories: '다음 What I Feel',
       newsletter: '뉴스레터',
       newsletterTitle: '새로운 아이디어를\n가끔 전합니다.',
       newsletterCopy: '읽거나 보거나 사용해 볼 가치가 있는 것이 생기면 짧은 이메일을 보냅니다.',
@@ -42,15 +47,20 @@ const copy = isKorean
     }
   : {
       description: 'Stories to read, listen to and watch.',
-      heroTitle: 'A Korean writer studying what it means to remain human in a faster, smarter world. If it all ends anyway...',
+      heroLabel: "A KOREAN WRITER'S JOURNAL",
+      heroParagraphs: [
+        ['In a world that never slows down,', 'without fear,', 'I want to live at a pace entirely my own.'],
+        ['To think deeply,', 'write honestly,', 'and share wholeheartedly.'],
+      ],
+      heroClosing: 'If it all ends soon anyway...',
       heroCta: 'Explore ↓',
-      stories: 'Stories',
+      stories: 'What I Feel',
       readArticle: 'Read article →',
-      noStories: 'No published stories yet.',
+      noStories: 'No published What I Feel entries yet.',
       viewAll: 'View all →',
-      recentStories: 'Recent Stories',
-      previousStories: 'Previous stories',
-      nextStories: 'Next stories',
+      recentStories: 'Recent What I Feel',
+      previousStories: 'Previous What I Feel entries',
+      nextStories: 'Next What I Feel entries',
       newsletter: 'Newsletter',
       newsletterTitle: 'New ideas,\noccasionally.',
       newsletterCopy: 'A short email when there is something worth reading, watching or trying.',
@@ -76,7 +86,7 @@ const recentStories = featuredStory
   ? stories.filter((story) => story.id !== featuredStory.id)
   : [];
 
-const storyPath = (story) => localizedPath(`/stories/${getPublicSlug(story.id, story.data.lang)}/`);
+const storyPath = (story) => localizedPath(`/what-i-feel/${getPublicSlug(story.id, story.data.lang)}/`);
 const storyVisual = (story) => story.data.heroImage || getYouTubeThumbnailUrl(story.data.youtubeUrl);
 const storyFormats = (story) => story.data.formats
   .map((format) => format.toUpperCase())
@@ -85,19 +95,29 @@ const storyFormats = (story) => story.data.formats
 
 <BaseLayout
   title={isKorean
-    ? 'If It All Ends — 인간답게 살아가는 이야기'
-    : 'If It All Ends — Stories About Being Human'}
+    ? 'If It All Ends — What I Feel과 What I Learn'
+    : 'If It All Ends — What I Feel and What I Learn'}
   description={copy.description}
   {lang}
   alternatePath={isKorean ? '/' : '/ko/'}
   structuredData={websiteStructuredData}
 >
   <section class="home-hero">
-    <h1 class={isKorean ? 'editorial-title' : 'editorial-title site-intro-title'}>
-      {copy.heroTitle.split('\n').map((line, index) => (
-        <>{index > 0 && <br />}{line}</>
-      ))}
-    </h1>
+    <div class="hero-intro">
+      {copy.heroLabel && <p class="hero-intro-label">{copy.heroLabel}</p>}
+      <h1 class:list={['editorial-title', 'site-intro-title', { 'site-intro-title--english': !isKorean }]}>
+        {copy.heroParagraphs.map((paragraph) => (
+          <span class="hero-intro-paragraph">
+            {paragraph.map((line, index) => (
+              <>{index > 0 && <br />}{line}</>
+            ))}
+          </span>
+        ))}
+        <span class:list={['hero-intro-closing', { 'hero-intro-closing--italic': !isKorean }]}>
+          {copy.heroClosing}
+        </span>
+      </h1>
+    </div>
 
     <div class="hero-bottom hero-bottom--single">
       <a href="#featured-story">{copy.heroCta}</a>
@@ -154,7 +174,7 @@ const storyFormats = (story) => story.data.formats
       <section class="home-section recent-stories" data-carousel>
         <div class="section-heading-row">
           <h2 class="section-heading">{copy.recentStories}</h2>
-          <a href={localizedPath('/stories/')}>{copy.viewAll}</a>
+          <a href={localizedPath('/what-i-feel/')}>{copy.viewAll}</a>
         </div>
 
         <div class="media-rail-frame">
@@ -569,7 +589,42 @@ const storyFormats = (story) => story.data.formats
   }
 
   .home-hero .site-intro-title {
-    font-size: clamp(2.9rem, 4.5vw, 4.8rem);
+    font-size: clamp(2rem, 3.6vw, 3.6rem);
+    line-height: 1.2;
+  }
+
+  .home-hero .site-intro-title--english {
+    font-family: var(--font-editorial);
+  }
+
+  html:lang(ko) .home-hero .site-intro-title {
+    line-height: 1.34;
+  }
+
+  .hero-intro-label {
+    margin: 0 0 28px;
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-shadow: 0 3px 22px rgba(0, 0, 0, 0.95);
+  }
+
+  .hero-intro-paragraph,
+  .hero-intro-closing {
+    display: block;
+  }
+
+  .hero-intro-paragraph + .hero-intro-paragraph {
+    margin-top: 0.72em;
+  }
+
+  .hero-intro-closing {
+    margin-top: 0.9em;
+  }
+
+  .hero-intro-closing--italic {
+    font-style: italic;
   }
 
   .hero-bottom {
@@ -742,7 +797,12 @@ const storyFormats = (story) => story.data.formats
   .featured-copy h2 {
     max-width: 1000px;
     margin: 22px 0 28px;
-    font-size: clamp(3rem, 6vw, 6.6rem);
+    font-size: 3.375rem;
+    line-height: 1.18;
+  }
+
+  html:lang(ko) .featured-copy h2 {
+    line-height: 1.3;
   }
 
   .featured-description {
@@ -837,6 +897,12 @@ const storyFormats = (story) => story.data.formats
   }
 
   @media (min-width: 761px) {
+    .featured-copy,
+    .featured-copy h2 {
+      width: 100%;
+      max-width: none;
+    }
+
     .featured-visual {
       aspect-ratio: auto;
     }
@@ -1342,7 +1408,12 @@ const storyFormats = (story) => story.data.formats
     }
 
     .home-hero .site-intro-title {
-      font-size: clamp(2.15rem, 8.5vw, 3.4rem);
+      font-size: clamp(1.75rem, 7.3vw, 2.35rem);
+    }
+
+    .hero-intro-label {
+      margin-bottom: 22px;
+      font-size: 0.68rem;
     }
 
     .featured-visual {
@@ -1354,7 +1425,7 @@ const storyFormats = (story) => story.data.formats
     }
 
     .featured-copy h2 {
-      font-size: clamp(2.5rem, 12vw, 4.2rem);
+      font-size: 2.75rem;
     }
 
     .play-cue {
@@ -1420,6 +1491,12 @@ const storyFormats = (story) => story.data.formats
 
     .about-section {
       min-height: auto;
+    }
+  }
+
+  @media (min-width: 761px) and (max-width: 1023px) {
+    .featured-copy h2 {
+      font-size: 2.75rem;
     }
   }
 
