@@ -255,17 +255,15 @@ const storyFormats = (post) => post.data.formats
     position: relative;
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 3;
     margin-bottom: 30px;
-    overflow: hidden;
     background: rgba(1, 8, 15, 0.48);
   }
 
   .story-archive-visual img {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
   }
 
   .archive-play-cue {
@@ -329,16 +327,6 @@ const storyFormats = (post) => post.data.formats
   @media (max-width: 760px) {
     .stories-archive {
       padding: 30px 18px 40px;
-    }
-
-    .story-archive-visual {
-      aspect-ratio: auto;
-      overflow: visible;
-    }
-
-    .story-archive-visual img {
-      height: auto;
-      object-fit: contain;
     }
 
     .stories-archive-intro {

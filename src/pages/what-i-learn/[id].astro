@@ -41,20 +41,8 @@ const articleStructuredData = canonicalURL
       imageURL: articleImageURL,
     })
   : undefined;
-const topicCopy = isKorean
-  ? {
-      'learning-methods': '학습법',
-      exercise: '운동',
-      'development-study': '개발 공부',
-    }
-  : {
-      'learning-methods': 'Learning methods',
-      exercise: 'Exercise',
-      'development-study': 'Development study',
-    };
-const topicLabels = post.data.topics
-  .map((topic) => topicCopy[topic] || topic.replaceAll('-', ' '))
-  .join(' · ');
+const formatLabels = post.data.formats.map((format) => format.toUpperCase()).join(' · ');
+const topicLabels = post.data.topics.join(' · ');
 const { Content } = await render(post);
 ---
 
@@ -76,6 +64,7 @@ const { Content } = await render(post);
     )}
 
     <header class="learn-detail-header">
+      {formatLabels && <p class="learn-formats">{formatLabels}</p>}
       {topicLabels && <p class="learn-topics">{topicLabels}</p>}
       <h1 class="editorial-title">{post.data.title}</h1>
       {post.data.description && <p class="learn-description">{post.data.description}</p>}
@@ -125,6 +114,7 @@ const { Content } = await render(post);
     padding-block: clamp(36px, 5vw, 72px) clamp(54px, 7vw, 88px);
   }
 
+  .learn-formats,
   .learn-topics,
   .learn-detail-header time {
     color: var(--muted);
@@ -134,6 +124,7 @@ const { Content } = await render(post);
     text-transform: uppercase;
   }
 
+  .learn-formats,
   .learn-topics {
     margin-bottom: 26px;
   }

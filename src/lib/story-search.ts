@@ -58,7 +58,7 @@ export async function getStorySearchIndex(lang: ContentLanguage): Promise<StoryS
       title: entry.data.title,
       description: entry.data.description || '',
       body: markdownToSearchText(entry.body || ''),
-      formats: [],
+      formats: entry.data.formats,
       section: 'what-i-learn' as const,
       url: `${pathPrefix}/what-i-learn/${getPublicSlug(entry.id, entry.data.lang)}/`,
     }));

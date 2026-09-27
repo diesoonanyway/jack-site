@@ -15,26 +15,15 @@ const copy = isKorean
   ? {
       intro: '배우고 싶은 것들이 아직 많다는 것. 그것만으로도 살아갈 이유는 충분하지 않을까...',
       noEntries: '아직 발행된 What I Learn 글이 없습니다.',
-      topics: {
-        'learning-methods': '학습법',
-        exercise: '운동',
-        'development-study': '개발 공부',
-      },
     }
   : {
       intro: 'There is still so much I want to learn. Could that alone be reason enough to keep living...',
       noEntries: 'No published What I Learn entries yet.',
-      topics: {
-        'learning-methods': 'Learning methods',
-        exercise: 'Exercise',
-        'development-study': 'Development study',
-      },
     };
 
 const entryPath = (post) => `${pathPrefix}/what-i-learn/${getPublicSlug(post.id, post.data.lang)}/`;
-const topicLabels = (topics) => topics
-  .map((topic) => copy.topics[topic] || topic.replaceAll('-', ' '))
-  .join(' · ');
+const formatLabels = (formats) => formats.map((format) => format.toUpperCase()).join(' · ');
+const topicLabels = (topics) => topics.join(' · ');
 ---
 
 <BaseLayout
@@ -44,7 +33,7 @@ const topicLabels = (topics) => topics
   alternatePath={isKorean ? '/what-i-learn/' : '/ko/what-i-learn/'}
 >
   <div class="learn-archive">
-    <header class="learn-archive-intro">
+    <header class="learn-archive-intro learn-archive-intro--wide">
       <p class="archive-kicker">IF IT ALL ENDS</p>
       <h1 class="editorial-title">What I Learn</h1>
       <p class="learn-archive-description">{copy.intro}</p>
@@ -61,6 +50,9 @@ const topicLabels = (topics) => topics
             )}
 
             <div class="learn-archive-copy">
+              {post.data.formats.length > 0 && (
+                <p class="learn-formats">{formatLabels(post.data.formats)}</p>
+              )}
               {post.data.topics.length > 0 && (
                 <p class="learn-topics">{topicLabels(post.data.topics)}</p>
               )}
@@ -101,6 +93,7 @@ const topicLabels = (topics) => topics
   }
 
   .archive-kicker,
+  .learn-formats,
   .learn-topics,
   .learn-archive-copy time {
     color: var(--muted);
@@ -126,6 +119,17 @@ const topicLabels = (topics) => topics
     color: var(--body-text);
     font-size: clamp(1.08rem, 1.7vw, 1.3rem);
     line-height: 1.75;
+  }
+
+  @media (min-width: 1200px) {
+    .learn-archive-intro--wide {
+      max-width: 1120px;
+    }
+
+    .learn-archive-intro--wide .learn-archive-description {
+      max-width: none;
+      white-space: nowrap;
+    }
   }
 
   .learn-archive-list {
@@ -166,6 +170,7 @@ const topicLabels = (topics) => topics
     flex-direction: column;
   }
 
+  .learn-formats,
   .learn-topics {
     margin-bottom: 20px;
   }

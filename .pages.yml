@@ -124,6 +124,17 @@ content:
             - name: watch
               label: Watch
 
+      - name: topics
+        label: Topics
+        type: reference
+        description: Optional. Select one or more topics managed under What I Feel Topics.
+        options:
+          collection: what-i-feel-topics
+          multiple: true
+          search: "name"
+          value: "{primary}"
+          label: "{primary}"
+
       - name: episode
         label: Episode (optional)
         type: string
@@ -140,6 +151,38 @@ content:
           format: markdown
           media: media
           switcher: true
+
+  - name: what-i-feel-topics
+    label: What I Feel Topics
+    type: collection
+    path: src/content/what-i-feel-topics
+    format: yaml-frontmatter
+    subfolders: false
+    exclude: [".gitkeep"]
+
+    operations:
+      create: true
+      rename: true
+      delete: true
+
+    filename:
+      template: "{primary}.md"
+      field: false
+
+    view:
+      fields: [name]
+      primary: name
+      sort: [name]
+      search: [name]
+      default:
+        sort: name
+        order: asc
+
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
 
   - name: what-i-learn
     label: What I Learn
@@ -223,21 +266,32 @@ content:
         options:
           media: media
 
-      - name: topics
-        label: Topics
+      - name: formats
+        label: Formats
         type: select
         required: true
-        description: Choose one or more learning topics. More options can be added later.
+        description: Choose every way this What I Learn entry can be experienced.
         options:
           multiple: true
           min: 1
           values:
-            - name: learning-methods
-              label: Learning methods
-            - name: exercise
-              label: Exercise
-            - name: development-study
-              label: Development study
+            - name: read
+              label: Read
+            - name: listen
+              label: Listen
+            - name: watch
+              label: Watch
+
+      - name: topics
+        label: Topics
+        type: reference
+        description: Optional. Select one or more topics managed under What I Learn Topics.
+        options:
+          collection: what-i-learn-topics
+          multiple: true
+          search: "name"
+          value: "{primary}"
+          label: "{primary}"
 
       - name: body
         label: Body
@@ -246,3 +300,35 @@ content:
           format: markdown
           media: media
           switcher: true
+
+  - name: what-i-learn-topics
+    label: What I Learn Topics
+    type: collection
+    path: src/content/what-i-learn-topics
+    format: yaml-frontmatter
+    subfolders: false
+    exclude: [".gitkeep"]
+
+    operations:
+      create: true
+      rename: true
+      delete: true
+
+    filename:
+      template: "{primary}.md"
+      field: false
+
+    view:
+      fields: [name]
+      primary: name
+      sort: [name]
+      search: [name]
+      default:
+        sort: name
+        order: asc
+
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
