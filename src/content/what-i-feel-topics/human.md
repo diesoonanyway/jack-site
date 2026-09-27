@@ -1,3 +1,3 @@
 ---
-name: human
+name: philosophy
 ---
