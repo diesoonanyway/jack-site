@@ -338,6 +338,12 @@ const measurementId = 'G-Z9K72KWHGP';
         font-size: 0.98rem;
       }
 
+      .nav-primary {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+      }
+
       .nav a {
         color: var(--text);
       }
@@ -526,24 +532,67 @@ const measurementId = 'G-Z9K72KWHGP';
 
         .site-header {
           top: 8px;
-
-          align-items: flex-start;
-
-          flex-direction: column;
-
-          gap: 16px;
-
-          padding: 18px;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          align-items: center;
+          gap: 12px;
+          padding: 14px;
         }
 
         .brand {
+          grid-column: 1;
+          grid-row: 1;
+          min-width: 0;
           font-size: 1.375rem;
         }
 
         .nav {
-          gap: 12px 16px;
+          display: contents;
+        }
 
-          font-size: 0.92rem;
+        .nav-primary {
+          grid-column: 1 / -1;
+          grid-row: 2;
+          display: flex;
+          align-items: center;
+          gap: clamp(12px, 4vw, 18px);
+          min-width: 0;
+          max-width: 100%;
+          padding-bottom: 2px;
+          overflow-x: auto;
+          overscroll-behavior-inline: contain;
+          scrollbar-width: none;
+          font-size: clamp(0.78rem, 3.6vw, 0.9rem);
+          white-space: nowrap;
+        }
+
+        .nav-primary::-webkit-scrollbar {
+          display: none;
+        }
+
+        .nav-primary > a,
+        .nav-primary > .story-search {
+          flex: 0 0 auto;
+        }
+
+        .nav .language-switcher {
+          grid-column: 2;
+          grid-row: 1;
+          justify-self: end;
+        }
+
+        .nav .language-hint {
+          right: 0;
+          left: auto;
+        }
+
+        .nav .language-hint::before {
+          right: 20px;
+          left: auto;
+        }
+
+        .nav .subscribe-link {
+          padding: 6px 10px;
         }
 
         h1 {
@@ -603,26 +652,28 @@ const measurementId = 'G-Z9K72KWHGP';
         </a>
 
         <nav class="nav">
-          <a href={`${pathPrefix}/what-i-feel/`}>
-            {navigation.whatIFeel}
-          </a>
+          <div class="nav-primary">
+            <a href={`${pathPrefix}/what-i-feel/`}>
+              {navigation.whatIFeel}
+            </a>
 
-          <a href={`${pathPrefix}/what-i-learn/`}>
-            {navigation.whatILearn}
-          </a>
+            <a href={`${pathPrefix}/what-i-learn/`}>
+              {navigation.whatILearn}
+            </a>
 
-          <a href={`${pathPrefix}/about/`}>
-            {navigation.about}
-          </a>
+            <a href={`${pathPrefix}/about/`}>
+              {navigation.about}
+            </a>
 
-          <a
-            href={`${homePath}#subscribe`}
-            class="subscribe-link"
-          >
-            {navigation.newsletter}
-          </a>
+            <a
+              href={`${homePath}#subscribe`}
+              class="subscribe-link"
+            >
+              {navigation.newsletter}
+            </a>
 
-          <StorySearch {lang} />
+            <StorySearch {lang} />
+          </div>
 
           <LanguageSwitcher
             {lang}

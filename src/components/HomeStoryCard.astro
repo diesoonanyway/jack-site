@@ -9,6 +9,7 @@ interface Props {
   visual?: string;
   hasVideo?: boolean;
   featured?: boolean;
+  mobileOnly?: boolean;
 }
 
 const {
@@ -21,12 +22,20 @@ const {
   visual,
   hasVideo = false,
   featured = false,
+  mobileOnly = false,
 } = Astro.props;
 
 const formatLabel = formats.map((format) => format.toUpperCase()).join(' · ');
 ---
 
-<article class:list={['media-rail-item', 'story-rail-item', { 'featured-rail-item': featured }]}>
+<article class:list={[
+  'media-rail-item',
+  'story-rail-item',
+  {
+    'featured-rail-item': featured,
+    'mobile-featured-card': mobileOnly,
+  },
+]}>
   <div class="story-card-labels">
     {featured && <span class="featured-badge">Featured</span>}
     {formatLabel && <span class="story-formats">{formatLabel}</span>}

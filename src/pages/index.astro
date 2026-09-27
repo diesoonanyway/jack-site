@@ -200,28 +200,32 @@ const homepageSections = [
               />
             </div>
 
-            {section.remainingCards.length > 0 && (
-              <div class="story-showcase-rail">
-                <div class="media-rail-frame">
-                  <div class="media-rail-controls" hidden>
-                    <button type="button" data-carousel-direction="previous" aria-label={section.previousLabel}>←</button>
-                    <button type="button" data-carousel-direction="next" aria-label={section.nextLabel}>→</button>
-                  </div>
+            <div class="story-showcase-rail">
+              <div class="media-rail-frame">
+                <div class="media-rail-controls" hidden>
+                  <button type="button" data-carousel-direction="previous" aria-label={section.previousLabel}>←</button>
+                  <button type="button" data-carousel-direction="next" aria-label={section.nextLabel}>→</button>
+                </div>
 
-                  <div
-                    class="media-rail"
-                    role="region"
-                    aria-roledescription="carousel"
-                    aria-label={section.title}
-                    data-carousel-track
-                  >
-                    {section.remainingCards.map((card) => (
-                      <HomeStoryCard {...card} {dateLocale} />
-                    ))}
-                  </div>
+                <div
+                  class="media-rail"
+                  role="region"
+                  aria-roledescription="carousel"
+                  aria-label={section.title}
+                  data-carousel-track
+                >
+                  <HomeStoryCard
+                    {...section.featuredCard}
+                    {dateLocale}
+                    featured
+                    mobileOnly
+                  />
+                  {section.remainingCards.map((card) => (
+                    <HomeStoryCard {...card} {dateLocale} />
+                  ))}
                 </div>
               </div>
-            )}
+            </div>
           </div>
         ) : (
           <p class="story-showcase-empty muted">{section.emptyMessage}</p>
@@ -416,7 +420,8 @@ const homepageSections = [
     };
 
     const move = (direction: number) => {
-      const card = track.querySelector<HTMLElement>('.media-rail-item');
+      const card = Array.from(track.querySelectorAll<HTMLElement>('.media-rail-item'))
+        .find((item) => item.getClientRects().length > 0);
       const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
       const distance = (card?.getBoundingClientRect().width ?? track.clientWidth) + gap;
       track.scrollBy({
@@ -818,6 +823,10 @@ const homepageSections = [
     display: none;
   }
 
+  .mobile-featured-card {
+    display: none;
+  }
+
   .story-card-labels {
     display: flex;
     flex-wrap: wrap;
@@ -898,6 +907,10 @@ const homepageSections = [
   }
 
   @media (min-width: 761px) {
+    .story-showcase-layout--single .story-showcase-rail {
+      display: none;
+    }
+
     .media-rail-frame.has-controls .media-rail-controls:not([hidden]) {
       display: contents;
     }
@@ -1444,20 +1457,43 @@ const homepageSections = [
     .media-rail {
       gap: 24px;
       padding-bottom: 16px;
-      scroll-snap-type: x proximity;
+      scroll-snap-type: x mandatory;
     }
 
-    .media-rail-item {
-      flex-basis: min(72vw, 340px);
-      padding-right: 24px;
+    .story-showcase-featured {
+      display: none;
+    }
+
+    .story-showcase-layout {
+      gap: 0;
+    }
+
+    .mobile-featured-card {
+      display: block;
+    }
+
+    .story-showcase-section .media-rail-item {
+      flex-basis: 100%;
+      width: auto;
+      padding-right: 0;
+      scroll-snap-align: center;
     }
 
     .media-rail-item .media-card-title {
       font-size: 1.3125rem;
     }
 
-    .media-rail-controls {
-      display: none;
+    .media-rail-frame.has-controls .media-rail-controls:not([hidden]) {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .media-rail-controls button {
+      width: 40px;
+      height: 40px;
+      font-size: 1.25rem;
     }
 
     .newsletter-fields {
