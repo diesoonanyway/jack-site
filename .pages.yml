@@ -131,9 +131,9 @@ content:
         options:
           collection: what-i-feel-topics
           multiple: true
-          search: "name"
-          value: "{primary}"
-          label: "{primary}"
+          search: "fields.name"
+          value: "{fields.name}"
+          label: "{fields.name}"
 
       - name: episode
         label: Episode (optional)
@@ -289,9 +289,9 @@ content:
         options:
           collection: what-i-learn-topics
           multiple: true
-          search: "name"
-          value: "{primary}"
-          label: "{primary}"
+          search: "fields.name"
+          value: "{fields.name}"
+          label: "{fields.name}"
 
       - name: body
         label: Body
