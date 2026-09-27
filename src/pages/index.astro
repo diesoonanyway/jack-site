@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeStoryCard from '../components/HomeStoryCard.astro';
 import { getPublicSlug } from '../lib/content-slug';
-import { sortByCreatedAt } from '../lib/content-sort';
 import { getYouTubeThumbnailUrl } from '../lib/youtube';
 import { createWebsiteStructuredData } from '../lib/seo';
 
@@ -25,13 +25,15 @@ const copy = isKorean
       ],
       heroClosing: '어차피 곧 끝날 인생이라면…',
       heroCta: 'What I Feel 둘러보기 →',
-      stories: 'What I Feel',
-      readArticle: '글 읽기 →',
-      noStories: '아직 발행된 What I Feel 글이 없습니다.',
+      whatIFeel: 'What I Feel',
+      whatILearn: 'What I Learn',
+      noWhatIFeel: '아직 발행된 What I Feel 글이 없습니다.',
+      noWhatILearn: '아직 발행된 What I Learn 글이 없습니다.',
       viewAll: '모두 보기 →',
-      recentStories: '최근 What I Feel',
-      previousStories: '이전 What I Feel',
-      nextStories: '다음 What I Feel',
+      previousWhatIFeel: '이전 What I Feel',
+      nextWhatIFeel: '다음 What I Feel',
+      previousWhatILearn: '이전 What I Learn',
+      nextWhatILearn: '다음 What I Learn',
       newsletter: '뉴스레터',
       newsletterTitle: '새로운 아이디어를\n가끔 전합니다.',
       newsletterCopy: '읽거나 보거나 사용해 볼 가치가 있는 것이 생기면 짧은 이메일을 보냅니다.',
@@ -54,13 +56,15 @@ const copy = isKorean
       ],
       heroClosing: 'If it all ends soon anyway...',
       heroCta: 'Explore ↓',
-      stories: 'What I Feel',
-      readArticle: 'Read article →',
-      noStories: 'No published What I Feel entries yet.',
+      whatIFeel: 'What I Feel',
+      whatILearn: 'What I Learn',
+      noWhatIFeel: 'No published What I Feel entries yet.',
+      noWhatILearn: 'No published What I Learn entries yet.',
       viewAll: 'View all →',
-      recentStories: 'Recent What I Feel',
-      previousStories: 'Previous What I Feel entries',
-      nextStories: 'Next What I Feel entries',
+      previousWhatIFeel: 'Previous What I Feel entries',
+      nextWhatIFeel: 'Next What I Feel entries',
+      previousWhatILearn: 'Previous What I Learn entries',
+      nextWhatILearn: 'Next What I Learn entries',
       newsletter: 'Newsletter',
       newsletterTitle: 'New ideas,\noccasionally.',
       newsletterCopy: 'A short email when there is something worth reading, watching or trying.',
@@ -75,22 +79,69 @@ const copy = isKorean
       aboutJack: 'About Jack →',
     };
 
-const stories =
-  sortByCreatedAt((await getCollection('stories'))
-    .filter(
-      (post) => !post.data.draft && post.data.lang === lang
-    ));
+const sortByPublicationDate = (entries) => [...entries].sort((a, b) =>
+  b.data.date.valueOf() - a.data.date.valueOf() || a.id.localeCompare(b.id)
+);
 
-const featuredStory = stories.find((story) => story.data.featured) ?? stories[0];
-const recentStories = featuredStory
-  ? stories.filter((story) => story.id !== featuredStory.id)
-  : [];
+const stories = sortByPublicationDate((await getCollection('stories'))
+  .filter((post) => !post.data.draft && post.data.lang === lang));
+const learningEntries = sortByPublicationDate((await getCollection('whatILearn'))
+  .filter((post) => !post.data.draft && post.data.lang === lang));
 
-const storyPath = (story) => localizedPath(`/what-i-feel/${getPublicSlug(story.id, story.data.lang)}/`);
-const storyVisual = (story) => story.data.heroImage || getYouTubeThumbnailUrl(story.data.youtubeUrl);
-const storyFormats = (story) => story.data.formats
-  .map((format) => format.toUpperCase())
-  .join(' · ');
+const toWhatIFeelCard = (story) => ({
+  id: story.id,
+  title: story.data.title,
+  description: story.data.description,
+  date: story.data.date,
+  formats: story.data.formats,
+  featured: story.data.featured,
+  href: localizedPath(`/what-i-feel/${getPublicSlug(story.id, story.data.lang)}/`),
+  visual: story.data.heroImage || getYouTubeThumbnailUrl(story.data.youtubeUrl),
+  hasVideo: Boolean(story.data.youtubeUrl),
+});
+
+const toWhatILearnCard = (entry) => ({
+  id: entry.id,
+  title: entry.data.title,
+  description: entry.data.description,
+  date: entry.data.date,
+  formats: entry.data.formats,
+  featured: entry.data.featured,
+  href: localizedPath(`/what-i-learn/${getPublicSlug(entry.id, entry.data.lang)}/`),
+  visual: entry.data.heroImage,
+  hasVideo: false,
+});
+
+const buildHomepageSection = (cards, details) => {
+  const featuredCard = cards.find((card) => card.featured) ?? cards[0];
+
+  return {
+    ...details,
+    featuredCard,
+    remainingCards: featuredCard
+      ? cards.filter((card) => card.id !== featuredCard.id)
+      : [],
+  };
+};
+
+const homepageSections = [
+  buildHomepageSection(stories.map(toWhatIFeelCard), {
+    id: 'what-i-feel',
+    title: copy.whatIFeel,
+    emptyMessage: copy.noWhatIFeel,
+    viewAllPath: localizedPath('/what-i-feel/'),
+    previousLabel: copy.previousWhatIFeel,
+    nextLabel: copy.nextWhatIFeel,
+  }),
+  buildHomepageSection(learningEntries.map(toWhatILearnCard), {
+    id: 'what-i-learn',
+    title: copy.whatILearn,
+    emptyMessage: copy.noWhatILearn,
+    viewAllPath: localizedPath('/what-i-learn/'),
+    previousLabel: copy.previousWhatILearn,
+    nextLabel: copy.nextWhatILearn,
+  }),
+];
 ---
 
 <BaseLayout
@@ -120,109 +171,63 @@ const storyFormats = (story) => story.data.formats
     </div>
 
     <div class="hero-bottom hero-bottom--single">
-      <a href="#featured-story">{copy.heroCta}</a>
+      <a href="#what-i-feel">{copy.heroCta}</a>
     </div>
   </section>
 
   <div class="home-content-sections">
-    {featuredStory ? (
+    {homepageSections.map((section) => (
       <section
-        class="home-section featured-story"
-        id="featured-story"
+        class="home-section story-showcase-section"
+        id={section.id}
+        data-carousel={section.remainingCards.length > 0 ? true : undefined}
       >
-        {storyVisual(featuredStory) && (
-          <a
-            class="featured-visual"
-            href={storyPath(featuredStory)}
-            aria-label={featuredStory.data.title}
-          >
-            <img
-              src={storyVisual(featuredStory)}
-              alt=""
-              loading="eager"
-            />
-            {featuredStory.data.youtubeUrl && (
-              <span class="play-cue" aria-hidden="true">▶</span>
-            )}
-          </a>
-        )}
-
-        <div class:list={['featured-copy', { 'featured-copy--text-only': !storyVisual(featuredStory) }]}>
-          <p class="story-formats">{storyFormats(featuredStory)}</p>
-          <h2 class="editorial-title">
-            <a href={storyPath(featuredStory)}>{featuredStory.data.title}</a>
-          </h2>
-          {featuredStory.data.description && (
-            <p class="featured-description">{featuredStory.data.description}</p>
-          )}
-          <time datetime={featuredStory.data.date.toISOString()}>
-            {featuredStory.data.date.toLocaleDateString(dateLocale, {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </time>
-        </div>
-      </section>
-    ) : (
-      <section class="home-section" id="featured-story">
-        <p class="muted">{copy.noStories}</p>
-      </section>
-    )}
-
-    {recentStories.length > 0 && (
-      <section class="home-section recent-stories" data-carousel>
         <div class="section-heading-row">
-          <h2 class="section-heading">{copy.recentStories}</h2>
-          <a href={localizedPath('/what-i-feel/')}>{copy.viewAll}</a>
+          <h2 class="section-heading">{section.title}</h2>
+          <a href={section.viewAllPath}>{copy.viewAll}</a>
         </div>
 
-        <div class="media-rail-frame">
-          <div class="media-rail-controls" hidden>
-            <button type="button" data-carousel-direction="previous" aria-label={copy.previousStories}>←</button>
-            <button type="button" data-carousel-direction="next" aria-label={copy.nextStories}>→</button>
-          </div>
+        {section.featuredCard ? (
+          <div class:list={[
+            'story-showcase-layout',
+            { 'story-showcase-layout--single': section.remainingCards.length === 0 },
+          ]}>
+            <div class="story-showcase-featured">
+              <HomeStoryCard
+                {...section.featuredCard}
+                {dateLocale}
+                featured
+              />
+            </div>
 
-          <div
-            class="media-rail"
-            role="region"
-            aria-roledescription="carousel"
-            aria-label={copy.recentStories}
-            data-carousel-track
-          >
-            {recentStories.map((story) => (
-              <article class="media-rail-item story-rail-item">
-                <p class="story-formats">{storyFormats(story)}</p>
-                {storyVisual(story) && (
-                  <a
-                    class="story-rail-visual"
-                    href={storyPath(story)}
-                    tabindex="-1"
-                    aria-hidden="true"
+            {section.remainingCards.length > 0 && (
+              <div class="story-showcase-rail">
+                <div class="media-rail-frame">
+                  <div class="media-rail-controls" hidden>
+                    <button type="button" data-carousel-direction="previous" aria-label={section.previousLabel}>←</button>
+                    <button type="button" data-carousel-direction="next" aria-label={section.nextLabel}>→</button>
+                  </div>
+
+                  <div
+                    class="media-rail"
+                    role="region"
+                    aria-roledescription="carousel"
+                    aria-label={section.title}
+                    data-carousel-track
                   >
-                    <img src={storyVisual(story)} alt="" loading="lazy" />
-                    {story.data.youtubeUrl && (
-                      <span class="play-cue play-cue--small" aria-hidden="true">▶</span>
-                    )}
-                  </a>
-                )}
-                <h3 class="media-card-title">
-                  <a class="media-card-link" href={storyPath(story)}>{story.data.title}</a>
-                </h3>
-                {story.data.description && <p class="story-card-description">{story.data.description}</p>}
-                <time datetime={story.data.date.toISOString()}>
-                  {story.data.date.toLocaleDateString(dateLocale, {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-              </article>
-            ))}
+                    {section.remainingCards.map((card) => (
+                      <HomeStoryCard {...card} {dateLocale} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        ) : (
+          <p class="story-showcase-empty muted">{section.emptyMessage}</p>
+        )}
       </section>
-    )}
+    ))}
 
 
   <!-- NEWSLETTER -->
@@ -755,65 +760,12 @@ const storyFormats = (story) => story.data.formats
     white-space: nowrap;
   }
 
-  /*
-    FEATURED STORY
-  */
-
-  .featured-story {
-    display: grid;
-    gap: clamp(42px, 6vw, 88px);
-  }
-
-  .featured-visual {
-    position: relative;
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 8;
-    overflow: hidden;
-    background: rgba(1, 8, 15, 0.5);
-  }
-
-  .featured-visual img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
   .story-rail-visual img {
     display: block;
     width: 100%;
     height: auto;
   }
 
-  .featured-copy {
-    max-width: 1050px;
-  }
-
-  .featured-copy--text-only {
-    padding-block: clamp(54px, 7vw, 110px);
-  }
-
-  .featured-copy h2 {
-    max-width: 1000px;
-    margin: 22px 0 28px;
-    font-size: 3.375rem;
-    line-height: 1.18;
-  }
-
-  html:lang(ko) .featured-copy h2 {
-    line-height: 1.3;
-  }
-
-  .featured-description {
-    max-width: 760px;
-    margin-bottom: 28px;
-    color: var(--body-text);
-    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
-    line-height: 1.75;
-  }
-
-  .featured-copy time,
   .story-formats {
     color: var(--muted);
     font-size: 0.78rem;
@@ -839,8 +791,57 @@ const storyFormats = (story) => story.data.formats
   }
 
   /*
-    RECENT STORIES RAIL
+    STORY SHOWCASES
   */
+
+  .story-showcase-layout {
+    display: grid;
+    gap: 56px;
+    min-width: 0;
+  }
+
+  .story-showcase-featured,
+  .story-showcase-rail {
+    min-width: 0;
+  }
+
+  .story-showcase-empty {
+    margin: 0;
+  }
+
+  .featured-rail-item {
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .featured-rail-item::after {
+    display: none;
+  }
+
+  .story-card-labels {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    min-height: 1rem;
+    margin: 0 0 18px;
+  }
+
+  .featured-badge,
+  .story-card-labels .story-formats {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .featured-badge {
+    color: var(--accent);
+  }
+
+  .story-card-labels .story-formats {
+    color: var(--muted);
+  }
 
   .media-rail-frame {
     position: relative;
@@ -897,21 +898,6 @@ const storyFormats = (story) => story.data.formats
   }
 
   @media (min-width: 761px) {
-    .featured-copy,
-    .featured-copy h2 {
-      width: 100%;
-      max-width: none;
-    }
-
-    .featured-visual {
-      aspect-ratio: auto;
-    }
-
-    .featured-visual img {
-      height: auto;
-      object-fit: contain;
-    }
-
     .media-rail-frame.has-controls .media-rail-controls:not([hidden]) {
       display: contents;
     }
@@ -943,6 +929,17 @@ const storyFormats = (story) => story.data.formats
     .media-rail.fade-left.fade-right {
       -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.45), #000 76px, #000 calc(100% - 76px), rgba(0, 0, 0, 0.45));
       mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.45), #000 76px, #000 calc(100% - 76px), rgba(0, 0, 0, 0.45));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .story-showcase-layout {
+      grid-template-columns: minmax(280px, 404.88px) minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .story-showcase-layout--single {
+      grid-template-columns: minmax(280px, 404.88px);
     }
   }
 
@@ -983,11 +980,6 @@ const storyFormats = (story) => story.data.formats
     width: 38px;
     height: 38px;
     font-size: 0.68rem;
-  }
-
-  .story-rail-item .story-formats {
-    margin: 0 0 18px;
-    font-size: 0.72rem;
   }
 
   .story-rail-item .story-card-description {
@@ -1416,18 +1408,6 @@ const storyFormats = (story) => story.data.formats
       font-size: 0.68rem;
     }
 
-    .featured-visual {
-      aspect-ratio: 4 / 3;
-    }
-
-    .featured-copy--text-only {
-      padding-block: 24px;
-    }
-
-    .featured-copy h2 {
-      font-size: 2.75rem;
-    }
-
     .play-cue {
       right: 16px;
       bottom: 16px;
@@ -1494,22 +1474,4 @@ const storyFormats = (story) => story.data.formats
     }
   }
 
-  @media (min-width: 761px) and (max-width: 1023px) {
-    .featured-copy h2 {
-      font-size: 2.75rem;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .featured-copy h2 {
-      font-size: 2rem;
-      line-height: 1.3;
-    }
-  }
-
-  @media (max-width: 390px) {
-    .featured-copy h2 {
-      font-size: 1.75rem;
-    }
-  }
 </style>

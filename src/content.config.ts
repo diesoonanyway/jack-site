@@ -54,6 +54,7 @@ const whatILearn = defineCollection({
     heroImage: z.string().optional(),
     formats: z.array(z.enum(['read', 'listen', 'watch'])).default([]),
     topics: z.array(z.string()).default([]),
+    featured: z.boolean().default(false),
   }),
 });
 

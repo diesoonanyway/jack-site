@@ -1,0 +1,60 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  date: Date;
+  dateLocale: string;
+  formats: string[];
+  href: string;
+  visual?: string;
+  hasVideo?: boolean;
+  featured?: boolean;
+}
+
+const {
+  title,
+  description,
+  date,
+  dateLocale,
+  formats,
+  href,
+  visual,
+  hasVideo = false,
+  featured = false,
+} = Astro.props;
+
+const formatLabel = formats.map((format) => format.toUpperCase()).join(' · ');
+---
+
+<article class:list={['media-rail-item', 'story-rail-item', { 'featured-rail-item': featured }]}>
+  <div class="story-card-labels">
+    {featured && <span class="featured-badge">Featured</span>}
+    {formatLabel && <span class="story-formats">{formatLabel}</span>}
+  </div>
+
+  {visual && (
+    <a
+      class="story-rail-visual"
+      href={href}
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <img src={visual} alt="" loading={featured ? 'eager' : 'lazy'} />
+      {hasVideo && (
+        <span class="play-cue play-cue--small" aria-hidden="true">▶</span>
+      )}
+    </a>
+  )}
+
+  <h3 class="media-card-title">
+    <a class="media-card-link" href={href}>{title}</a>
+  </h3>
+  {description && <p class="story-card-description">{description}</p>}
+  <time datetime={date.toISOString()}>
+    {date.toLocaleDateString(dateLocale, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })}
+  </time>
+</article>

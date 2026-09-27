@@ -293,6 +293,11 @@ content:
           value: "{fields.name}"
           label: "{fields.name}"
 
+      - name: featured
+        label: Featured
+        type: boolean
+        default: false
+
       - name: body
         label: Body
         type: rich-text
