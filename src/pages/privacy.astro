@@ -7,508 +7,898 @@ const isKorean = lang === 'ko';
 ---
 
 <BaseLayout
-  title={isKorean ? '개인정보 처리방침 — If It All Ends' : 'Privacy Policy — If It All Ends'}
-  description={isKorean
-    ? 'If It All Ends의 개인정보 처리방침입니다.'
-    : 'Privacy Policy for If It All Ends.'}
-  {lang}
-  alternatePath={isKorean ? '/privacy/' : '/ko/privacy/'}
+  title={isKorean ? '개인정보처리방침 — If It All Ends' : 'Privacy Policy — If It All Ends'}
+  description={
+    isKorean
+      ? 'If It All Ends가 개인정보를 수집, 사용 및 처리하는 방법에 대한 안내입니다.'
+      : 'Information about how If It All Ends collects, uses, and handles information.'
+  }
+  lang={lang}
 >
   {isKorean ? (
     <article class="privacy-page editorial-page">
       <header class="privacy-header editorial-page-intro">
-        <h1>개인정보 처리방침</h1>
-        <p class="last-updated editorial-page-meta">최종 업데이트: 2026년 9월 24일</p>
+        <h1>개인정보처리방침</h1>
+
+        <p class="last-updated editorial-page-meta">
+          최종 업데이트: 2026년 9월 29일
+        </p>
+
         <p class="intro editorial-page-intro-text">
-          이 개인정보 처리방침은 사용자가 이 웹사이트를 방문하거나 뉴스레터를 구독할 때 If It All Ends가 정보를 수집, 이용 및 처리하는 방식을 설명합니다.
+          본 개인정보처리방침은 If It All Ends를 방문하거나,
+          뉴스레터를 구독하거나, 댓글 기능을 이용할 때
+          정보가 어떻게 수집, 사용 및 처리되는지를 설명합니다.
         </p>
       </header>
 
       <div class="privacy-content editorial-page-content editorial-page-content--prose editorial-page-content--sectioned">
+
         <section>
           <h2>1. 운영자 정보</h2>
-          <p>If It All Ends는 글, 대화, 영상 및 제품을 소개하는 독립 웹사이트입니다.</p>
-          <p>이 개인정보 처리방침에 관한 질문은 다음 주소로 문의할 수 있습니다.</p>
-          <p><a href="mailto:hello@ifitallends.com">hello@ifitallends.com</a></p>
+
+          <p>
+            If It All Ends는 글, 대화, 영상 및 기타 콘텐츠를 제공하는
+            독립 웹사이트입니다.
+          </p>
+
+          <p>
+            개인정보처리방침에 관한 문의는 아래 이메일로 연락할 수 있습니다.
+          </p>
+
+          <p>
+            <a href="mailto:hello@ifitallends.com">
+              hello@ifitallends.com
+            </a>
+          </p>
         </section>
 
         <section>
-          <h2>2. 수집하는 정보</h2>
-          <p>당사는 사용자가 직접 제공하는 정보와 웹사이트 이용 시 자동으로 수집되는 정보를 수집할 수 있습니다.</p>
-          <h3>사용자가 제공하는 정보</h3>
-          <p>뉴스레터를 구독하면 사용자가 제공한 이메일 주소를 수집합니다.</p>
-          <h3>자동으로 수집되는 정보</h3>
-          <p>이 웹사이트는 분석 및 기술 인프라를 사용하며, 이를 통해 다음과 같은 정보가 수집될 수 있습니다.</p>
+          <h2>2. 수집할 수 있는 정보</h2>
+
+          <p>
+            웹사이트 이용 과정에서 사용자가 직접 제공하는 정보와
+            자동으로 생성되거나 수집되는 정보를 처리할 수 있습니다.
+          </p>
+
+          <h3>사용자가 직접 제공하는 정보</h3>
+
+          <p>
+            뉴스레터를 구독하는 경우 사용자가 제공한 이메일 주소를
+            수집합니다.
+          </p>
+
+          <p>
+            댓글을 작성하는 경우 댓글 내용과 Google 계정의 표시 이름,
+            Google 계정을 구분하기 위한 고유 식별자를 처리할 수 있습니다.
+          </p>
+
+          <h3>자동으로 수집될 수 있는 정보</h3>
+
+          <p>
+            웹사이트 분석 및 기술적 운영 과정에서 다음과 같은 정보가
+            처리될 수 있습니다.
+          </p>
+
           <ul>
             <li>방문한 페이지</li>
-            <li>대략적인 지리적 위치</li>
+            <li>대략적인 지역 정보</li>
             <li>브라우저 및 기기 정보</li>
             <li>세션 및 참여 정보</li>
             <li>유입 웹사이트 또는 트래픽 출처</li>
-            <li>기술적 요청 및 보안 정보</li>
+            <li>기술적 요청 및 보안 관련 정보</li>
           </ul>
         </section>
 
         <section>
-          <h2>3. 정보 이용 방법</h2>
-          <p>이 웹사이트를 통해 수집된 정보는 다음 목적으로 이용될 수 있습니다.</p>
+          <h2>3. 정보 이용 목적</h2>
+
+          <p>
+            수집된 정보는 다음 목적을 위해 사용될 수 있습니다.
+          </p>
+
           <ul>
             <li>웹사이트 운영 및 유지</li>
-            <li>방문자의 웹사이트 이용 방식 이해</li>
+            <li>방문자가 웹사이트를 이용하는 방식 이해</li>
             <li>콘텐츠 및 사용자 경험 개선</li>
-            <li>사용자가 요청한 뉴스레터 발송</li>
+            <li>요청한 뉴스레터 발송</li>
             <li>이메일 및 콘텐츠 참여도 측정</li>
-            <li>남용 또는 보안 위협으로부터 웹사이트 보호</li>
+            <li>댓글 기능 제공 및 사용자 인증</li>
+            <li>스팸, 남용 또는 보안 위협으로부터 웹사이트 보호</li>
           </ul>
         </section>
 
         <section>
           <h2>4. 뉴스레터 및 이메일</h2>
-          <p>뉴스레터 구독은 이메일 마케팅 서비스인 Kit을 통해 관리됩니다.</p>
-          <p>구독 시 사용자의 이메일 주소는 구독 관리와 이메일 발송을 위해 Kit에서 처리하고 저장할 수 있습니다.</p>
-          <p>당사는 구독했거나 이메일 수신에 동의한 사람에게만 뉴스레터 이메일을 보냅니다.</p>
-          <p>모든 마케팅 이메일에는 구독 해지 옵션이 포함되며 언제든지 구독을 해지할 수 있습니다.</p>
-          <p>영문 홈페이지에서는 표시 조건에 해당하는 방문자에게 뉴스레터 안내창이 자동으로 표시될 수 있습니다. 안내창을 닫으면 다시 표시할 시점을 정하기 위한 기록이 브라우저의 로컬 저장소에 30일 동안 보관됩니다.</p>
-          <p>구독 성공이 감지되면 해당 브라우저에 구독 표시가 자동 만료 기간 없이 저장됩니다. 이 표시는 실제 Kit 구독 상태와 동기화되지 않으며 브라우저 저장소를 삭제할 때까지 남을 수 있습니다. 두 로컬 저장소 값 모두 이메일 주소를 포함하지 않습니다.</p>
+
+          <p>
+            뉴스레터 구독은 이메일 마케팅 서비스인 Kit을 통해 관리됩니다.
+          </p>
+
+          <p>
+            사용자가 뉴스레터를 구독하면 구독 관리 및 이메일 발송을 위해
+            이메일 주소가 Kit에서 처리 및 저장될 수 있습니다.
+          </p>
+
+          <p>
+            뉴스레터 또는 마케팅 이메일은 구독했거나 수신에 동의한
+            사용자에게만 발송합니다.
+          </p>
+
+          <p>
+            모든 마케팅 이메일에는 구독 취소 링크가 포함되며,
+            언제든지 구독을 취소할 수 있습니다.
+          </p>
+
+          <p>
+            영문 홈페이지에서는 조건에 해당하는 방문자에게
+            뉴스레터 구독 안내창이 자동으로 표시될 수 있습니다.
+            안내창을 닫은 경우 다시 표시할 시점을 결정하기 위한 정보가
+            브라우저의 로컬 스토리지에 30일 동안 저장됩니다.
+          </p>
+
+          <p>
+            구독 성공이 확인되면 해당 브라우저에 구독 상태를 나타내는
+            표시가 저장될 수 있습니다. 이 값에는 이메일 주소가
+            포함되지 않습니다.
+          </p>
         </section>
 
         <section>
           <h2>5. Google Analytics</h2>
-          <p>이 웹사이트는 방문자가 분석 사용에 동의한 경우에만 Google Analytics 4를 불러와 방문자가 사이트를 찾고 이용하는 방식을 이해합니다. 동의하지 않았거나 아직 선택하지 않은 경우 분석 태그를 다운로드하거나 Google Analytics 측정 요청을 보내지 않습니다.</p>
-          <p>Google Analytics 4는 페이지 조회, 세션 정보, 대략적인 위치, 브라우저 및 기기 정보 등을 수집할 수 있습니다.</p>
-          <p>스크롤, 외부 링크 상호작용 및 기타 향상된 측정 이벤트의 수집 여부는 Google Analytics 속성 설정에 따라 달라집니다.</p>
-          <p>Google Analytics는 웹사이트 활동을 측정하기 위해 쿠키 및 유사 기술을 사용할 수 있습니다.</p>
-          <p>분석 정보는 웹사이트 성능을 이해하고 사이트의 콘텐츠와 경험을 개선하는 데 사용됩니다.</p>
+
+          <p>
+            이 웹사이트는 방문자가 분석 기능에 동의한 경우에만
+            Google Analytics 4를 로드합니다.
+          </p>
+
+          <p>
+            동의하지 않았거나 아직 선택하지 않은 경우
+            Google Analytics 태그를 불러오지 않으며
+            Google Analytics 측정 요청도 전송하지 않습니다.
+          </p>
+
+          <p>
+            Google Analytics는 페이지 조회, 세션 정보,
+            대략적인 위치, 브라우저 및 기기 정보 등을
+            처리할 수 있습니다.
+          </p>
+
+          <p>
+            스크롤, 외부 링크 클릭 및 기타 향상된 측정 이벤트의
+            수집 여부는 Google Analytics 속성 설정에 따라 달라질 수 있습니다.
+          </p>
+
+          <p>
+            Google Analytics는 웹사이트 이용을 측정하기 위해
+            쿠키 및 유사한 기술을 사용할 수 있습니다.
+          </p>
         </section>
 
         <section>
           <h2>6. 쿠키 및 유사 기술</h2>
-          <p>Google Analytics 4는 웹사이트 활동을 측정하기 위해 쿠키를 사용할 수 있습니다. Spotify와 Google/YouTube의 내장 재생기도 콘텐츠 제공과 상호작용 처리를 위해 쿠키 또는 유사 기술을 사용할 수 있습니다.</p>
-          <p>이 웹사이트는 뉴스레터 안내창의 표시 여부를 기억하기 위해 쿠키와는 별개의 브라우저 로컬 저장소도 사용합니다. 이 로컬 저장소 값에는 이메일 주소가 포함되지 않습니다.</p>
-          <p>분석 동의 선택도 별도의 버전이 지정된 브라우저 로컬 저장소에 보관됩니다. 방문자는 동의 배너에서 분석을 허용하거나 거부할 수 있으며 아래 개인정보 설정 링크에서 나중에 선택을 변경할 수 있습니다.</p>
-          <p>브라우저 설정을 통해 쿠키와 로컬 저장소를 관리하거나 삭제할 수도 있습니다. 다만 브라우저 설정은 관련 법률에서 요구하는 동의를 대신하지 않습니다.</p>
+
+          <p>
+            Google Analytics 4는 웹사이트 이용을 측정하기 위해
+            쿠키를 사용할 수 있습니다.
+          </p>
+
+          <p>
+            Spotify 및 Google/YouTube의 외부 콘텐츠를 사용자가
+            직접 불러오는 경우 해당 서비스도 쿠키 또는 유사 기술을
+            사용할 수 있습니다.
+          </p>
+
+          <p>
+            이 웹사이트는 쿠키와 별도로 브라우저 로컬 스토리지를 사용하여
+            뉴스레터 안내창 표시 여부와 개인정보 관련 선택을 기억할 수 있습니다.
+          </p>
+
+          <p>
+            쿠키와 로컬 스토리지는 브라우저 설정을 통해 관리하거나
+            삭제할 수 있습니다.
+          </p>
+
+          <p>
+            법률상 동의가 필요한 경우 브라우저 설정만으로
+            웹사이트의 동의 절차를 대체하지는 않습니다.
+          </p>
         </section>
 
         <section>
-          <h2>7. 서비스 제공업체</h2>
-          <p>당사는 이 웹사이트의 일부를 운영하기 위해 제3자 서비스 제공업체를 이용합니다.</p>
-          <p>현재 이용 중인 서비스는 다음과 같습니다.</p>
+          <h2>7. 댓글 및 Google 로그인</h2>
+
+          <p>
+            이 웹사이트는 댓글을 작성하려는 사용자를 인증하기 위해
+            Google Sign-In을 사용합니다.
+          </p>
+
+          <p>
+            댓글 시스템에서는 Google 계정의 고유 식별자와 표시 이름을
+            사용하여 사용자를 인증하고 댓글과 계정을 연결합니다.
+          </p>
+
+          <p>
+            댓글 데이터베이스에는 Google 이메일 주소를 의도적으로
+            저장하지 않습니다.
+          </p>
+
+          <p>
+            댓글 내용, 표시 이름, Google 계정 고유 식별자 및
+            댓글 작성 시각은 Cloudflare 인프라를 이용해 저장될 수 있습니다.
+          </p>
+
+          <p>
+            댓글 기능을 이용하는 동안 로그인 상태를 유지하기 위해
+            Google 로그인 인증 정보가 브라우저의 세션 스토리지에
+            일시적으로 저장될 수 있습니다.
+          </p>
+
+          <p>
+            사용자는 본인이 작성한 댓글을 삭제할 수 있으며,
+            웹사이트 관리자는 서비스 운영 및 안전을 위해
+            댓글을 삭제할 수 있습니다.
+          </p>
+        </section>
+
+        <section>
+          <h2>8. 광고 및 Google AdSense</h2>
+
+          <p>
+            이 웹사이트는 Google AdSense를 이용하여 광고를
+            표시할 수 있습니다.
+          </p>
+
+          <p>
+            Google을 포함한 제3자 광고 제공업체는 광고 제공,
+            측정 및 광고 효과 분석을 위해 쿠키 또는 유사 기술을
+            사용할 수 있습니다.
+          </p>
+
+          <p>
+            Google은 이 웹사이트 또는 다른 웹사이트에 대한
+            이전 방문 기록을 기반으로 광고를 제공하기 위해
+            광고 쿠키를 사용할 수 있습니다.
+          </p>
+
+          <p>
+            적용되는 법률과 사용자의 동의 선택에 따라
+            맞춤 광고 또는 비맞춤 광고가 표시될 수 있습니다.
+          </p>
+
+          <p>
+            사용자는 Google 광고 설정을 통해 맞춤 광고와 관련된
+            설정을 관리할 수 있습니다.
+          </p>
+
+          <p>
+            Google 및 기타 광고 제공업체는 광고 제공과 측정을 위해
+            쿠키, IP 주소, 브라우저 및 기기 정보,
+            광고 상호작용 정보 등을 처리할 수 있습니다.
+          </p>
+        </section>
+
+        <section>
+          <h2>9. 외부 서비스 제공업체</h2>
+
+          <p>
+            웹사이트의 일부 기능을 운영하기 위해
+            제3자 서비스 제공업체를 이용합니다.
+          </p>
+
+          <p>현재 이용하는 서비스에는 다음이 포함될 수 있습니다.</p>
+
           <ul>
-            <li>웹사이트 분석 및 측정을 위한 Google Analytics</li>
-            <li>뉴스레터 구독 및 이메일 발송을 위한 Kit</li>
-            <li>웹사이트 호스팅, 전송, 보안, DNS 및 이메일 라우팅을 위한 Cloudflare</li>
-            <li>게시된 Story의 오디오 재생기 제공을 위한 Spotify</li>
-            <li>YouTube URL이 포함된 Story의 선택적 동영상 재생을 위한 Google/YouTube</li>
+            <li>
+              Google Analytics — 웹사이트 분석 및 측정
+            </li>
+
+            <li>
+              Google AdSense — 광고 제공 및 광고 측정
+            </li>
+
+            <li>
+              Google Sign-In — 댓글 사용자 인증
+            </li>
+
+            <li>
+              Kit — 뉴스레터 구독 및 이메일 발송
+            </li>
+
+            <li>
+              Cloudflare — 웹사이트 제공, 보안, DNS,
+              이메일 라우팅, Worker 및 댓글 데이터베이스
+            </li>
+
+            <li>
+              Spotify — 게시된 Story의 오디오 플레이어
+            </li>
+
+            <li>
+              Google/YouTube — YouTube URL이 포함된 Story의
+              선택적 영상 플레이어
+            </li>
           </ul>
-          <p>Spotify와 YouTube 내장 재생기는 방문자가 해당 외부 콘텐츠를 불러오는 버튼을 선택하기 전에는 생성되지 않습니다. YouTube 재생기는 Story에 YouTube URL이 포함된 경우에만 제공되며 개인정보 보호 강화 도메인인 youtube-nocookie.com을 사용합니다. 재생기 URL은 자동 재생을 요청하지 않습니다.</p>
-          <p>방문자가 외부 콘텐츠를 불러오거나 제공업체 링크를 선택하면 해당 제공업체는 IP 주소, 브라우저 및 기기 정보, 콘텐츠가 포함된 페이지에 관한 정보, 재생기 상호작용 정보 등의 기술 정보를 처리할 수 있습니다. youtube-nocookie.com을 사용하더라도 Google이 방문자 정보를 전혀 처리하지 않는다는 의미는 아닙니다.</p>
-          <p>이들 제공업체는 서비스 제공에 필요한 범위에서 정보를 처리할 수 있으며 각자의 개인정보 보호 및 데이터 보호 정책에 따라 운영됩니다.</p>
+
+          <p>
+            Spotify 및 YouTube 임베드 플레이어는 사용자가
+            해당 외부 콘텐츠를 불러오기로 선택하기 전까지 생성되지 않습니다.
+          </p>
+
+          <p>
+            YouTube 플레이어는 가능한 경우 개인정보 보호 강화 도메인인
+            youtube-nocookie.com을 사용합니다.
+          </p>
+
+          <p>
+            외부 콘텐츠를 불러오거나 서비스 제공업체 링크를 방문하면
+            해당 업체가 IP 주소, 브라우저 및 기기 정보,
+            콘텐츠가 포함된 페이지 정보 및 상호작용 정보 등을
+            처리할 수 있습니다.
+          </p>
+
+          <p>
+            각 서비스 제공업체는 자체 개인정보 및 데이터 보호 정책에 따라
+            정보를 처리합니다.
+          </p>
         </section>
 
         <section>
-          <h2>8. 정보 공유</h2>
-          <p>당사는 현재 사용자의 개인정보를 판매하지 않습니다.</p>
-          <p>웹사이트 운영, 요청한 서비스 제공, 법적 의무 준수 또는 웹사이트와 사용자 보호에 필요한 경우 서비스 제공업체와 정보를 공유할 수 있습니다.</p>
+          <h2>10. 정보 공유</h2>
+
+          <p>
+            당사는 현재 사용자의 개인정보를 판매하지 않습니다.
+          </p>
+
+          <p>
+            웹사이트 운영, 요청된 서비스 제공,
+            법적 의무 준수 또는 웹사이트 및 사용자의 보호를 위해
+            필요한 경우 서비스 제공업체와 정보를 공유할 수 있습니다.
+          </p>
         </section>
 
         <section>
-          <h2>9. 데이터 보관</h2>
-          <p>정보는 당사가 사용하는 서비스의 설정 및 보관 관행을 고려해 이 방침에 설명된 목적에 합리적으로 필요한 기간 동안만 보관됩니다.</p>
-          <p>뉴스레터 구독자 정보는 사용자가 구독을 해지하거나 삭제를 요청하거나 더 이상 필요하지 않을 때까지 보관될 수 있습니다.</p>
+          <h2>11. 데이터 보관</h2>
+
+          <p>
+            개인정보는 본 방침에 설명된 목적을 위해 합리적으로 필요한
+            기간 동안만 보관합니다.
+          </p>
+
+          <p>
+            뉴스레터 구독 정보는 사용자가 구독을 취소하거나
+            삭제를 요청하거나 더 이상 필요하지 않을 때까지
+            보관될 수 있습니다.
+          </p>
+
+          <p>
+            댓글 및 댓글 계정 식별 정보는 댓글 기능 운영에 필요한 동안
+            보관될 수 있으며, 댓글 또는 관련 데이터가 삭제될 경우
+            해당 정보도 삭제될 수 있습니다.
+          </p>
         </section>
 
         <section>
-          <h2>10. 국제적 데이터 처리</h2>
-          <p>이 웹사이트가 이용하는 일부 서비스 제공업체는 사용자가 거주하는 국가가 아닌 다른 국가에서 정보를 처리하거나 저장할 수 있습니다.</p>
-          <p>따라서 사용자의 정보에는 해당 관할권의 법률이 적용될 수 있습니다.</p>
+          <h2>12. 국제적 데이터 처리</h2>
+
+          <p>
+            이 웹사이트에서 사용하는 일부 서비스 제공업체는
+            사용자가 거주하는 국가가 아닌 다른 국가에서
+            정보를 처리하거나 저장할 수 있습니다.
+          </p>
+
+          <p>
+            이에 따라 정보가 해당 국가의 법률 적용을 받을 수 있습니다.
+          </p>
         </section>
 
         <section>
-          <h2>11. 사용자의 선택권</h2>
-          <p>거주 지역에 따라 사용자는 개인정보에 대한 열람, 정정 또는 삭제 요청을 포함한 권리를 가질 수 있습니다.</p>
-          <p>이메일에 포함된 구독 해지 링크를 사용해 언제든지 뉴스레터 구독을 해지할 수도 있습니다.</p>
-          <p>분석 동의를 철회하면 이후 Google Analytics 측정이 중지되며, 이 웹사이트는 가능한 범위에서 관련 분석 쿠키를 삭제합니다.</p>
-          <p><a href="#privacy-settings" data-consent-settings>분석 개인정보 설정 변경</a></p>
-          <p>개인정보 관련 요청은 다음 주소로 문의해 주세요.</p>
-          <p><a href="mailto:hello@ifitallends.com">hello@ifitallends.com</a></p>
+          <h2>13. 사용자의 선택 및 권리</h2>
+
+          <p>
+            사용자의 거주 지역에 따라 개인정보에 대한 열람,
+            수정 또는 삭제를 요청할 권리가 있을 수 있습니다.
+          </p>
+
+          <p>
+            뉴스레터 이메일에 포함된 구독 취소 링크를 이용해
+            언제든지 뉴스레터 구독을 취소할 수 있습니다.
+          </p>
+
+          <p>
+            분석 동의를 철회하면 이후 Google Analytics 측정을 중단하고,
+            가능한 경우 관련 분석 쿠키를 제거합니다.
+          </p>
+
+          <p>
+            <a href="#privacy-settings" data-consent-settings>
+              개인정보 설정 변경
+            </a>
+          </p>
+
+          <p>
+            개인정보 관련 요청은 아래 이메일로 연락할 수 있습니다.
+          </p>
+
+          <p>
+            <a href="mailto:hello@ifitallends.com">
+              hello@ifitallends.com
+            </a>
+          </p>
         </section>
 
         <section>
-          <h2>12. 방침 변경</h2>
-          <p>웹사이트, 서비스 또는 법적 요건이 변경됨에 따라 이 개인정보 처리방침이 업데이트될 수 있습니다.</p>
-          <p>방침이 업데이트되면 이 페이지 상단의 날짜가 수정됩니다.</p>
+          <h2>14. 개인정보처리방침 변경</h2>
+
+          <p>
+            웹사이트, 서비스 또는 법적 요구사항이 변경됨에 따라
+            본 개인정보처리방침이 업데이트될 수 있습니다.
+          </p>
+
+          <p>
+            정책이 변경되면 이 페이지 상단의 최종 업데이트 날짜를
+            변경합니다.
+          </p>
         </section>
+
       </div>
     </article>
   ) : (
-  <article class="privacy-page editorial-page">
-    <header class="privacy-header editorial-page-intro">
-      <h1>Privacy Policy</h1>
+    <article class="privacy-page editorial-page">
+      <header class="privacy-header editorial-page-intro">
+        <h1>Privacy Policy</h1>
 
-      <p class="last-updated editorial-page-meta">
-        Last updated: 24 September 2026
-      </p>
-
-      <p class="intro editorial-page-intro-text">
-        This Privacy Policy explains how If It All Ends
-        collects, uses, and handles information when you
-        visit this website or subscribe to the newsletter.
-      </p>
-    </header>
-
-    <div class="privacy-content editorial-page-content editorial-page-content--prose editorial-page-content--sectioned">
-      <section>
-        <h2>1. Who we are</h2>
-
-        <p>
-          If It All Ends is an independent website featuring
-          writing, conversations, videos, and products.
+        <p class="last-updated editorial-page-meta">
+          Last updated: 29 September 2026
         </p>
 
-        <p>
-          If you have questions about this Privacy Policy,
-          you can contact:
+        <p class="intro editorial-page-intro-text">
+          This Privacy Policy explains how If It All Ends
+          collects, uses, and handles information when you
+          visit this website, subscribe to the newsletter,
+          or use the comment system.
         </p>
+      </header>
 
-        <p>
-          <a href="mailto:hello@ifitallends.com">
-            hello@ifitallends.com
-          </a>
-        </p>
-      </section>
+      <div class="privacy-content editorial-page-content editorial-page-content--prose editorial-page-content--sectioned">
 
-      <section>
-        <h2>2. Information we collect</h2>
+        <section>
+          <h2>1. Who we are</h2>
 
-        <p>
-          We may collect information that you provide
-          directly to us and information collected
-          automatically when you use the website.
-        </p>
+          <p>
+            If It All Ends is an independent website featuring
+            writing, conversations, videos, and other content.
+          </p>
 
-        <h3>Information you provide</h3>
+          <p>
+            If you have questions about this Privacy Policy,
+            you can contact:
+          </p>
 
-        <p>
-          If you subscribe to the newsletter, we collect
-          the email address you provide.
-        </p>
+          <p>
+            <a href="mailto:hello@ifitallends.com">
+              hello@ifitallends.com
+            </a>
+          </p>
+        </section>
 
-        <h3>Information collected automatically</h3>
+        <section>
+          <h2>2. Information we collect</h2>
 
-        <p>
-          This website uses analytics and technical
-          infrastructure that may collect information such
-          as:
-        </p>
+          <p>
+            We may collect information that you provide
+            directly to us and information collected or
+            generated automatically when you use the website.
+          </p>
 
-        <ul>
-          <li>pages you visit;</li>
-          <li>approximate geographic location;</li>
-          <li>browser and device information;</li>
-          <li>session and engagement information;</li>
-          <li>referring websites or traffic sources;</li>
-          <li>technical request and security information.</li>
-        </ul>
-      </section>
+          <h3>Information you provide</h3>
 
-      <section>
-        <h2>3. How we use information</h2>
+          <p>
+            If you subscribe to the newsletter, we collect
+            the email address you provide.
+          </p>
 
-        <p>
-          Information collected through this website may be
-          used to:
-        </p>
+          <p>
+            If you leave a comment, we may process the content
+            of your comment, your Google display name, and a
+            unique identifier associated with your Google account.
+          </p>
 
-        <ul>
-          <li>operate and maintain the website;</li>
-          <li>understand how visitors use the website;</li>
-          <li>improve content and user experience;</li>
-          <li>send newsletters you have requested;</li>
-          <li>measure engagement with emails and content;</li>
-          <li>protect the website from abuse or security threats.</li>
-        </ul>
-      </section>
+          <h3>Information collected automatically</h3>
 
-      <section>
-        <h2>4. Newsletter and email</h2>
+          <p>
+            This website uses analytics and technical
+            infrastructure that may collect information such as:
+          </p>
 
-        <p>
-          Newsletter subscriptions are managed using Kit,
-          an email marketing service.
-        </p>
+          <ul>
+            <li>pages you visit;</li>
+            <li>approximate geographic location;</li>
+            <li>browser and device information;</li>
+            <li>session and engagement information;</li>
+            <li>referring websites or traffic sources;</li>
+            <li>technical request and security information.</li>
+          </ul>
+        </section>
 
-        <p>
-          When you subscribe, your email address may be
-          processed and stored by Kit for the purpose of
-          managing your subscription and delivering emails.
-        </p>
+        <section>
+          <h2>3. How we use information</h2>
 
-        <p>
-          We only send newsletter emails to people who have
-          subscribed or otherwise provided permission to
-          receive them.
-        </p>
+          <p>
+            Information collected through this website may be
+            used to:
+          </p>
 
-        <p>
-          Every marketing email includes an unsubscribe
-          option. You may unsubscribe at any time.
-        </p>
+          <ul>
+            <li>operate and maintain the website;</li>
+            <li>understand how visitors use the website;</li>
+            <li>improve content and user experience;</li>
+            <li>send newsletters you have requested;</li>
+            <li>measure engagement with emails and content;</li>
+            <li>provide and authenticate the comment system;</li>
+            <li>protect the website from abuse or security threats.</li>
+          </ul>
+        </section>
 
-        <p>
-          On the English homepage, eligible visitors may be
-          shown a newsletter prompt automatically. If the
-          prompt is dismissed, a record used to determine
-          when it may be shown again is kept in browser local
-          storage for 30 days.
-        </p>
+        <section>
+          <h2>4. Newsletter and email</h2>
 
-        <p>
-          When a successful subscription is detected, a
-          subscription indicator is stored in that browser
-          without automatic expiry. This indicator is not
-          synchronised with the actual Kit subscription
-          status and may remain until browser storage is
-          cleared. Neither local storage value contains your
-          email address.
-        </p>
-      </section>
+          <p>
+            Newsletter subscriptions are managed using Kit,
+            an email marketing service.
+          </p>
 
-      <section>
-        <h2>5. Google Analytics</h2>
+          <p>
+            When you subscribe, your email address may be
+            processed and stored by Kit for the purpose of
+            managing your subscription and delivering emails.
+          </p>
 
-        <p>
-          This website loads Google Analytics 4 only when a
-          visitor consents to analytics, so we can understand
-          how visitors find and interact with the site. If
-          you decline or have not yet made a choice, the
-          analytics tag is not downloaded and no Google
-          Analytics measurement request is sent.
-        </p>
+          <p>
+            We only send newsletter or marketing emails to people
+            who have subscribed or otherwise provided permission
+            to receive them.
+          </p>
 
-        <p>
-          Google Analytics may collect information such as
-          page views, session information, approximate
-          location, and browser and device information.
-        </p>
+          <p>
+            Every marketing email includes an unsubscribe option.
+            You may unsubscribe at any time.
+          </p>
 
-        <p>
-          Whether scrolling, outbound-link interactions, and
-          other enhanced measurement events are collected
-          depends on the Google Analytics property settings.
-        </p>
+          <p>
+            On the English homepage, eligible visitors may be
+            shown a newsletter prompt automatically. If the
+            prompt is dismissed, a record used to determine when
+            it may be shown again is kept in browser local storage
+            for 30 days.
+          </p>
 
-        <p>
-          Google Analytics may use cookies and similar
-          technologies to measure website activity.
-        </p>
+          <p>
+            When a successful subscription is detected, a
+            subscription indicator may be stored in that browser.
+            This value does not contain your email address.
+          </p>
+        </section>
 
-        <p>
-          Analytics information is used to understand
-          website performance and improve the content and
-          experience of the site.
-        </p>
-      </section>
+        <section>
+          <h2>5. Google Analytics</h2>
 
-      <section>
-        <h2>6. Cookies and similar technologies</h2>
+          <p>
+            This website loads Google Analytics 4 only when a
+            visitor consents to analytics, so we can understand
+            how visitors find and interact with the site.
+          </p>
 
-        <p>
-          Google Analytics 4 may use cookies to measure
-          website activity. Embedded players from Spotify
-          and Google/YouTube may also use cookies or similar
-          technologies to provide content and process player
-          interactions.
-        </p>
+          <p>
+            If you decline or have not yet made a choice, the
+            analytics tag is not downloaded and no Google
+            Analytics measurement request is sent.
+          </p>
 
-        <p>
-          This website also uses browser local storage,
-          which is distinct from cookies, to remember whether
-          to show the newsletter prompt. These local storage
-          values do not contain your email address.
-        </p>
+          <p>
+            Google Analytics may collect information such as
+            page views, session information, approximate
+            location, and browser and device information.
+          </p>
 
-        <p>
-          Your analytics choice is also kept separately in
-          versioned browser local storage. You can allow or
-          decline analytics in the consent banner and change
-          your choice later using the privacy-settings link
-          below.
-        </p>
+          <p>
+            Whether scrolling, outbound-link interactions, and
+            other enhanced measurement events are collected
+            depends on the Google Analytics property settings.
+          </p>
 
-        <p>
-          You can also manage or delete cookies and local
-          storage through your browser settings. Browser
-          settings do not replace consent where it is
-          required by law.
-        </p>
-      </section>
+          <p>
+            Google Analytics may use cookies and similar
+            technologies to measure website activity.
+          </p>
+        </section>
 
-      <section>
-        <h2>7. Service providers</h2>
+        <section>
+          <h2>6. Cookies and similar technologies</h2>
 
-        <p>
-          We use third-party service providers to operate
-          parts of this website.
-        </p>
+          <p>
+            Google Analytics 4 may use cookies to measure
+            website activity.
+          </p>
 
-        <p>
-          These currently include:
-        </p>
+          <p>
+            Embedded content from Spotify and Google/YouTube
+            may also use cookies or similar technologies when
+            you choose to load that external content.
+          </p>
 
-        <ul>
-          <li>
-            Google Analytics for website analytics and
-            measurement;
-          </li>
+          <p>
+            This website also uses browser local storage,
+            which is distinct from cookies, to remember certain
+            preferences such as newsletter prompts and privacy
+            choices.
+          </p>
 
-          <li>
-            Kit for newsletter subscriptions and email
-            delivery;
-          </li>
+          <p>
+            You can manage or delete cookies and local storage
+            through your browser settings.
+          </p>
 
-          <li>
-            Cloudflare for website hosting, delivery,
-            security, DNS, and email routing.
-          </li>
+          <p>
+            Browser settings do not replace consent where
+            consent is required by applicable law.
+          </p>
+        </section>
 
-          <li>
-            Spotify for audio players in published Stories;
-          </li>
+        <section>
+          <h2>7. Comments and Google Sign-In</h2>
 
-          <li>
-            Google/YouTube for optional video players when a
-            Story includes a YouTube URL.
-          </li>
-        </ul>
+          <p>
+            This website uses Google Sign-In to authenticate
+            users who choose to leave comments.
+          </p>
 
-        <p>
-          Spotify and YouTube embedded players are not
-          created until you choose to load that external
-          content. YouTube players are provided only when a
-          Story includes a YouTube URL and use the privacy-
-          enhanced youtube-nocookie.com domain. The player
-          URLs do not request autoplay.
-        </p>
+          <p>
+            For the comment system, we use your Google account's
+            unique identifier and display name to authenticate
+            your account and associate comments with you.
+          </p>
 
-        <p>
-          When you load external content or follow a provider
-          link, the provider may process technical
-          information such as your IP address, browser and
-          device information, information about the page
-          containing the content, and player interaction
-          information. Use of youtube-nocookie.com does not
-          mean that Google processes no visitor information.
-        </p>
+          <p>
+            We do not intentionally store your Google email
+            address in the comments database.
+          </p>
 
-        <p>
-          These providers may process information as
-          necessary to provide their services and operate
-          under their own privacy and data protection
-          policies.
-        </p>
-      </section>
+          <p>
+            Comments, your display name, your Google account
+            identifier, and the time the comment was submitted
+            may be stored using Cloudflare infrastructure.
+          </p>
 
-      <section>
-        <h2>8. Sharing of information</h2>
+          <p>
+            A Google sign-in credential may be stored temporarily
+            in your browser's session storage so that you remain
+            signed in while using the comment feature.
+          </p>
 
-        <p>
-          We do not currently sell your personal
-          information.
-        </p>
+          <p>
+            You may delete comments that you have written.
+            The site administrator may also remove comments
+            where necessary for moderation, safety, or operation
+            of the service.
+          </p>
+        </section>
 
-        <p>
-          Information may be shared with service providers
-          when necessary to operate the website, provide
-          requested services, comply with legal obligations,
-          or protect the website and its users.
-        </p>
-      </section>
+        <section>
+          <h2>8. Advertising and Google AdSense</h2>
 
-      <section>
-        <h2>9. Data retention</h2>
+          <p>
+            This website may use Google AdSense to display
+            advertising.
+          </p>
 
-        <p>
-          Information is retained only for as long as
-          reasonably necessary for the purposes described
-          in this policy, subject to the settings and
-          retention practices of the services we use.
-        </p>
+          <p>
+            Third-party vendors, including Google, may use
+            cookies or similar technologies to serve, measure,
+            and analyse advertisements.
+          </p>
 
-        <p>
-          Newsletter subscriber information may be retained
-          until you unsubscribe, request deletion, or it is
-          otherwise no longer needed.
-        </p>
-      </section>
+          <p>
+            Google may use advertising cookies to serve ads
+            based on your previous visits to this website or
+            other websites.
+          </p>
 
-      <section>
-        <h2>10. International data processing</h2>
+          <p>
+            Depending on your consent choices and applicable
+            law, advertising may be personalised or
+            non-personalised.
+          </p>
 
-        <p>
-          Some of the service providers used by this
-          website may process or store information in
-          countries other than the country where you live.
-        </p>
+          <p>
+            You can manage your personalised advertising
+            preferences through Google Ads Settings.
+          </p>
 
-        <p>
-          As a result, your information may be subject to
-          the laws of those jurisdictions.
-        </p>
-      </section>
+          <p>
+            Google and other advertising providers may process
+            information such as cookies, IP addresses, browser
+            and device information, and advertising interaction
+            data in connection with ad delivery and measurement.
+          </p>
+        </section>
 
-      <section>
-        <h2>11. Your choices</h2>
+        <section>
+          <h2>9. Service providers</h2>
 
-        <p>
-          Depending on your location, you may have rights
-          relating to your personal information, including
-          rights to request access, correction, or deletion.
-        </p>
+          <p>
+            We use third-party service providers to operate
+            parts of this website.
+          </p>
 
-        <p>
-          You can also unsubscribe from newsletter emails
-          at any time using the unsubscribe link included
-          in those emails.
-        </p>
+          <p>
+            These currently include or may include:
+          </p>
 
-        <p>
-          If you withdraw analytics consent, further Google
-          Analytics measurement is stopped and this website
-          removes related analytics cookies where possible.
-        </p>
+          <ul>
+            <li>
+              Google Analytics for website analytics and measurement;
+            </li>
 
-        <p>
-          <a href="#privacy-settings" data-consent-settings>
-            Change analytics privacy settings
-          </a>
-        </p>
+            <li>
+              Google AdSense for advertising and advertising measurement;
+            </li>
 
-        <p>
-          For privacy-related requests, contact:
-        </p>
+            <li>
+              Google Sign-In for authenticating users of the comment system;
+            </li>
 
-        <p>
-          <a href="mailto:hello@ifitallends.com">
-            hello@ifitallends.com
-          </a>
-        </p>
-      </section>
+            <li>
+              Kit for newsletter subscriptions and email delivery;
+            </li>
 
-      <section>
-        <h2>12. Changes to this policy</h2>
+            <li>
+              Cloudflare for website hosting, delivery, security,
+              DNS, email routing, Workers, and comment data storage;
+            </li>
 
-        <p>
-          This Privacy Policy may be updated as the website,
-          services, or legal requirements change.
-        </p>
+            <li>
+              Spotify for audio players in published Stories;
+            </li>
 
-        <p>
-          When the policy is updated, the date at the top of
-          this page will be revised.
-        </p>
-      </section>
-    </div>
-  </article>
+            <li>
+              Google/YouTube for optional video players when a
+              Story includes a YouTube URL.
+            </li>
+          </ul>
+
+          <p>
+            Spotify and YouTube embedded players are not created
+            until you choose to load that external content.
+          </p>
+
+          <p>
+            YouTube players are provided only when a Story includes
+            a YouTube URL and, where configured, use the
+            privacy-enhanced youtube-nocookie.com domain.
+          </p>
+
+          <p>
+            When you load external content or follow a provider
+            link, the provider may process technical information
+            such as your IP address, browser and device information,
+            information about the page containing the content,
+            and interaction information.
+          </p>
+
+          <p>
+            These providers may process information as necessary
+            to provide their services and operate under their own
+            privacy and data protection policies.
+          </p>
+        </section>
+
+        <section>
+          <h2>10. Sharing of information</h2>
+
+          <p>
+            We do not currently sell your personal information.
+          </p>
+
+          <p>
+            Information may be shared with service providers
+            when necessary to operate the website, provide
+            requested services, comply with legal obligations,
+            or protect the website and its users.
+          </p>
+        </section>
+
+        <section>
+          <h2>11. Data retention</h2>
+
+          <p>
+            Information is retained only for as long as reasonably
+            necessary for the purposes described in this policy,
+            subject to the settings and retention practices of the
+            services we use.
+          </p>
+
+          <p>
+            Newsletter subscriber information may be retained until
+            you unsubscribe, request deletion, or it is otherwise
+            no longer needed.
+          </p>
+
+          <p>
+            Comments and related account identifiers may be retained
+            for as long as needed to operate the comment system and
+            may be deleted when the relevant comment or associated
+            data is removed.
+          </p>
+        </section>
+
+        <section>
+          <h2>12. International data processing</h2>
+
+          <p>
+            Some of the service providers used by this website
+            may process or store information in countries other
+            than the country where you live.
+          </p>
+
+          <p>
+            As a result, your information may be subject to the
+            laws of those jurisdictions.
+          </p>
+        </section>
+
+        <section>
+          <h2>13. Your choices and rights</h2>
+
+          <p>
+            Depending on your location, you may have rights
+            relating to your personal information, including
+            rights to request access, correction, or deletion.
+          </p>
+
+          <p>
+            You can unsubscribe from newsletter emails at any
+            time using the unsubscribe link included in those emails.
+          </p>
+
+          <p>
+            If you withdraw analytics consent, further Google
+            Analytics measurement is stopped and this website
+            removes related analytics cookies where possible.
+          </p>
+
+          <p>
+            <a href="#privacy-settings" data-consent-settings>
+              Change privacy settings
+            </a>
+          </p>
+
+          <p>
+            For privacy-related requests, contact:
+          </p>
+
+          <p>
+            <a href="mailto:hello@ifitallends.com">
+              hello@ifitallends.com
+            </a>
+          </p>
+        </section>
+
+        <section>
+          <h2>14. Changes to this policy</h2>
+
+          <p>
+            This Privacy Policy may be updated as the website,
+            services, or legal requirements change.
+          </p>
+
+          <p>
+            When the policy is updated, the date at the top of
+            this page will be revised.
+          </p>
+        </section>
+
+      </div>
+    </article>
   )}
 </BaseLayout>
 
