@@ -1,0 +1,1113 @@
+---
+interface Props {
+  section: 'what-i-feel' | 'what-i-learn';
+  slug: string;
+  lang: 'en' | 'ko';
+}
+
+const { section, slug, lang } = Astro.props;
+const isKorean = lang === 'ko';
+---
+
+<section
+  class="comments"
+  data-comments
+  data-section={section}
+  data-slug={slug}
+  data-lang={lang}
+>
+  <div class="comments-heading">
+    <h2>
+      {isKorean ? '댓글' : 'Comments'}
+    </h2>
+
+    <p data-comments-intro>
+      {isKorean
+        ? 'Google 계정으로 로그인해 댓글을 남길 수 있습니다.'
+        : 'Sign in with Google to leave a comment.'}
+    </p>
+  </div>
+
+  <p
+    class="comments-status"
+    data-comments-status
+    role="status"
+    aria-live="polite"
+  >
+    {isKorean
+      ? '댓글을 불러오는 중…'
+      : 'Loading comments…'}
+  </p>
+
+  <div
+    class="comments-auth"
+    data-comments-auth
+    hidden
+  >
+    <div data-google-button></div>
+  </div>
+
+  <div
+    class="comments-account"
+    data-comments-account
+    hidden
+  >
+    <span data-account-name></span>
+
+    <button
+      type="button"
+      data-logout
+    >
+      {isKorean
+        ? '로그아웃'
+        : 'Sign out'}
+    </button>
+  </div>
+
+  <form
+    class="comments-form"
+    data-comments-form
+    hidden
+  >
+    <label>
+      {isKorean
+        ? '댓글 작성'
+        : 'Write a comment'}
+    </label>
+
+    <textarea
+      rows="5"
+      maxlength="2000"
+      required
+      data-comment-body
+    ></textarea>
+
+    <div class="comments-form-footer">
+      <span data-count>
+        0 / 2000
+      </span>
+
+      <button
+        type="submit"
+        data-submit
+      >
+        {isKorean
+          ? '댓글 등록'
+          : 'Post comment'}
+      </button>
+    </div>
+  </form>
+
+  <ol
+    class="comments-list"
+    data-comments-list
+  ></ol>
+
+  <p
+    class="comments-empty"
+    data-comments-empty
+    hidden
+  >
+    {isKorean
+      ? '아직 댓글이 없습니다. 첫 댓글을 남겨 보세요.'
+      : 'No comments yet. You can start the conversation.'}
+  </p>
+
+  <button
+    type="button"
+    data-more
+    hidden
+  >
+    {isKorean
+      ? '댓글 더 보기'
+      : 'Load more comments'}
+  </button>
+</section>
+
+<script>
+  const API =
+    'https://ifitallends-comments-api.korean-app-dev.workers.dev';
+
+  type GoogleCredentialResponse = {
+    credential?: string;
+  };
+
+  type GoogleIdentity = {
+    accounts: {
+      id: {
+        initialize: (
+          options: {
+            client_id: string;
+            callback: (
+              response:
+                GoogleCredentialResponse
+            ) => void;
+          }
+        ) => void;
+
+        renderButton: (
+          element: HTMLElement,
+          options:
+            Record<string, unknown>
+        ) => void;
+
+        disableAutoSelect:
+          () => void;
+      };
+    };
+  };
+
+  type GoogleWindow =
+    Window & {
+      google?: GoogleIdentity;
+    };
+
+  type CommentItem = {
+    id?: number;
+    author: string;
+    body: string;
+    createdAt: number;
+    canDelete?: boolean;
+  };
+
+  const googleWindow =
+    window as GoogleWindow;
+
+  async function loadGoogle():
+    Promise<GoogleIdentity> {
+    if (googleWindow.google) {
+      return googleWindow.google;
+    }
+
+    return new Promise(
+      (resolve, reject) => {
+        const existing =
+          document.querySelector(
+            'script[src="https://accounts.google.com/gsi/client"]'
+          );
+
+        if (existing) {
+          const wait =
+            setInterval(() => {
+              if (
+                googleWindow.google
+              ) {
+                clearInterval(
+                  wait
+                );
+
+                resolve(
+                  googleWindow.google
+                );
+              }
+            }, 100);
+
+          return;
+        }
+
+        const script =
+          document.createElement(
+            'script'
+          );
+
+        script.src =
+          'https://accounts.google.com/gsi/client';
+
+        script.async = true;
+        script.defer = true;
+
+        script.onload = () => {
+          if (
+            googleWindow.google
+          ) {
+            resolve(
+              googleWindow.google
+            );
+          } else {
+            reject(
+              new Error(
+                'Google sign-in failed to load.'
+              )
+            );
+          }
+        };
+
+        script.onerror = () => {
+          reject(
+            new Error(
+              'Google sign-in failed to load.'
+            )
+          );
+        };
+
+        document.head
+          .appendChild(script);
+      }
+    );
+  }
+
+  document
+    .querySelectorAll<HTMLElement>(
+      '[data-comments]'
+    )
+    .forEach(
+      async (root) => {
+        const section =
+          root.dataset.section;
+
+        const slug =
+          root.dataset.slug;
+
+        const lang =
+          root.dataset.lang === 'ko'
+            ? 'ko'
+            : 'en';
+
+        if (
+          !section ||
+          !slug
+        ) {
+          return;
+        }
+
+        const intro =
+          root.querySelector<HTMLElement>(
+            '[data-comments-intro]'
+          )!;
+
+        const status =
+          root.querySelector<HTMLElement>(
+            '[data-comments-status]'
+          )!;
+
+        const auth =
+          root.querySelector<HTMLElement>(
+            '[data-comments-auth]'
+          )!;
+
+        const googleButton =
+          root.querySelector<HTMLElement>(
+            '[data-google-button]'
+          )!;
+
+        const account =
+          root.querySelector<HTMLElement>(
+            '[data-comments-account]'
+          )!;
+
+        const accountName =
+          root.querySelector<HTMLElement>(
+            '[data-account-name]'
+          )!;
+
+        const logout =
+          root.querySelector<HTMLButtonElement>(
+            '[data-logout]'
+          )!;
+
+        const form =
+          root.querySelector<HTMLFormElement>(
+            '[data-comments-form]'
+          )!;
+
+        const textarea =
+          root.querySelector<HTMLTextAreaElement>(
+            '[data-comment-body]'
+          )!;
+
+        const count =
+          root.querySelector<HTMLElement>(
+            '[data-count]'
+          )!;
+
+        const submit =
+          root.querySelector<HTMLButtonElement>(
+            '[data-submit]'
+          )!;
+
+        const list =
+          root.querySelector<HTMLOListElement>(
+            '[data-comments-list]'
+          )!;
+
+        const empty =
+          root.querySelector<HTMLElement>(
+            '[data-comments-empty]'
+          )!;
+
+        const more =
+          root.querySelector<HTMLButtonElement>(
+            '[data-more]'
+          )!;
+
+        let token =
+          sessionStorage.getItem(
+            'ifitallends_google_token'
+          );
+
+        let nextCursor:
+          number | null = null;
+
+        function setStatus(
+          message = ''
+        ) {
+          status.textContent =
+            message;
+
+          status.hidden =
+            !message;
+        }
+
+        function showSignedOut() {
+          auth.hidden = false;
+          account.hidden = true;
+          form.hidden = true;
+
+          intro.textContent =
+            lang === 'ko'
+              ? 'Google 계정으로 로그인해 댓글을 남길 수 있습니다.'
+              : 'Sign in with Google to leave a comment.';
+        }
+
+        function showSignedIn(
+          name: string
+        ) {
+          auth.hidden = true;
+          account.hidden = false;
+          form.hidden = false;
+
+          accountName.textContent =
+            name;
+
+          intro.textContent =
+            lang === 'ko'
+              ? '로그인되었습니다. 자유롭게 댓글을 남겨 주세요.'
+              : 'You’re signed in. Leave a comment below.';
+        }
+
+        function createComment(
+          comment: CommentItem
+        ) {
+          const li =
+            document.createElement(
+              'li'
+            );
+
+          const header =
+            document.createElement(
+              'div'
+            );
+
+          header.className =
+            'comment-header';
+
+          const author =
+            document.createElement(
+              'strong'
+            );
+
+          author.textContent =
+            comment.author;
+
+          const time =
+            document.createElement(
+              'time'
+            );
+
+          time.textContent =
+            new Date(
+              comment.createdAt
+            ).toLocaleDateString(
+              lang === 'ko'
+                ? 'ko-KR'
+                : 'en-AU'
+            );
+
+          const body =
+            document.createElement(
+              'p'
+            );
+
+          body.textContent =
+            comment.body;
+
+          header.append(
+            author,
+            time
+          );
+
+          if (
+            comment.canDelete &&
+            comment.id &&
+            token
+          ) {
+            const deleteButton =
+              document.createElement(
+                'button'
+              );
+
+            deleteButton.type =
+              'button';
+
+            deleteButton.textContent =
+              lang === 'ko'
+                ? '삭제'
+                : 'Delete';
+
+            deleteButton.className =
+              'comment-delete';
+
+            deleteButton
+              .addEventListener(
+                'click',
+                async () => {
+                  const confirmed =
+                    window.confirm(
+                      lang === 'ko'
+                        ? '이 댓글을 삭제할까요?'
+                        : 'Delete this comment?'
+                    );
+
+                  if (
+                    !confirmed ||
+                    !token
+                  ) {
+                    return;
+                  }
+
+                  deleteButton.disabled =
+                    true;
+
+                  const response =
+                    await fetch(
+                      `${API}/api/comments/${comment.id}`,
+                      {
+                        method:
+                          'DELETE',
+
+                        headers: {
+                          Authorization:
+                            `Bearer ${token}`
+                        }
+                      }
+                    );
+
+                  if (
+                    !response.ok
+                  ) {
+                    deleteButton.disabled =
+                      false;
+
+                    setStatus(
+                      lang === 'ko'
+                        ? '댓글을 삭제하지 못했습니다.'
+                        : 'Comment could not be deleted.'
+                    );
+
+                    return;
+                  }
+
+                  li.remove();
+
+                  empty.hidden =
+                    list.children
+                      .length > 0;
+
+                  setStatus(
+                    lang === 'ko'
+                      ? '댓글이 삭제되었습니다.'
+                      : 'Comment deleted.'
+                  );
+                }
+              );
+
+            header.append(
+              deleteButton
+            );
+          }
+
+          li.append(
+            header,
+            body
+          );
+
+          return li;
+        }
+
+        async function loadComments(
+          append = false
+        ) {
+          const params =
+            new URLSearchParams({
+              section,
+              slug,
+              lang
+            });
+
+          if (
+            append &&
+            nextCursor
+          ) {
+            params.set(
+              'cursor',
+              String(
+                nextCursor
+              )
+            );
+          }
+
+          const headers:
+            Record<
+              string,
+              string
+            > = {};
+
+          if (token) {
+            headers.Authorization =
+              `Bearer ${token}`;
+          }
+
+          const response =
+            await fetch(
+              `${API}/api/comments?${params}`,
+              {
+                headers
+              }
+            );
+
+          if (
+            !response.ok
+          ) {
+            throw new Error(
+              lang === 'ko'
+                ? '댓글을 불러오지 못했습니다.'
+                : 'Comments could not be loaded.'
+            );
+          }
+
+          const data =
+            await response
+              .json() as {
+                comments:
+                  CommentItem[];
+                nextCursor:
+                  number | null;
+              };
+
+          if (!append) {
+            list
+              .replaceChildren();
+          }
+
+          data.comments.forEach(
+            (comment) => {
+              list.append(
+                createComment(
+                  comment
+                )
+              );
+            }
+          );
+
+          nextCursor =
+            data.nextCursor;
+
+          empty.hidden =
+            list.children
+              .length > 0;
+
+          more.hidden =
+            !nextCursor;
+        }
+
+        async function authenticate(
+          credential: string
+        ) {
+          const response =
+            await fetch(
+              `${API}/api/auth/google`,
+              {
+                method: 'POST',
+
+                headers: {
+                  Authorization:
+                    `Bearer ${credential}`
+                }
+              }
+            );
+
+          if (
+            !response.ok
+          ) {
+            throw new Error(
+              'Google authentication failed.'
+            );
+          }
+
+          const data =
+            await response
+              .json() as {
+                user: {
+                  name?: string;
+                };
+              };
+
+          token =
+            credential;
+
+          sessionStorage
+            .setItem(
+              'ifitallends_google_token',
+              credential
+            );
+
+          showSignedIn(
+            data.user.name ||
+              'Reader'
+          );
+
+          setStatus();
+
+          await loadComments();
+        }
+
+        async function setupGoogle() {
+          const configResponse =
+            await fetch(
+              `${API}/api/comments/config`
+            );
+
+          if (
+            !configResponse.ok
+          ) {
+            throw new Error(
+              'Comments configuration could not be loaded.'
+            );
+          }
+
+          const config =
+            await configResponse
+              .json() as {
+                googleClientId?:
+                  string;
+              };
+
+          if (
+            !config.googleClientId
+          ) {
+            throw new Error(
+              'Google Client ID is missing.'
+            );
+          }
+
+          const google =
+            await loadGoogle();
+
+          google.accounts.id
+            .initialize({
+              client_id:
+                config.googleClientId,
+
+              callback:
+                (response) => {
+                  if (
+                    response.credential
+                  ) {
+                    void authenticate(
+                      response.credential
+                    );
+                  }
+                }
+            });
+
+          google.accounts.id
+            .renderButton(
+              googleButton,
+              {
+                theme: 'outline',
+                size: 'large',
+                shape: 'pill',
+                text:
+                  'continue_with',
+                locale: lang
+              }
+            );
+        }
+
+        if (token) {
+          try {
+            const response =
+              await fetch(
+                `${API}/api/auth/session`,
+                {
+                  headers: {
+                    Authorization:
+                      `Bearer ${token}`
+                  }
+                }
+              );
+
+            if (
+              response.ok
+            ) {
+              const data =
+                await response
+                  .json() as {
+                    authenticated:
+                      boolean;
+
+                    user?: {
+                      name?:
+                        string;
+                    };
+                  };
+
+              if (
+                data.authenticated &&
+                data.user
+              ) {
+                showSignedIn(
+                  data.user.name ||
+                    'Reader'
+                );
+              } else {
+                token = null;
+
+                sessionStorage
+                  .removeItem(
+                    'ifitallends_google_token'
+                  );
+
+                showSignedOut();
+              }
+            } else {
+              token = null;
+
+              sessionStorage
+                .removeItem(
+                  'ifitallends_google_token'
+                );
+
+              showSignedOut();
+            }
+          } catch {
+            showSignedOut();
+          }
+        } else {
+          showSignedOut();
+        }
+
+        logout.addEventListener(
+          'click',
+          async () => {
+            token = null;
+
+            sessionStorage
+              .removeItem(
+                'ifitallends_google_token'
+              );
+
+            googleWindow
+              .google
+              ?.accounts.id
+              .disableAutoSelect();
+
+            showSignedOut();
+
+            setStatus();
+
+            await loadComments();
+          }
+        );
+
+        textarea
+          .addEventListener(
+            'input',
+            () => {
+              count.textContent =
+                `${textarea.value.length} / 2000`;
+            }
+          );
+
+        form.addEventListener(
+          'submit',
+          async (event) => {
+            event.preventDefault();
+
+            const originalBody =
+              textarea.value
+                .trim();
+
+            if (
+              !token ||
+              !originalBody
+            ) {
+              return;
+            }
+
+            submit.disabled =
+              true;
+
+            setStatus(
+              lang === 'ko'
+                ? '댓글을 등록하는 중…'
+                : 'Posting comment…'
+            );
+
+            try {
+              const response =
+                await fetch(
+                  `${API}/api/comments`,
+                  {
+                    method:
+                      'POST',
+
+                    headers: {
+                      'Content-Type':
+                        'application/json',
+
+                      Authorization:
+                        `Bearer ${token}`
+                    },
+
+                    body:
+                      JSON.stringify(
+                        {
+                          section,
+                          slug,
+                          lang,
+                          body:
+                            originalBody
+                        }
+                      )
+                  }
+                );
+
+              if (
+                !response.ok
+              ) {
+                throw new Error(
+                  'Comment could not be submitted.'
+                );
+              }
+
+              const payload =
+                await response
+                  .json() as {
+                    comment:
+                      CommentItem;
+                  };
+
+              list.prepend(
+                createComment(
+                  payload.comment
+                )
+              );
+
+              empty.hidden =
+                true;
+
+              textarea.value =
+                '';
+
+              count.textContent =
+                '0 / 2000';
+
+              setStatus(
+                lang === 'ko'
+                  ? '댓글이 등록되었습니다.'
+                  : 'Comment posted.'
+              );
+            } catch {
+              textarea.value =
+                originalBody;
+
+              count.textContent =
+                `${originalBody.length} / 2000`;
+
+              setStatus(
+                lang === 'ko'
+                  ? '댓글 등록에 실패했습니다.'
+                  : 'Comment could not be submitted.'
+              );
+            } finally {
+              submit.disabled =
+                false;
+            }
+          }
+        );
+
+        more.addEventListener(
+          'click',
+          () => {
+            void loadComments(
+              true
+            );
+          }
+        );
+
+        try {
+          await Promise.all([
+            setupGoogle(),
+            loadComments()
+          ]);
+
+          setStatus();
+        } catch (error) {
+          console.error(
+            error
+          );
+
+          setStatus(
+            lang === 'ko'
+              ? '댓글 기능을 불러오지 못했습니다.'
+              : 'Comments are currently unavailable.'
+          );
+        }
+      }
+    );
+</script>
+
+<style>
+  .comments [hidden] {
+    display: none !important;
+  }
+
+  .comments {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top:
+      1px solid
+      rgba(0, 0, 0, 0.15);
+  }
+
+  .comments-heading h2 {
+    margin-bottom: 0.4rem;
+  }
+
+  .comments-heading p,
+  .comments-status,
+  .comments-empty {
+    opacity: 0.7;
+  }
+
+  .comments-auth,
+  .comments-account,
+  .comments-form {
+    margin-top: 1.5rem;
+  }
+
+  .comments-account {
+    display: flex;
+    justify-content:
+      space-between;
+    align-items: center;
+  }
+
+  .comments-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0.5rem;
+    padding: 0.9rem;
+    font: inherit;
+    resize: vertical;
+  }
+
+  .comments-form-footer {
+    margin-top: 0.6rem;
+    display: flex;
+    justify-content:
+      space-between;
+    align-items: center;
+  }
+
+  button {
+    cursor: pointer;
+    font: inherit;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .comments-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+  }
+
+  .comments-list li {
+    padding: 1rem 0;
+
+    border-top:
+      1px solid
+      rgba(0, 0, 0, 0.1);
+  }
+
+  .comment-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .comments-list time {
+    font-size: 0.85rem;
+    opacity: 0.55;
+  }
+
+  .comments-list p {
+    margin-bottom: 0;
+  }
+
+  .comment-delete {
+    margin-left: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    opacity: 0.55;
+    cursor: pointer;
+  }
+
+  .comment-delete:hover {
+    opacity: 1;
+  }
+  
+:global(.comment-header) {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+:global(.comment-header strong) {
+  font-weight: 700;
+}
+
+:global(.comment-header time) {
+  font-size: 0.85rem;
+  opacity: 0.55;
+}
+
+:global(.comment-delete) {
+  margin-left: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  opacity: 0.55;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+:global(.comment-delete:hover) {
+  opacity: 1;
+}
+
+:global(.comments-list li) {
+  padding: 1rem 0;
+}
+</style>

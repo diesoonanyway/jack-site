@@ -5,6 +5,7 @@ import { getPublicSlug } from '../../lib/content-slug';
 import { getSafeExternalAudioUrl, getSpotifyEpisodeId, getSpotifyExternalUrl } from '../../lib/spotify';
 import { getYouTubeThumbnailUrl, getYouTubeVideoId } from '../../lib/youtube';
 import { createArticleStructuredData } from '../../lib/seo';
+import Comments from '../../components/Comments.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('stories');
@@ -161,6 +162,7 @@ const { Content } = await render(post);
 
     <div class="article-body"><Content /></div>
   </article>
+  <Comments section="what-i-feel" {slug} {lang} />
 </BaseLayout>
 
 <script>

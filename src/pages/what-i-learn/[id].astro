@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../../lib/content-slug';
 import { createArticleStructuredData } from '../../lib/seo';
+import Comments from '../../components/Comments.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('whatILearn');
@@ -79,6 +80,7 @@ const { Content } = await render(post);
 
     <div class="article-body"><Content /></div>
   </article>
+  <Comments section="what-i-learn" {slug} {lang} />
 </BaseLayout>
 
 <style>
