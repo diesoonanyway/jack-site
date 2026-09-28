@@ -1,0 +1,823 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Comment administration — If It All Ends"
+  description="Private comment administration."
+  lang="en"
+  noindex={true}
+>
+  <main class="admin-comments" data-admin-comments>
+    <header>
+      <p class="admin-kicker">IF IT ALL ENDS</p>
+      <h1>Comment administration</h1>
+
+      <p
+        data-admin-status
+        role="status"
+        aria-live="polite"
+      >
+        Checking access…
+      </p>
+    </header>
+
+    <section data-admin-login hidden>
+      <p>
+        Sign in with the Google account configured as the site administrator.
+      </p>
+
+      <div data-admin-google-button></div>
+    </section>
+
+    <div data-admin-dashboard hidden>
+      <div class="admin-toolbar">
+        <p>Administrator session active.</p>
+
+        <button
+          type="button"
+          class="admin-text-button"
+          data-admin-logout
+        >
+          Sign out
+        </button>
+      </div>
+
+      <section class="admin-section">
+        <h2>All comments</h2>
+
+        <ol
+          class="admin-comment-list"
+          data-admin-comment-list
+        ></ol>
+
+        <p
+          data-admin-empty
+          hidden
+        >
+          No comments yet.
+        </p>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const API =
+    'https://ifitallends-comments-api.korean-app-dev.workers.dev';
+
+  type GoogleCredentialResponse = {
+    credential?: string;
+  };
+
+  type GoogleIdentity = {
+    accounts: {
+      id: {
+        initialize: (
+          options: {
+            client_id: string;
+            callback: (
+              response: GoogleCredentialResponse
+            ) => void;
+          }
+        ) => void;
+
+        renderButton: (
+          element: HTMLElement,
+          options: Record<string, unknown>
+        ) => void;
+
+        disableAutoSelect: () => void;
+      };
+    };
+  };
+
+  type GoogleWindow = Window & {
+    google?: GoogleIdentity;
+  };
+
+  type AdminComment = {
+    id: number;
+    post_slug: string;
+    author_name: string;
+    body: string;
+    status: string;
+    created_at: string;
+  };
+
+  const googleWindow =
+    window as GoogleWindow;
+
+  const root =
+    document.querySelector<HTMLElement>(
+      '[data-admin-comments]'
+    );
+
+  async function loadGoogle():
+    Promise<GoogleIdentity> {
+    if (googleWindow.google) {
+      return googleWindow.google;
+    }
+
+    return new Promise(
+      (resolve, reject) => {
+        const existing =
+          document.querySelector(
+            'script[src="https://accounts.google.com/gsi/client"]'
+          );
+
+        if (existing) {
+          const wait =
+            setInterval(() => {
+              if (
+                googleWindow.google
+              ) {
+                clearInterval(wait);
+
+                resolve(
+                  googleWindow.google
+                );
+              }
+            }, 100);
+
+          return;
+        }
+
+        const script =
+          document.createElement(
+            'script'
+          );
+
+        script.src =
+          'https://accounts.google.com/gsi/client';
+
+        script.async = true;
+        script.defer = true;
+
+        script.onload = () => {
+          if (googleWindow.google) {
+            resolve(
+              googleWindow.google
+            );
+          } else {
+            reject(
+              new Error(
+                'Google sign-in failed to load.'
+              )
+            );
+          }
+        };
+
+        script.onerror = () => {
+          reject(
+            new Error(
+              'Google sign-in failed to load.'
+            )
+          );
+        };
+
+        document.head.appendChild(
+          script
+        );
+      }
+    );
+  }
+
+  if (root) {
+    const status =
+      root.querySelector<HTMLElement>(
+        '[data-admin-status]'
+      )!;
+
+    const loginArea =
+      root.querySelector<HTMLElement>(
+        '[data-admin-login]'
+      )!;
+
+    const googleButton =
+      root.querySelector<HTMLElement>(
+        '[data-admin-google-button]'
+      )!;
+
+    const dashboard =
+      root.querySelector<HTMLElement>(
+        '[data-admin-dashboard]'
+      )!;
+
+    const logout =
+      root.querySelector<HTMLButtonElement>(
+        '[data-admin-logout]'
+      )!;
+
+    const commentList =
+      root.querySelector<HTMLOListElement>(
+        '[data-admin-comment-list]'
+      )!;
+
+    const empty =
+      root.querySelector<HTMLElement>(
+        '[data-admin-empty]'
+      )!;
+
+    let token =
+      sessionStorage.getItem(
+        'ifitallends_google_token'
+      );
+
+    function setStatus(
+      message = '',
+      error = false
+    ) {
+      status.textContent =
+        message;
+
+      status.classList.toggle(
+        'is-error',
+        error
+      );
+
+      status.hidden =
+        !message;
+    }
+
+    function showLogin() {
+      loginArea.hidden = false;
+      dashboard.hidden = true;
+    }
+
+    function showDashboard() {
+      loginArea.hidden = true;
+      dashboard.hidden = false;
+    }
+
+    function formatDate(
+      value: string
+    ) {
+      const parsed =
+        Date.parse(
+          value.replace(
+            ' ',
+            'T'
+          ) + 'Z'
+        );
+
+      if (
+        Number.isNaN(parsed)
+      ) {
+        return value;
+      }
+
+      return new Date(
+        parsed
+      ).toLocaleString(
+        'en-AU'
+      );
+    }
+
+    function createComment(
+      comment: AdminComment
+    ) {
+      const item =
+        document.createElement(
+          'li'
+        );
+
+      item.className =
+        'admin-comment';
+
+      const meta =
+        document.createElement(
+          'p'
+        );
+
+      meta.className =
+        'admin-comment-meta';
+
+      meta.textContent =
+        `${comment.author_name} · ${comment.post_slug} · ${formatDate(comment.created_at)}`;
+
+      const body =
+        document.createElement(
+          'p'
+        );
+
+      body.className =
+        'admin-comment-body';
+
+      body.textContent =
+        comment.body;
+
+      const actions =
+        document.createElement(
+          'div'
+        );
+
+      actions.className =
+        'admin-actions';
+
+      const remove =
+        document.createElement(
+          'button'
+        );
+
+      remove.type =
+        'button';
+
+      remove.className =
+        'admin-text-button';
+
+      remove.textContent =
+        'Delete';
+
+      remove.addEventListener(
+        'click',
+        async () => {
+          if (!token) return;
+
+          const confirmed =
+            window.confirm(
+              'Delete this comment permanently?'
+            );
+
+          if (!confirmed) {
+            return;
+          }
+
+          remove.disabled =
+            true;
+
+          try {
+            const response =
+              await fetch(
+                `${API}/api/admin/comments/${comment.id}`,
+                {
+                  method:
+                    'DELETE',
+
+                  headers: {
+                    Authorization:
+                      `Bearer ${token}`
+                  }
+                }
+              );
+
+            if (!response.ok) {
+              throw new Error(
+                'Delete failed.'
+              );
+            }
+
+            item.remove();
+
+            empty.hidden =
+              commentList.children
+                .length > 0;
+
+            setStatus(
+              'Comment deleted.'
+            );
+          } catch (
+            error
+          ) {
+            remove.disabled =
+              false;
+
+            setStatus(
+              error instanceof Error
+                ? error.message
+                : 'Delete failed.',
+              true
+            );
+          }
+        }
+      );
+
+      actions.append(
+        remove
+      );
+
+      item.append(
+        meta,
+        body,
+        actions
+      );
+
+      return item;
+    }
+
+    async function loadComments() {
+      if (!token) {
+        showLogin();
+
+        setStatus(
+          'Administrator sign-in is required.'
+        );
+
+        return;
+      }
+
+      const response =
+        await fetch(
+          `${API}/api/admin/comments`,
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`
+            }
+          }
+        );
+
+      if (
+        response.status ===
+          401 ||
+        response.status ===
+          403
+      ) {
+        token = null;
+
+        sessionStorage.removeItem(
+          'ifitallends_google_token'
+        );
+
+        showLogin();
+
+        setStatus(
+          'This Google account is not authorised as the administrator.',
+          true
+        );
+
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          'Comments could not be loaded.'
+        );
+      }
+
+      const data =
+        await response
+          .json() as {
+            comments:
+              AdminComment[];
+          };
+
+      commentList
+        .replaceChildren();
+
+      data.comments.forEach(
+        (comment) => {
+          commentList.append(
+            createComment(
+              comment
+            )
+          );
+        }
+      );
+
+      empty.hidden =
+        data.comments.length > 0;
+
+      showDashboard();
+
+      setStatus();
+    }
+
+    async function setupGoogle() {
+      const configResponse =
+        await fetch(
+          `${API}/api/comments/config`
+        );
+
+      if (
+        !configResponse.ok
+      ) {
+        throw new Error(
+          'Configuration could not be loaded.'
+        );
+      }
+
+      const config =
+        await configResponse
+          .json() as {
+            googleClientId?: string;
+          };
+
+      if (
+        !config.googleClientId
+      ) {
+        throw new Error(
+          'Google Client ID is missing.'
+        );
+      }
+
+      const google =
+        await loadGoogle();
+
+      google.accounts.id
+        .initialize({
+          client_id:
+            config.googleClientId,
+
+          callback:
+            async (
+              response
+            ) => {
+              if (
+                !response.credential
+              ) {
+                return;
+              }
+
+              token =
+                response.credential;
+
+              sessionStorage.setItem(
+                'ifitallends_google_token',
+                response.credential
+              );
+
+              await loadComments();
+            }
+        });
+
+      google.accounts.id
+        .renderButton(
+          googleButton,
+          {
+            theme:
+              'outline',
+            size:
+              'large',
+            shape:
+              'pill',
+            text:
+              'continue_with'
+          }
+        );
+    }
+
+    logout.addEventListener(
+      'click',
+      () => {
+        token = null;
+
+        sessionStorage.removeItem(
+          'ifitallends_google_token'
+        );
+
+        googleWindow.google
+          ?.accounts.id
+          .disableAutoSelect();
+
+        showLogin();
+
+        setStatus(
+          'Administrator sign-in is required.'
+        );
+      }
+    );
+
+    void (
+      async () => {
+        try {
+          await setupGoogle();
+
+          await loadComments();
+        } catch (
+          error
+        ) {
+          showLogin();
+
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : 'Administrator page could not be loaded.',
+            true
+          );
+        }
+      }
+    )();
+  }
+</script>
+
+<style>
+  .admin-comments [hidden] {
+    display: none !important;
+  }
+
+  .admin-comments {
+    width:
+      calc(100% - 48px);
+
+    max-width:
+      1040px;
+
+    min-height:
+      70vh;
+
+    margin-inline:
+      auto;
+
+    padding:
+      clamp(
+        72px,
+        10vw,
+        132px
+      )
+      0
+      100px;
+  }
+
+  .admin-kicker {
+    color:
+      var(--muted);
+
+    font-size:
+      0.75rem;
+
+    letter-spacing:
+      0.16em;
+  }
+
+  h1,
+  h2 {
+    font-family:
+      var(--font-editorial);
+
+    font-weight:
+      var(
+        --editorial-title-weight
+      );
+  }
+
+  h1 {
+    margin:
+      18px 0 26px;
+
+    font-size:
+      clamp(
+        2.6rem,
+        7vw,
+        5rem
+      );
+
+    line-height:
+      1.05;
+  }
+
+  h2 {
+    margin-bottom:
+      26px;
+
+    font-size:
+      clamp(
+        1.8rem,
+        4vw,
+        2.7rem
+      );
+  }
+
+  [data-admin-status] {
+    color:
+      var(--muted);
+  }
+
+  [data-admin-status].is-error {
+    color:
+      #efc1b8;
+  }
+
+  .admin-toolbar {
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      space-between;
+
+    gap:
+      18px;
+
+    margin-top:
+      40px;
+  }
+
+  .admin-section {
+    margin-top:
+      68px;
+
+    padding-top:
+      46px;
+
+    border-top:
+      1px solid
+      rgba(
+        220,
+        230,
+        240,
+        0.14
+      );
+  }
+
+  .admin-comment-list {
+    margin:
+      0;
+
+    padding:
+      0;
+
+    list-style:
+      none;
+  }
+
+  :global(.admin-comment) {
+    padding:
+      24px 0;
+
+    border-top:
+      1px solid
+      rgba(
+        220,
+        230,
+        240,
+        0.1
+      );
+  }
+
+  :global(.admin-comment-meta) {
+    color:
+      var(--muted);
+
+    font-size:
+      0.82rem;
+  }
+
+  :global(.admin-comment-body) {
+    line-height:
+      1.7;
+
+    white-space:
+      pre-wrap;
+
+    overflow-wrap:
+      anywhere;
+  }
+
+  :global(.admin-actions) {
+    margin-top:
+      12px;
+  }
+
+  .admin-text-button,
+  :global(.admin-text-button) {
+    padding:
+      0;
+
+    border:
+      0;
+
+    color:
+      var(--muted);
+
+    background:
+      transparent;
+
+    font:
+      inherit;
+
+    text-decoration:
+      underline;
+
+    text-underline-offset:
+      0.24em;
+
+    cursor:
+      pointer;
+  }
+
+  @media (
+    max-width:
+      600px
+  ) {
+    .admin-comments {
+      width:
+        calc(
+          100% - 36px
+        );
+
+      padding-top:
+        56px;
+    }
+
+    .admin-toolbar {
+      align-items:
+        flex-start;
+
+      flex-direction:
+        column;
+    }
+  }
+</style>
