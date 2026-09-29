@@ -8,11 +8,14 @@ description: "This is the story of Dan-Yul Moon — once the most famous English
   the journey of a man who stepped outside the game of success to discover what
   truly matters: breathing, loving, and simply being alive."
 date: 2026-09-19
-createdAt: "2026-09-19T15:55:21+10:00"
+createdAt: 2026-09-19T05:55:00Z
 draft: false
 lang: en
 formats:
   - listen
 episode: "7"
 spotifyUrl: https://open.spotify.com/episode/20GYgAIhkZgVet2ruk9GYF?si=eoHHT128SqG-Ah7jbOhXzg
+topics:
+  - korean
+featured: false
 ---
