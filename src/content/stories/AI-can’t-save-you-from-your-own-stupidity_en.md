@@ -1,5 +1,5 @@
 ---
-slug: AI-can’t-save-you-from-your-own-stupidity
+slug: ai-cant-save-you-from-your-own-stupidity
 title: AI can’t save you from your own stupidity.
 date: 2026-09-25
 createdAt: 2026-09-25T09:11:00Z
@@ -9,6 +9,8 @@ heroImage: /media/download-1.png
 formats:
   - read
 featured: false
+topics:
+  - philosophy
 ---
 Reading the news is not about knowing more events. It is about noticing what the world is beginning to need. Somewhere inside that movement, you have to find the point where what you want to do meets what you are capable of doing well. And in that one area, you need to go deep enough to understand it like someone with a doctorate.
 
