@@ -9,6 +9,8 @@ heroImage: /media/10t6m-ffpwsu-xhi-al9og.webp
 formats:
   - read
 featured: false
+topics:
+  - philosophy
 ---
 “You have no idea how much more peaceful life becomes when you are willing to lose just a little.”
 
