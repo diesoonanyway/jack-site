@@ -13,11 +13,14 @@ description: >
   This is a story about patience, identity, and the quiet power of not giving up
   — even when your dream seems to have passed you by.
 date: 2026-09-19
-createdAt: "2026-09-19T15:54:02+10:00"
+createdAt: 2026-09-19T05:54:00Z
 draft: false
 lang: en
 formats:
   - listen
 episode: "5"
 spotifyUrl: https://open.spotify.com/episode/2XvojDI7WeJXPzsp92dpZZ?si=7b4SIwNIRNSC2GSvpsacLA
+topics:
+  - korean
+featured: false
 ---
