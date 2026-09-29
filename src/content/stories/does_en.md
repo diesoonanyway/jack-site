@@ -9,6 +9,8 @@ heroImage: /media/13jrxqikj1jezbo9q61gncw.webp
 formats:
   - read
 featured: false
+topics:
+  - philosophy
 ---
 > “Set your goals far higher than you think you can reach. Even if you fail, you’ll still make it halfway.”
 
