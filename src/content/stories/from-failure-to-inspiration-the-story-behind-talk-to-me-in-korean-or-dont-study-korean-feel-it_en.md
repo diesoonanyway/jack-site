@@ -8,13 +8,16 @@ description: >
   millions of learners worldwide — this is how persistence became a voice that
   changed language learning forever.
 date: 2026-09-19
-createdAt: "2026-09-19T15:46:18+10:00"
+createdAt: 2026-09-19T05:46:00Z
 draft: false
 lang: en
 formats:
   - listen
 episode: "3"
 spotifyUrl: https://open.spotify.com/episode/4NsdhS4jsqp8efoDlAsetX?si=FClVwre5SMG6dXYpAl7rzg
+topics:
+  - korean
+featured: false
 ---
 오늘의 문장: 조금라도 계속하면, 길이 열려.
 
