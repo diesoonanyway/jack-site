@@ -10,6 +10,8 @@ heroImage: /media/download-2.png
 formats:
   - read
 featured: false
+topics:
+  - philosophy
 ---
 Where did all that ambitions go — the part of me that once swore I would never live the same life as everyone else?
 
