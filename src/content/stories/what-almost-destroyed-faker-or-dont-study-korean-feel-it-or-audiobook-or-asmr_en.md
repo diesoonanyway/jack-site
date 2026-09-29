@@ -9,11 +9,14 @@ description: We meet a young Korean man who changed the world of esports. His
   found the strength to rise again. This is the human journey behind the
   greatest esports player of all time.
 date: 2026-09-19
-createdAt: "2026-09-19T15:56:01+10:00"
+createdAt: 2026-09-19T05:56:00Z
 draft: false
 lang: en
 formats:
   - listen
 episode: "7"
 spotifyUrl: https://open.spotify.com/episode/7Bmg8o2oNre9GkA1VuDfk0?si=fbIQ4Lm3R2uGoDM6DeqF5g
+topics:
+  - korean
+featured: false
 ---
