@@ -1,3 +1,3 @@
 ---
-name: korean
+name: korean culture
 ---
