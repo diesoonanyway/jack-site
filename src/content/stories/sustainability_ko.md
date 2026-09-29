@@ -10,6 +10,8 @@ heroImage: /media/1geozysrsklfhb3bspjjb5a-1.webp
 formats:
   - read
 featured: false
+topics:
+  - philosophy
 ---
 무언가를 결정해야 할 때 제일 먼저 나 자신에게 묻는 질문이다. 나에게 있어 가장 큰 판단 기준은 늘 지속 가능성이였다. 빠른 길보다, 오래 걸을 수 있는 길.
 
