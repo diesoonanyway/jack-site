@@ -11,7 +11,7 @@ formats:
   - read
 featured: false
 topics:
-  - korean culture
+  - philosophy
 ---
 Years ago, I watched a television programme in which women from several countries discussed dating and marriage. The topic was a man they loved who lacked financial security. The Korean panellist said:
 
