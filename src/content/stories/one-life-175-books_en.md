@@ -2,21 +2,18 @@
 slug: one-life-175-books
 title: One Life, 175 Books
 date: 2026-09-12
-createdAt: "2026-09-13T09:37:09+10:00"
-description: '"What 175 unread books taught me about attention, judgment, and using AI to think better rather than simply consume more."'
-tags: []
+createdAt: 2026-09-12T23:37:00Z
+description: '"What 175 unread books taught me about attention, judgment, and
+  using AI to think better rather than simply consume more."'
 draft: false
-heroImage: ""
 featured: false
-relatedPodcast: ""
-relatedYoutube: ""
-relatedApp: ""
 lang: en
 formats:
   - read
 translation: /ko/stories/one-life-175-books/
+topics:
+  - philosophy
 ---
-
 That line from *About Time* has been sitting in my head.
 
 In the film, Tim’s father can travel back in time, and one of the quiet joys of his impossible life is reading. Not saving the world. Not becoming powerful. Not chasing some dramatic second chance.
