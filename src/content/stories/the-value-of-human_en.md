@@ -10,7 +10,7 @@ formats:
   - read
 featured: false
 topics:
-  - human
+  - philosophy
 ---
 Thanks to AI, anyone can now create images, produce music and videos, and even write novels. Results that once took years of training can now be produced before a cup of coffee has gone cold.
 
