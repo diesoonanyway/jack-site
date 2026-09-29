@@ -9,7 +9,7 @@ heroImage: /media/1yaecuv9cwsuaiw6ypmr0kg.webp
 formats:
   - read
 topics:
-  - human
+  - philosophy
 featured: false
 ---
 AI덕분에 이제 누구나 쉽게 그림을 그리고, 음악과 영상을 제작하고, 소설을 쓰기도 한다. 예전에는 몇 년을 배워야 겨우 만들 수 있었던 결과물이 이제는 커피 한 잔이 식기도 전에 완성된다.
