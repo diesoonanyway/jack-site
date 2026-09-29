@@ -22,7 +22,9 @@ const topicEntries = await getCollection('whatIFeelTopics');
 const topics = topicEntries
   .map((topic) => topic.data.name.trim())
   .filter(Boolean)
-  .sort((a, b) => a.localeCompare(b, isKorean ? 'ko' : 'en'));
+  .sort((a, b) =>
+    a.localeCompare(b, isKorean ? 'ko' : 'en'),
+  );
 
 const copy = isKorean
   ? {
@@ -50,13 +52,10 @@ const storyPath = (post) =>
 const storyVisual = (post) =>
   post.data.heroImage ||
   getYouTubeThumbnailUrl(post.data.youtubeUrl);
-
-const storyTopics = (post) =>
-  post.data.topics.join(' · ');
 ---
 
 <BaseLayout
-  title={`What I Feel — If It All Ends`}
+  title="What I Feel — If It All Ends"
   description={copy.intro}
   {lang}
   alternatePath={
@@ -154,12 +153,6 @@ const storyTopics = (post) =>
               )}
 
               <div class="story-archive-copy">
-                {post.data.topics.length > 0 && (
-                  <p class="story-topics">
-                    {storyTopics(post)}
-                  </p>
-                )}
-
                 <h2 class="editorial-title">
                   <a href={storyPath(post)}>
                     {post.data.title}
@@ -277,7 +270,6 @@ const storyTopics = (post) =>
   }
 
   .archive-kicker,
-  .story-topics,
   .story-archive-copy time {
     color: var(--muted);
     font-size: 0.78rem;
@@ -349,21 +341,16 @@ const storyTopics = (post) =>
     background: transparent;
   }
 
-  .story-filters button[
-    aria-pressed='true'
-  ] {
+  .story-filters button[aria-pressed='true'] {
     color: var(--text);
   }
 
-  .story-filters button[
-    aria-pressed='true'
-  ]::after {
+  .story-filters button[aria-pressed='true']::after {
     background: currentColor;
   }
 
   .story-filters button:focus-visible,
-  .story-archive-entry
-    a:focus-visible {
+  .story-archive-entry a:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 5px;
   }
@@ -439,10 +426,6 @@ const storyTopics = (post) =>
     pointer-events: none;
   }
 
-  .story-topics {
-    margin-bottom: 20px;
-  }
-
   .story-archive-copy h2 {
     margin-bottom: 22px;
     font-size: clamp(
@@ -479,9 +462,7 @@ const storyTopics = (post) =>
     color: var(--muted);
   }
 
-  @media (
-    max-width: 1020px
-  ) {
+  @media (max-width: 1020px) {
     .stories-archive-list {
       grid-template-columns:
         repeat(
@@ -491,9 +472,7 @@ const storyTopics = (post) =>
     }
   }
 
-  @media (
-    max-width: 760px
-  ) {
+  @media (max-width: 760px) {
     .stories-archive {
       padding:
         30px 18px 40px;
@@ -538,12 +517,9 @@ const storyTopics = (post) =>
     }
   }
 
-  @media (
-    max-width: 640px
-  ) {
+  @media (max-width: 640px) {
     .stories-archive-list {
-      grid-template-columns:
-        1fr;
+      grid-template-columns: 1fr;
       gap: 64px;
       padding-block: 68px;
     }

@@ -48,9 +48,6 @@ const entryPath = (post) =>
     post.id,
     post.data.lang,
   )}/`;
-
-const topicLabels = (topics) =>
-  topics.join(' · ');
 ---
 
 <BaseLayout
@@ -136,14 +133,6 @@ const topicLabels = (topics) =>
             )}
 
             <div class="learn-archive-copy">
-              {post.data.topics.length > 0 && (
-                <p class="learn-topics">
-                  {topicLabels(
-                    post.data.topics,
-                  )}
-                </p>
-              )}
-
               <h2 class="editorial-title">
                 <a href={entryPath(post)}>
                   {post.data.title}
@@ -260,7 +249,6 @@ const topicLabels = (topics) =>
   }
 
   .archive-kicker,
-  .learn-topics,
   .learn-archive-copy time {
     color: var(--muted);
     font-size: 0.78rem;
@@ -407,10 +395,6 @@ const topicLabels = (topics) =>
     display: flex;
     flex: 1;
     flex-direction: column;
-  }
-
-  .learn-topics {
-    margin-bottom: 20px;
   }
 
   .learn-archive-copy h2 {
