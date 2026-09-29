@@ -1,5 +1,5 @@
 ---
-slug: AI-can’t-save-you-from-your-own-stupidity
+slug: ai-cant-save-you-from-your-own-stupidity
 title: AI는 당신의 무지를 대신 채워주지 않는다
 date: 2026-09-25
 createdAt: 2026-09-25T10:01:00Z
@@ -9,6 +9,8 @@ formats:
   - read
 featured: false
 heroImage: /media/download-1.png
+topics:
+  - philosophy
 ---
 뉴스를 본다는 것은 사건을 많이 아는 것이 아니라, 시대가 무엇을 필요로 하기 시작했는지 읽는 일이다. 그 흐름 속에서 내가 하고 싶은 일과 잘할 수 있는 일이 만나는 영역을 찾아야 한다. 그리고 적어도 그 분야에서만큼은 박사 학위를 가진 사람처럼 깊이 알아야 한다.
 
