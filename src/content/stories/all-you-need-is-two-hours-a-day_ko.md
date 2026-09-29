@@ -2,19 +2,17 @@
 slug: all-you-need-is-two-hours-a-day
 title: “하루에 딱 두 시간만 하세요.” 너나 하세요...
 date: 2026-09-14
-createdAt: "2026-09-14T15:53:11+10:00"
-description: AI로 누구나 몇 시간 만에 만들고 돈 벌 수 있다고 난리다. 하지만 만드는 일이 쉬워질수록, 무엇을 만들 가치가 있는지 정하는 일이 더 중요해진다.
-tags: []
+createdAt: 2026-09-14T05:53:00Z
+description: AI로 누구나 몇 시간 만에 만들고 돈 벌 수 있다고 난리다. 하지만 만드는 일이 쉬워질수록, 무엇을 만들 가치가 있는지
+  정하는 일이 더 중요해진다.
 draft: false
-heroImage: ""
 featured: false
-relatedPodcast: ""
-relatedYoutube: ""
-relatedApp: ""
 lang: ko
 formats:
   - read
 translation: /stories/all-you-need-is-two-hours-a-day/
+topics:
+  - philosophy
 ---
 ![what Excites Me?](all-you-need-is-two-hours-a-day/what-excites-me-1.png)
 요즘 인터넷에서 자주 보는 문장이다.
