@@ -10,8 +10,10 @@ const stories = defineCollection({
   loader: glob({
     pattern: '*_{en,ko}.md',
     base: './src/content/stories',
-    generateId: ({ entry, data }) => getPairedEntryId(entry, data.lang, data.slug),
+    generateId: ({ entry, data }) =>
+      getPairedEntryId(entry, data.lang, data.slug),
   }),
+
   schema: z.object({
     title: z.string(),
     slug: z.string(),
@@ -25,14 +27,34 @@ const stories = defineCollection({
     heroImage: z.string().optional(),
     spotifyUrl: z.string().optional(),
     youtubeUrl: z.string().optional(),
-    formats: z.array(z.enum(['read', 'listen', 'watch'])).default([]),
+
+    formats: z
+      .array(z.enum(['read', 'listen', 'watch']))
+      .default([]),
+
     topics: z.array(z.string()).default([]),
+
     featured: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
-    episode: z.union([z.string(), z.number()]).optional(),
+
+    episode: z
+      .union([z.string(), z.number()])
+      .optional(),
+
     relatedPodcast: z.string().optional(),
     relatedYoutube: z.string().optional(),
     relatedApp: z.string().optional(),
+  }),
+});
+
+const whatIFeelTopics = defineCollection({
+  loader: glob({
+    pattern: '*.md',
+    base: './src/content/what-i-feel-topics',
+  }),
+
+  schema: z.object({
+    name: z.string(),
   }),
 });
 
@@ -40,8 +62,10 @@ const whatILearn = defineCollection({
   loader: glob({
     pattern: '*_{en,ko}.md',
     base: './src/content/what-i-learn',
-    generateId: ({ entry, data }) => getPairedEntryId(entry, data.lang, data.slug),
+    generateId: ({ entry, data }) =>
+      getPairedEntryId(entry, data.lang, data.slug),
   }),
+
   schema: z.object({
     title: z.string(),
     slug: z.string(),
@@ -52,9 +76,25 @@ const whatILearn = defineCollection({
     lang: z.enum(['en', 'ko']).default('en'),
     translation: z.string().optional(),
     heroImage: z.string().optional(),
-    formats: z.array(z.enum(['read', 'listen', 'watch'])).default([]),
+
+    formats: z
+      .array(z.enum(['read', 'listen', 'watch']))
+      .default([]),
+
     topics: z.array(z.string()).default([]),
+
     featured: z.boolean().default(false),
+  }),
+});
+
+const whatILearnTopics = defineCollection({
+  loader: glob({
+    pattern: '*.md',
+    base: './src/content/what-i-learn-topics',
+  }),
+
+  schema: z.object({
+    name: z.string(),
   }),
 });
 
@@ -94,6 +134,8 @@ const apps = defineCollection({
 
 export const collections = {
   stories,
+  whatIFeelTopics,
   whatILearn,
+  whatILearnTopics,
   apps,
 };

@@ -5,79 +5,244 @@ import { sortByCreatedAt } from '../../lib/content-sort';
 import { getPublicSlug } from '../../lib/content-slug';
 
 const { lang = 'en' } = Astro.props;
+
 const isKorean = lang === 'ko';
 const pathPrefix = isKorean ? '/ko' : '';
 const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
-const posts = sortByCreatedAt((await getCollection('whatILearn'))
-  .filter((post) => !post.data.draft && post.data.lang === lang));
+
+const posts = sortByCreatedAt(
+  (await getCollection('whatILearn')).filter(
+    (post) => !post.data.draft && post.data.lang === lang,
+  ),
+);
+
+const topicEntries = await getCollection('whatILearnTopics');
+
+const topics = topicEntries
+  .map((topic) => topic.data.name.trim())
+  .filter(Boolean)
+  .sort((a, b) =>
+    a.localeCompare(b, isKorean ? 'ko' : 'en'),
+  );
 
 const copy = isKorean
   ? {
-      intro: '배우고 싶은 것들이 아직 많다는 것. 그것만으로도 살아갈 이유는 충분하지 않을까...',
-      noEntries: '아직 발행된 What I Learn 글이 없습니다.',
+      intro:
+        '배우고 싶은 것들이 아직 많다는 것. 그것만으로도 살아갈 이유는 충분하지 않을까...',
+      all: '전체',
+      filtersLabel: 'What I Learn 주제 필터',
+      noEntries:
+        '아직 발행된 What I Learn 글이 없습니다.',
     }
   : {
-      intro: 'There is still so much I want to learn. Could that alone be reason enough to keep living...',
-      noEntries: 'No published What I Learn entries yet.',
+      intro:
+        'There is still so much I want to learn. Could that alone be reason enough to keep living...',
+      all: 'All',
+      filtersLabel: 'Filter What I Learn by topic',
+      noEntries:
+        'No published What I Learn entries yet.',
     };
 
-const entryPath = (post) => `${pathPrefix}/what-i-learn/${getPublicSlug(post.id, post.data.lang)}/`;
-const formatLabels = (formats) => formats.map((format) => format.toUpperCase()).join(' · ');
-const topicLabels = (topics) => topics.join(' · ');
+const entryPath = (post) =>
+  `${pathPrefix}/what-i-learn/${getPublicSlug(
+    post.id,
+    post.data.lang,
+  )}/`;
+
+const topicLabels = (topics) =>
+  topics.join(' · ');
 ---
 
 <BaseLayout
   title="What I Learn — If It All Ends"
   description={copy.intro}
   {lang}
-  alternatePath={isKorean ? '/what-i-learn/' : '/ko/what-i-learn/'}
+  alternatePath={
+    isKorean
+      ? '/what-i-learn/'
+      : '/ko/what-i-learn/'
+  }
 >
-  <div class="learn-archive">
-    <header class="learn-archive-intro learn-archive-intro--wide">
-      <p class="archive-kicker">IF IT ALL ENDS</p>
-      <h1 class="editorial-title">What I Learn</h1>
-      <p class="learn-archive-description">{copy.intro}</p>
+  <div
+    class="learn-archive"
+    data-learn-archive
+  >
+    <header
+      class="learn-archive-intro learn-archive-intro--wide"
+    >
+      <p class="archive-kicker">
+        IF IT ALL ENDS
+      </p>
+
+      <h1 class="editorial-title">
+        What I Learn
+      </h1>
+
+      <p class="learn-archive-description">
+        {copy.intro}
+      </p>
     </header>
+
+    <div
+      class="learn-filters"
+      role="group"
+      aria-label={copy.filtersLabel}
+    >
+      <button
+        type="button"
+        data-learn-filter="all"
+        aria-pressed="true"
+      >
+        {copy.all}
+      </button>
+
+      {topics.map((topic) => (
+        <button
+          type="button"
+          data-learn-filter={topic}
+          aria-pressed="false"
+        >
+          {topic}
+        </button>
+      ))}
+    </div>
 
     {posts.length > 0 ? (
       <div class="learn-archive-list">
         {posts.map((post, index) => (
-          <article class="learn-archive-entry">
+          <article
+            class="learn-archive-entry"
+            data-learn-entry
+            data-topics={JSON.stringify(
+              post.data.topics,
+            )}
+          >
             {post.data.heroImage && (
-              <a class="learn-archive-visual" href={entryPath(post)} aria-label={post.data.title}>
-                <img src={post.data.heroImage} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
+              <a
+                class="learn-archive-visual"
+                href={entryPath(post)}
+                aria-label={post.data.title}
+              >
+                <img
+                  src={post.data.heroImage}
+                  alt=""
+                  loading={
+                    index === 0
+                      ? 'eager'
+                      : 'lazy'
+                  }
+                />
               </a>
             )}
 
             <div class="learn-archive-copy">
-              {post.data.formats.length > 0 && (
-                <p class="learn-formats">{formatLabels(post.data.formats)}</p>
-              )}
               {post.data.topics.length > 0 && (
-                <p class="learn-topics">{topicLabels(post.data.topics)}</p>
+                <p class="learn-topics">
+                  {topicLabels(
+                    post.data.topics,
+                  )}
+                </p>
               )}
+
               <h2 class="editorial-title">
-                <a href={entryPath(post)}>{post.data.title}</a>
+                <a href={entryPath(post)}>
+                  {post.data.title}
+                </a>
               </h2>
+
               {post.data.description && (
-                <p class="learn-archive-summary">{post.data.description}</p>
+                <p class="learn-archive-summary">
+                  {post.data.description}
+                </p>
               )}
-              <time datetime={post.data.date.toISOString()}>
-                {post.data.date.toLocaleDateString(dateLocale, {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+
+              <time
+                datetime={post.data.date.toISOString()}
+              >
+                {post.data.date.toLocaleDateString(
+                  dateLocale,
+                  {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  },
+                )}
               </time>
             </div>
           </article>
         ))}
       </div>
     ) : (
-      <p class="empty-state">{copy.noEntries}</p>
+      <p class="empty-state">
+        {copy.noEntries}
+      </p>
     )}
   </div>
 </BaseLayout>
+
+<script>
+  const archive =
+    document.querySelector<HTMLElement>(
+      '[data-learn-archive]',
+    );
+
+  if (archive) {
+    const buttons = Array.from(
+      archive.querySelectorAll<HTMLButtonElement>(
+        '[data-learn-filter]',
+      ),
+    );
+
+    const entries = Array.from(
+      archive.querySelectorAll<HTMLElement>(
+        '[data-learn-entry]',
+      ),
+    );
+
+    const applyFilter = (
+      filter: string,
+    ) => {
+      buttons.forEach((button) => {
+        button.setAttribute(
+          'aria-pressed',
+          String(
+            button.dataset.learnFilter ===
+              filter,
+          ),
+        );
+      });
+
+      entries.forEach((entry) => {
+        let topics: string[] = [];
+
+        try {
+          topics = JSON.parse(
+            entry.dataset.topics || '[]',
+          );
+        } catch {
+          topics = [];
+        }
+
+        const visible =
+          filter === 'all' ||
+          topics.includes(filter);
+
+        entry.hidden = !visible;
+      });
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener(
+        'click',
+        () =>
+          applyFilter(
+            button.dataset.learnFilter ??
+              'all',
+          ),
+      );
+    });
+  }
+</script>
 
 <style>
   .learn-archive {
@@ -89,11 +254,12 @@ const topicLabels = (topics) => topics.join(' · ');
 
   .learn-archive-intro {
     max-width: 980px;
-    padding-block: clamp(52px, 8vw, 118px) clamp(62px, 9vw, 132px);
+    padding-block:
+      clamp(52px, 8vw, 118px)
+      clamp(62px, 9vw, 132px);
   }
 
   .archive-kicker,
-  .learn-formats,
   .learn-topics,
   .learn-archive-copy time {
     color: var(--muted);
@@ -109,7 +275,11 @@ const topicLabels = (topics) => topics.join(' · ');
 
   .learn-archive-intro h1 {
     margin-bottom: 34px;
-    font-size: clamp(4.4rem, 10vw, 9rem);
+    font-size: clamp(
+      4.4rem,
+      10vw,
+      9rem
+    );
     line-height: 0.92;
   }
 
@@ -117,7 +287,11 @@ const topicLabels = (topics) => topics.join(' · ');
     max-width: 640px;
     margin-bottom: 0;
     color: var(--body-text);
-    font-size: clamp(1.08rem, 1.7vw, 1.3rem);
+    font-size: clamp(
+      1.08rem,
+      1.7vw,
+      1.3rem
+    );
     line-height: 1.75;
   }
 
@@ -126,19 +300,77 @@ const topicLabels = (topics) => topics.join(' · ');
       max-width: 1120px;
     }
 
-    .learn-archive-intro--wide .learn-archive-description {
+    .learn-archive-intro--wide
+      .learn-archive-description {
       max-width: none;
       white-space: nowrap;
     }
   }
 
+  .learn-filters {
+    display: flex;
+    gap: 30px;
+    max-width: 100%;
+    padding-bottom: 18px;
+    overflow-x: auto;
+    border-bottom:
+      1px solid
+      rgba(220, 230, 240, 0.14);
+    scrollbar-width: thin;
+  }
+
+  .learn-filters button {
+    position: relative;
+    flex: 0 0 auto;
+    padding: 8px 0;
+    border: 0;
+    color: var(--muted);
+    background: transparent;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .learn-filters button::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -19px;
+    left: 0;
+    height: 2px;
+    background: transparent;
+  }
+
+  .learn-filters button[aria-pressed='true'] {
+    color: var(--text);
+  }
+
+  .learn-filters button[aria-pressed='true']::after {
+    background: currentColor;
+  }
+
+  .learn-filters button:focus-visible,
+  .learn-archive-entry a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 5px;
+  }
+
   .learn-archive-list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(70px, 8vw, 112px) clamp(28px, 3vw, 44px);
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+    gap:
+      clamp(70px, 8vw, 112px)
+      clamp(28px, 3vw, 44px);
     width: 100%;
-    padding-block: clamp(76px, 9vw, 124px);
-    border-top: 1px solid rgba(220, 230, 240, 0.14);
+    padding-block:
+      clamp(76px, 9vw, 124px);
   }
 
   .learn-archive-entry {
@@ -147,7 +379,13 @@ const topicLabels = (topics) => topics.join(' · ');
     height: 100%;
     flex-direction: column;
     padding-top: 26px;
-    border-top: 1px solid rgba(220, 230, 240, 0.12);
+    border-top:
+      1px solid
+      rgba(220, 230, 240, 0.12);
+  }
+
+  .learn-archive-entry[hidden] {
+    display: none;
   }
 
   .learn-archive-visual {
@@ -155,7 +393,8 @@ const topicLabels = (topics) => topics.join(' · ');
     width: 100%;
     margin-bottom: 30px;
     overflow: hidden;
-    background: rgba(1, 8, 15, 0.48);
+    background:
+      rgba(1, 8, 15, 0.48);
   }
 
   .learn-archive-visual img {
@@ -170,14 +409,17 @@ const topicLabels = (topics) => topics.join(' · ');
     flex-direction: column;
   }
 
-  .learn-formats,
   .learn-topics {
     margin-bottom: 20px;
   }
 
   .learn-archive-copy h2 {
     margin-bottom: 22px;
-    font-size: clamp(1.65rem, 2.4vw, 2.1rem);
+    font-size: clamp(
+      1.65rem,
+      2.4vw,
+      2.1rem
+    );
     line-height: 1.18;
   }
 
@@ -201,32 +443,49 @@ const topicLabels = (topics) => topics.join(' · ');
   .empty-state {
     margin: 0;
     padding-block: 100px;
-    border-top: 1px solid rgba(220, 230, 240, 0.14);
     color: var(--muted);
   }
 
   @media (max-width: 1020px) {
     .learn-archive-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
     }
   }
 
   @media (max-width: 760px) {
     .learn-archive {
-      padding: 30px 18px 40px;
+      padding:
+        30px 18px 40px;
     }
 
     .learn-archive-intro {
-      padding-block: 48px 70px;
+      padding-block:
+        48px 70px;
     }
 
     .learn-archive-intro h1 {
       max-width: 100%;
       margin-bottom: 26px;
-      font-size: clamp(2.2rem, 11vw, 3rem);
+      font-size: clamp(
+        2.2rem,
+        11vw,
+        3rem
+      );
       line-height: 1.05;
       letter-spacing: -0.025em;
       white-space: nowrap;
+    }
+
+    .learn-filters {
+      gap: 24px;
+    }
+
+    .learn-archive-entry {
+      padding-top: 22px;
     }
   }
 

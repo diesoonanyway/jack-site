@@ -6,96 +6,183 @@ import { getPublicSlug } from '../../lib/content-slug';
 import { getYouTubeThumbnailUrl } from '../../lib/youtube';
 
 const { lang = 'en' } = Astro.props;
+
 const isKorean = lang === 'ko';
 const pathPrefix = isKorean ? '/ko' : '';
 const dateLocale = isKorean ? 'ko-KR' : 'en-AU';
-const posts = sortByCreatedAt((await getCollection('stories'))
-  .filter((post) => !post.data.draft && post.data.lang === lang));
+
+const posts = sortByCreatedAt(
+  (await getCollection('stories')).filter(
+    (post) => !post.data.draft && post.data.lang === lang,
+  ),
+);
+
+const topicEntries = await getCollection('whatIFeelTopics');
+
+const topics = topicEntries
+  .map((topic) => topic.data.name.trim())
+  .filter(Boolean)
+  .sort((a, b) => a.localeCompare(b, isKorean ? 'ko' : 'en'));
 
 const copy = isKorean
   ? {
       title: 'What I Feel',
       intro: '경험하고, 읽고, 듣고, 오래 생각한 것들.',
       all: '전체',
-      read: '읽기',
-      listen: '듣기',
-      watch: '보기',
-      filtersLabel: 'What I Feel 형식 필터',
+      filtersLabel: 'What I Feel 주제 필터',
       noStories: '아직 발행된 What I Feel 글이 없습니다.',
     }
   : {
       title: 'What I Feel',
-      intro: "Things I've experienced, read, heard, and kept thinking about.",
+      intro:
+        "Things I've experienced, read, heard, and kept thinking about.",
       all: 'All',
-      read: 'Read',
-      listen: 'Listen',
-      watch: 'Watch',
-      filtersLabel: 'Filter What I Feel by format',
+      filtersLabel: 'Filter What I Feel by topic',
       noStories: 'No published What I Feel entries yet.',
     };
 
-const storyPath = (post) => `${pathPrefix}/what-i-feel/${getPublicSlug(post.id, post.data.lang)}/`;
-const storyVisual = (post) => post.data.heroImage || getYouTubeThumbnailUrl(post.data.youtubeUrl);
-const storyFormats = (post) => post.data.formats
-  .map((format) => format.toUpperCase())
-  .join(' · ');
+const storyPath = (post) =>
+  `${pathPrefix}/what-i-feel/${getPublicSlug(
+    post.id,
+    post.data.lang,
+  )}/`;
+
+const storyVisual = (post) =>
+  post.data.heroImage ||
+  getYouTubeThumbnailUrl(post.data.youtubeUrl);
+
+const storyTopics = (post) =>
+  post.data.topics.join(' · ');
 ---
 
 <BaseLayout
   title={`What I Feel — If It All Ends`}
   description={copy.intro}
   {lang}
-  alternatePath={isKorean ? '/what-i-feel/' : '/ko/what-i-feel/'}
+  alternatePath={
+    isKorean
+      ? '/what-i-feel/'
+      : '/ko/what-i-feel/'
+  }
 >
-  <div class="stories-archive" data-story-archive>
+  <div
+    class="stories-archive"
+    data-story-archive
+  >
     <header class="stories-archive-intro">
-      <p class="archive-kicker">IF IT ALL ENDS</p>
-      <h1 class="editorial-title">{copy.title}</h1>
-      <p class="stories-archive-description">{copy.intro}</p>
+      <p class="archive-kicker">
+        IF IT ALL ENDS
+      </p>
+
+      <h1 class="editorial-title">
+        {copy.title}
+      </h1>
+
+      <p class="stories-archive-description">
+        {copy.intro}
+      </p>
     </header>
 
-    <div class="story-filters" role="group" aria-label={copy.filtersLabel}>
-      <button type="button" data-story-filter="all" aria-pressed="true">{copy.all}</button>
-      <button type="button" data-story-filter="read" aria-pressed="false">{copy.read}</button>
-      <button type="button" data-story-filter="listen" aria-pressed="false">{copy.listen}</button>
-      <button type="button" data-story-filter="watch" aria-pressed="false">{copy.watch}</button>
+    <div
+      class="story-filters"
+      role="group"
+      aria-label={copy.filtersLabel}
+    >
+      <button
+        type="button"
+        data-story-filter="all"
+        aria-pressed="true"
+      >
+        {copy.all}
+      </button>
+
+      {topics.map((topic) => (
+        <button
+          type="button"
+          data-story-filter={topic}
+          aria-pressed="false"
+        >
+          {topic}
+        </button>
+      ))}
     </div>
 
     {posts.length > 0 ? (
       <div class="stories-archive-list">
         {posts.map((post, index) => {
           const visual = storyVisual(post);
-          const youtubeThumbnail = getYouTubeThumbnailUrl(post.data.youtubeUrl);
+
+          const youtubeThumbnail =
+            getYouTubeThumbnailUrl(
+              post.data.youtubeUrl,
+            );
 
           return (
             <article
               class="story-archive-entry"
               data-story-entry
-              data-formats={post.data.formats.join(' ')}
+              data-topics={JSON.stringify(
+                post.data.topics,
+              )}
             >
               {visual && (
-                <a class="story-archive-visual" href={storyPath(post)} aria-label={post.data.title}>
-                  <img src={visual} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
-                  {youtubeThumbnail && !post.data.heroImage && (
-                    <span class="archive-play-cue" aria-hidden="true">▶</span>
-                  )}
+                <a
+                  class="story-archive-visual"
+                  href={storyPath(post)}
+                  aria-label={post.data.title}
+                >
+                  <img
+                    src={visual}
+                    alt=""
+                    loading={
+                      index === 0
+                        ? 'eager'
+                        : 'lazy'
+                    }
+                  />
+
+                  {youtubeThumbnail &&
+                    !post.data.heroImage && (
+                      <span
+                        class="archive-play-cue"
+                        aria-hidden="true"
+                      >
+                        ▶
+                      </span>
+                    )}
                 </a>
               )}
 
               <div class="story-archive-copy">
-                <p class="story-formats">{storyFormats(post)}</p>
-                <h2 class="editorial-title">
-                  <a href={storyPath(post)}>{post.data.title}</a>
-                </h2>
-                {post.data.description && (
-                  <p class="story-archive-summary">{post.data.description}</p>
+                {post.data.topics.length > 0 && (
+                  <p class="story-topics">
+                    {storyTopics(post)}
+                  </p>
                 )}
-                <time datetime={post.data.date.toISOString()}>
-                  {post.data.date.toLocaleDateString(dateLocale, {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+
+                <h2 class="editorial-title">
+                  <a href={storyPath(post)}>
+                    {post.data.title}
+                  </a>
+                </h2>
+
+                {post.data.description && (
+                  <p class="story-archive-summary">
+                    {post.data.description}
+                  </p>
+                )}
+
+                <time
+                  datetime={post.data.date.toISOString()}
+                >
+                  {post.data.date.toLocaleDateString(
+                    dateLocale,
+                    {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    },
+                  )}
                 </time>
               </div>
             </article>
@@ -103,33 +190,73 @@ const storyFormats = (post) => post.data.formats
         })}
       </div>
     ) : (
-      <p class="empty-state">{copy.noStories}</p>
+      <p class="empty-state">
+        {copy.noStories}
+      </p>
     )}
   </div>
 </BaseLayout>
 
 <script>
-  const archive = document.querySelector<HTMLElement>('[data-story-archive]');
+  const archive =
+    document.querySelector<HTMLElement>(
+      '[data-story-archive]',
+    );
 
   if (archive) {
-    const buttons = Array.from(archive.querySelectorAll<HTMLButtonElement>('[data-story-filter]'));
-    const entries = Array.from(archive.querySelectorAll<HTMLElement>('[data-story-entry]'));
+    const buttons = Array.from(
+      archive.querySelectorAll<HTMLButtonElement>(
+        '[data-story-filter]',
+      ),
+    );
 
-    const applyFilter = (filter: string) => {
+    const entries = Array.from(
+      archive.querySelectorAll<HTMLElement>(
+        '[data-story-entry]',
+      ),
+    );
+
+    const applyFilter = (
+      filter: string,
+    ) => {
       buttons.forEach((button) => {
-        button.setAttribute('aria-pressed', String(button.dataset.storyFilter === filter));
+        button.setAttribute(
+          'aria-pressed',
+          String(
+            button.dataset.storyFilter ===
+              filter,
+          ),
+        );
       });
 
       entries.forEach((entry) => {
-        const formats = entry.dataset.formats?.split(' ') ?? [];
-        const visible = filter === 'all'
-          || formats.includes(filter);
+        let topics: string[] = [];
+
+        try {
+          topics = JSON.parse(
+            entry.dataset.topics || '[]',
+          );
+        } catch {
+          topics = [];
+        }
+
+        const visible =
+          filter === 'all' ||
+          topics.includes(filter);
+
         entry.hidden = !visible;
       });
     };
 
     buttons.forEach((button) => {
-      button.addEventListener('click', () => applyFilter(button.dataset.storyFilter ?? 'all'));
+      button.addEventListener(
+        'click',
+        () =>
+          applyFilter(
+            button.dataset.storyFilter ??
+              'all',
+          ),
+      );
     });
   }
 </script>
@@ -144,11 +271,13 @@ const storyFormats = (post) => post.data.formats
 
   .stories-archive-intro {
     max-width: 980px;
-    padding-block: clamp(52px, 8vw, 118px) clamp(62px, 9vw, 132px);
+    padding-block:
+      clamp(52px, 8vw, 118px)
+      clamp(62px, 9vw, 132px);
   }
 
   .archive-kicker,
-  .story-formats,
+  .story-topics,
   .story-archive-copy time {
     color: var(--muted);
     font-size: 0.78rem;
@@ -163,7 +292,11 @@ const storyFormats = (post) => post.data.formats
 
   .stories-archive-intro h1 {
     margin-bottom: 34px;
-    font-size: clamp(5rem, 11vw, 10.5rem);
+    font-size: clamp(
+      5rem,
+      11vw,
+      10.5rem
+    );
     line-height: 0.88;
   }
 
@@ -171,7 +304,11 @@ const storyFormats = (post) => post.data.formats
     max-width: 640px;
     margin-bottom: 0;
     color: var(--body-text);
-    font-size: clamp(1.08rem, 1.7vw, 1.3rem);
+    font-size: clamp(
+      1.08rem,
+      1.7vw,
+      1.3rem
+    );
     line-height: 1.75;
   }
 
@@ -181,7 +318,9 @@ const storyFormats = (post) => post.data.formats
     max-width: 100%;
     padding-bottom: 18px;
     overflow-x: auto;
-    border-bottom: 1px solid rgba(220, 230, 240, 0.14);
+    border-bottom:
+      1px solid
+      rgba(220, 230, 240, 0.14);
     scrollbar-width: thin;
   }
 
@@ -210,26 +349,38 @@ const storyFormats = (post) => post.data.formats
     background: transparent;
   }
 
-  .story-filters button[aria-pressed='true'] {
+  .story-filters button[
+    aria-pressed='true'
+  ] {
     color: var(--text);
   }
 
-  .story-filters button[aria-pressed='true']::after {
+  .story-filters button[
+    aria-pressed='true'
+  ]::after {
     background: currentColor;
   }
 
   .story-filters button:focus-visible,
-  .story-archive-entry a:focus-visible {
+  .story-archive-entry
+    a:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 5px;
   }
 
   .stories-archive-list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(70px, 8vw, 112px) clamp(28px, 3vw, 44px);
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+    gap:
+      clamp(70px, 8vw, 112px)
+      clamp(28px, 3vw, 44px);
     width: 100%;
-    padding-block: clamp(76px, 9vw, 124px);
+    padding-block:
+      clamp(76px, 9vw, 124px);
   }
 
   .story-archive-entry {
@@ -238,7 +389,9 @@ const storyFormats = (post) => post.data.formats
     height: 100%;
     flex-direction: column;
     padding-top: 26px;
-    border-top: 1px solid rgba(220, 230, 240, 0.12);
+    border-top:
+      1px solid
+      rgba(220, 230, 240, 0.12);
   }
 
   .story-archive-entry[hidden] {
@@ -256,7 +409,8 @@ const storyFormats = (post) => post.data.formats
     display: block;
     width: 100%;
     margin-bottom: 30px;
-    background: rgba(1, 8, 15, 0.48);
+    background:
+      rgba(1, 8, 15, 0.48);
   }
 
   .story-archive-visual img {
@@ -274,21 +428,28 @@ const storyFormats = (post) => post.data.formats
     place-items: center;
     width: 48px;
     height: 48px;
-    border: 1px solid rgba(246, 244, 239, 0.45);
+    border:
+      1px solid
+      rgba(246, 244, 239, 0.45);
     border-radius: 50%;
     color: var(--text);
-    background: rgba(1, 8, 15, 0.7);
+    background:
+      rgba(1, 8, 15, 0.7);
     font-size: 0.75rem;
     pointer-events: none;
   }
 
-  .story-formats {
+  .story-topics {
     margin-bottom: 20px;
   }
 
   .story-archive-copy h2 {
     margin-bottom: 22px;
-    font-size: clamp(1.65rem, 2.4vw, 2.1rem);
+    font-size: clamp(
+      1.65rem,
+      2.4vw,
+      2.1rem
+    );
     line-height: 1.08;
   }
 
@@ -318,25 +479,39 @@ const storyFormats = (post) => post.data.formats
     color: var(--muted);
   }
 
-  @media (max-width: 1020px) {
+  @media (
+    max-width: 1020px
+  ) {
     .stories-archive-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
     }
   }
 
-  @media (max-width: 760px) {
+  @media (
+    max-width: 760px
+  ) {
     .stories-archive {
-      padding: 30px 18px 40px;
+      padding:
+        30px 18px 40px;
     }
 
     .stories-archive-intro {
-      padding-block: 48px 70px;
+      padding-block:
+        48px 70px;
     }
 
     .stories-archive-intro h1 {
       max-width: 100%;
       margin-bottom: 26px;
-      font-size: clamp(2.2rem, 11vw, 3rem);
+      font-size: clamp(
+        2.2rem,
+        11vw,
+        3rem
+      );
       line-height: 1.05;
       letter-spacing: -0.025em;
       white-space: nowrap;
@@ -351,7 +526,11 @@ const storyFormats = (post) => post.data.formats
     }
 
     .story-archive-copy h2 {
-      font-size: clamp(1.55rem, 8vw, 2rem);
+      font-size: clamp(
+        1.55rem,
+        8vw,
+        2rem
+      );
     }
 
     .story-archive-summary {
@@ -359,9 +538,12 @@ const storyFormats = (post) => post.data.formats
     }
   }
 
-  @media (max-width: 640px) {
+  @media (
+    max-width: 640px
+  ) {
     .stories-archive-list {
-      grid-template-columns: 1fr;
+      grid-template-columns:
+        1fr;
       gap: 64px;
       padding-block: 68px;
     }
