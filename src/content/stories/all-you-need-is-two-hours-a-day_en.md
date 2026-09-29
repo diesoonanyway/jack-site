@@ -2,22 +2,20 @@
 slug: all-you-need-is-two-hours-a-day
 title: “All You Need is Two Hours a Day.”
 date: 2026-09-14
-createdAt: "2026-09-14T15:53:11+10:00"
-description: AI promises that anyone can build—and make money—in just a few hours. But when making gets easy, choosing what is worth making becomes the real work.
-tags: []
+createdAt: 2026-09-14T05:53:00Z
+description: AI promises that anyone can build—and make money—in just a few
+  hours. But when making gets easy, choosing what is worth making becomes the
+  real work.
 draft: false
-heroImage: ""
 featured: false
-relatedPodcast: ""
-relatedYoutube: ""
-relatedApp: ""
 lang: en
 formats:
   - read
 translation: /ko/stories/all-you-need-is-two-hours-a-day/
+topics:
+  - philosophy
 ---
 ![What Excites Me?](all-you-need-is-two-hours-a-day/what-excites-me.png)
-
 
 I keep seeing the same promise online.
 
