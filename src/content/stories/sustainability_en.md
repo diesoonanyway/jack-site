@@ -9,6 +9,8 @@ heroImage: /media/1geozysrsklfhb3bspjjb5a-1.webp
 formats:
   - read
 featured: false
+topics:
+  - philosophy
 ---
 “How long could I keep doing this?”
 
