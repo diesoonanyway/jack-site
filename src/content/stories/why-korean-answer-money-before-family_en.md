@@ -9,6 +9,8 @@ heroImage: /media/10vg7ledcbxhl6q31tssfbg.webp
 formats:
   - read
 featured: false
+topics:
+  - philosophy
 ---
 The author of *Rich Dad Poor Dad* once put it like this:
 
