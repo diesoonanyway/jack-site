@@ -9,6 +9,8 @@ heroImage: /media/1gr5q-ad75bemdptkmovylw.webp
 formats:
   - read
 featured: false
+topics:
+  - philosophy
 ---
 “You’re not an easy person.”
 
