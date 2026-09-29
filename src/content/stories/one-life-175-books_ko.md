@@ -2,21 +2,17 @@
 slug: one-life-175-books
 title: 175권의 책, 한 번의 삶
 date: 2026-09-12
-createdAt: "2026-09-13T09:37:09+10:00"
+createdAt: 2026-09-12T23:37:00Z
 description: 읽고 싶은 175권의 책을 보며 생각한 시간, 판단, 그리고 AI 시대에 더 많이 소비하는 대신 더 잘 생각하는 법.
-tags: []
 draft: false
-heroImage: ""
 featured: false
-relatedPodcast: ""
-relatedYoutube: ""
-relatedApp: ""
 lang: ko
 formats:
   - read
 translation: /stories/one-life-175-books/
+topics:
+  - philosophy
 ---
-
 “나에게는 책, 책, 책이었어. 내가 평생 읽고 싶은 모든 책을 다 읽었지. 두 번씩. 디킨스는 세 번.”
 
 영화 ‘어바웃 타임’의 이 대사가 계속 머릿속에 남아 있었다.
