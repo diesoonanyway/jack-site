@@ -9,7 +9,7 @@ heroImage: /media/1nqlekdv2jj5qpc7ty8nwg.webp
 formats:
   - read
 topics:
-  - korean culture
+  - philosophy
 featured: false
 ---
 오래전 한 TV 프로그램에서 여러 나라의 여성들이 연애와 결혼에 관해 토론했다. 주제는 사랑하지만 경제적 능력이 부족한 남자였다. 한국 여성 출연자는 말했다.  
