@@ -9,11 +9,14 @@ description: "This is the story of a Korean man who worked seven part-time jobs
   freedom.Tonight’s story asks a quiet question: what does survival really cost
   in Korea?"
 date: 2026-09-19
-createdAt: "2026-09-19T15:57:43+10:00"
+createdAt: 2026-09-19T05:57:00Z
 draft: false
 lang: en
 formats:
   - listen
 episode: "10"
 spotifyUrl: https://open.spotify.com/episode/7toImbWQXshjmObc92qD7k?si=UfRSnOUjT0yS1atNCHXlIQ
+topics:
+  - korean
+featured: false
 ---
