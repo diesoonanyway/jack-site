@@ -9,6 +9,8 @@ heroImage: /media/10vg7ledcbxhl6q31tssfbg.webp
 formats:
   - read
 featured: false
+topics:
+  - philosophy
 ---
 부자 아빠, 가난한 아빠를 쓴 작가가 한 말이다.  
 
