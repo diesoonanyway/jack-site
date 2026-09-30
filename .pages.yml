@@ -132,6 +132,7 @@ content:
         options:
           collection: what-i-feel-topics
           multiple: true
+          min: 1
           search: "fields.name"
           value: "{fields.name}"
           label: "{fields.name}"
@@ -291,6 +292,7 @@ content:
         options:
           collection: what-i-learn-topics
           multiple: true
+          min: 1
           search: "fields.name"
           value: "{fields.name}"
           label: "{fields.name}"

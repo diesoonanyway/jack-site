@@ -233,9 +233,14 @@ const storyVisual = (post) =>
           topics = [];
         }
 
+        const normalizedFilter = filter.trim().toLowerCase();
         const visible =
-          filter === 'all' ||
-          topics.includes(filter);
+          normalizedFilter === 'all' ||
+          topics.some(
+            (topic) =>
+              typeof topic === 'string' &&
+              topic.trim().toLowerCase() === normalizedFilter,
+          );
 
         entry.hidden = !visible;
       });
