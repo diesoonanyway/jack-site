@@ -11,8 +11,6 @@ date: 2026-09-19
 createdAt: 2026-09-19T05:46:00Z
 draft: false
 lang: en
-formats:
-  - listen
 episode: "3"
 spotifyUrl: https://open.spotify.com/episode/4NsdhS4jsqp8efoDlAsetX?si=FClVwre5SMG6dXYpAl7rzg
 topics:

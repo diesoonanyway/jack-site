@@ -6,8 +6,6 @@ createdAt: 2026-09-28T09:24:00Z
 draft: false
 lang: en
 heroImage: /media/13jrxqikj1jezbo9q61gncw.webp
-formats:
-  - read
 featured: false
 topics:
   - philosophy

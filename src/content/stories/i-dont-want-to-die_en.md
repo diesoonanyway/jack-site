@@ -7,8 +7,6 @@ createdAt: 2026-09-25T21:19:00Z
 draft: false
 lang: en
 heroImage: /media/download-2.png
-formats:
-  - read
 featured: false
 topics:
   - philosophy

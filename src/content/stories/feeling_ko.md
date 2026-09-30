@@ -6,8 +6,6 @@ createdAt: 2026-09-28T09:21:00Z
 draft: false
 lang: ko
 heroImage: /media/1hlosoclgpc0fvxyzprilgg.webp
-formats:
-  - read
 topics:
   - mental health
 featured: false

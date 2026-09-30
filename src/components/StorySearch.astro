@@ -97,7 +97,6 @@ const copy = isKorean
     title: string;
     description: string;
     body: string;
-    formats: string[];
     section: 'what-i-feel' | 'what-i-learn';
     url: string;
   };
@@ -214,13 +213,10 @@ const copy = isKorean
             const item = document.createElement('li');
             item.className = 'story-search-result';
 
-            const format = document.createElement('p');
-            format.className = 'story-search-format';
+            const section = document.createElement('p');
+            section.className = 'story-search-section';
             const sectionLabel = entry.section === 'what-i-learn' ? 'WHAT I LEARN' : 'WHAT I FEEL';
-            format.textContent = [
-              sectionLabel,
-              ...entry.formats.map((value) => value.toUpperCase()),
-            ].join(' / ');
+            section.textContent = sectionLabel;
 
             const link = document.createElement('a');
             link.className = 'story-search-link editorial-title';
@@ -231,7 +227,7 @@ const copy = isKorean
             snippet.className = 'story-search-snippet';
             snippet.textContent = createSnippet(entry, query, terms);
 
-            item.append(format, link, snippet);
+            item.append(section, link, snippet);
             fragment.append(item);
           });
           results.append(fragment);
@@ -414,7 +410,7 @@ const copy = isKorean
     border-top: 1px solid rgba(255, 255, 255, 0.11);
   }
 
-  .story-search-dialog :global(.story-search-format) {
+  .story-search-dialog :global(.story-search-section) {
     margin: 0 0 8px;
     color: var(--muted);
     font-size: 0.73rem;

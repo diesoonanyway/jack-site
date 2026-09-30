@@ -6,7 +6,6 @@ export type StorySearchEntry = {
   title: string;
   description: string;
   body: string;
-  formats: string[];
   section: 'what-i-feel' | 'what-i-learn';
   url: string;
 };
@@ -47,7 +46,6 @@ export async function getStorySearchIndex(lang: ContentLanguage): Promise<StoryS
       title: story.data.title,
       description: story.data.intro || story.data.description || '',
       body: markdownToSearchText(story.body || ''),
-      formats: story.data.formats,
       section: 'what-i-feel' as const,
       url: `${pathPrefix}/what-i-feel/${getPublicSlug(story.id, story.data.lang)}/`,
     }));
@@ -58,7 +56,6 @@ export async function getStorySearchIndex(lang: ContentLanguage): Promise<StoryS
       title: entry.data.title,
       description: entry.data.description || '',
       body: markdownToSearchText(entry.body || ''),
-      formats: entry.data.formats,
       section: 'what-i-learn' as const,
       url: `${pathPrefix}/what-i-learn/${getPublicSlug(entry.id, entry.data.lang)}/`,
     }));

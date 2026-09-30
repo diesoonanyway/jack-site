@@ -11,8 +11,6 @@ date: 2026-09-19
 createdAt: 2026-09-19T05:55:00Z
 draft: false
 lang: en
-formats:
-  - listen
 episode: "7"
 spotifyUrl: https://open.spotify.com/episode/20GYgAIhkZgVet2ruk9GYF?si=eoHHT128SqG-Ah7jbOhXzg
 topics:

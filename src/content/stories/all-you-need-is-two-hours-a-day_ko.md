@@ -8,8 +8,6 @@ description: AI로 누구나 몇 시간 만에 만들고 돈 벌 수 있다고 �
 draft: false
 featured: false
 lang: ko
-formats:
-  - read
 translation: /stories/all-you-need-is-two-hours-a-day/
 topics:
   - philosophy

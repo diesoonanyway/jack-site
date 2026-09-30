@@ -6,8 +6,6 @@ createdAt: 2026-09-28T09:10:00Z
 draft: false
 lang: ko
 heroImage: /media/1yaecuv9cwsuaiw6ypmr0kg.webp
-formats:
-  - read
 topics:
   - philosophy
 featured: false

@@ -93,7 +93,6 @@ const toWhatIFeelCard = (story) => ({
   title: story.data.title,
   description: story.data.description,
   date: story.data.date,
-  formats: story.data.formats,
   featured: story.data.featured,
   href: localizedPath(`/what-i-feel/${getPublicSlug(story.id, story.data.lang)}/`),
   visual: story.data.heroImage || getYouTubeThumbnailUrl(story.data.youtubeUrl),
@@ -105,7 +104,6 @@ const toWhatILearnCard = (entry) => ({
   title: entry.data.title,
   description: entry.data.description,
   date: entry.data.date,
-  formats: entry.data.formats,
   featured: entry.data.featured,
   href: localizedPath(`/what-i-learn/${getPublicSlug(entry.id, entry.data.lang)}/`),
   visual: entry.data.heroImage,
@@ -771,14 +769,6 @@ const homepageSections = [
     height: auto;
   }
 
-  .story-formats {
-    color: var(--muted);
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
   .play-cue {
     position: absolute;
     right: 28px;
@@ -836,8 +826,7 @@ const homepageSections = [
     margin: 0 0 18px;
   }
 
-  .featured-badge,
-  .story-card-labels .story-formats {
+  .featured-badge {
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -846,10 +835,6 @@ const homepageSections = [
 
   .featured-badge {
     color: var(--accent);
-  }
-
-  .story-card-labels .story-formats {
-    color: var(--muted);
   }
 
   .media-rail-frame {

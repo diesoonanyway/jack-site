@@ -12,8 +12,6 @@ date: 2026-09-19
 createdAt: 2026-09-19T05:57:00Z
 draft: false
 lang: en
-formats:
-  - listen
 episode: "9"
 spotifyUrl: https://open.spotify.com/episode/2rUIv75kT6MVe1OzgYXbo9?si=8fVMScr4S--6o4KcCd38CA
 topics:

@@ -5,8 +5,6 @@ date: 2026-09-29
 createdAt: 2026-09-29T23:05:00Z
 draft: false
 lang: en
-formats:
-  - read
 topics:
   - learning method
 ---

@@ -9,8 +9,6 @@ description: AI promises that anyone can build—and make money—in just a few
 draft: false
 featured: false
 lang: en
-formats:
-  - read
 translation: /ko/stories/all-you-need-is-two-hours-a-day/
 topics:
   - philosophy

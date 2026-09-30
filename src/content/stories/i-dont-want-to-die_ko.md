@@ -6,8 +6,6 @@ createdAt: 2026-09-25T21:22:00Z
 draft: false
 lang: ko
 heroImage: /media/download-2.png
-formats:
-  - read
 featured: false
 topics:
   - philosophy

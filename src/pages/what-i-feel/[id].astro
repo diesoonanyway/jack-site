@@ -34,10 +34,7 @@ const youtubeId = getYouTubeVideoId(post.data.youtubeUrl);
 const youtubeThumbnail = getYouTubeThumbnailUrl(post.data.youtubeUrl);
 const heroVisual = post.data.heroImage || youtubeThumbnail;
 const storyDescription = post.data.intro || post.data.description;
-const storyFormats = post.data.formats
-  .map((format) => format.toUpperCase())
-  .join(' · ');
-const isWrittenArticle = post.data.formats.includes('read');
+const isWrittenArticle = !audioUrl && !youtubeId;
 const seoDescription = post.data.description || post.data.title;
 const canonicalURL = Astro.site
   ? new URL(Astro.url.pathname, Astro.site).toString()
@@ -79,7 +76,6 @@ const { Content } = await render(post);
     )}
 
     <header class:list={['story-detail-header', { 'story-detail-header--with-media': audioUrl || youtubeId }]}>
-      <p class="story-formats">{storyFormats}</p>
       <h1 class="editorial-title">{post.data.title}</h1>
       {storyDescription && <p class="story-description">{storyDescription}</p>}
       <time class="story-date" datetime={post.data.date.toISOString()}>
@@ -323,17 +319,12 @@ const { Content } = await render(post);
     margin-bottom: clamp(32px, 4vw, 48px);
   }
 
-  .story-formats,
   .story-date {
     color: var(--muted);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-  }
-
-  .story-formats {
-    margin-bottom: 30px;
   }
 
   .story-detail h1 {

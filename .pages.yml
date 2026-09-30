@@ -108,22 +108,6 @@ content:
         type: string
         description: Optional watch, youtu.be, Shorts or embed URL.
 
-      - name: formats
-        label: Formats
-        type: select
-        required: true
-        description: Choose every way this What I Feel entry can be experienced.
-        options:
-          multiple: true
-          min: 1
-          values:
-            - name: read
-              label: Read
-            - name: listen
-              label: Listen
-            - name: watch
-              label: Watch
-
       - name: topics
         label: Topics
         type: reference
@@ -267,22 +251,6 @@ content:
         type: image
         options:
           media: media
-
-      - name: formats
-        label: Formats
-        type: select
-        required: true
-        description: Choose every way this What I Learn entry can be experienced.
-        options:
-          multiple: true
-          min: 1
-          values:
-            - name: read
-              label: Read
-            - name: listen
-              label: Listen
-            - name: watch
-              label: Watch
 
       - name: topics
         label: Topics

@@ -6,8 +6,6 @@ createdAt: 2026-09-27T12:31:00Z
 draft: false
 lang: en
 heroImage: /media/1u3fmgky0gt6kphavp4dpew.webp
-formats:
-  - read
 topics:
   - learning method
 ---

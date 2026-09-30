@@ -7,8 +7,6 @@ description: 읽고 싶은 175권의 책을 보며 생각한 시간, 판단, 그
 draft: false
 featured: false
 lang: ko
-formats:
-  - read
 translation: /stories/one-life-175-books/
 topics:
   - philosophy

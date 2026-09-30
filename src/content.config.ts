@@ -28,10 +28,6 @@ const stories = defineCollection({
     spotifyUrl: z.string().optional(),
     youtubeUrl: z.string().optional(),
 
-    formats: z
-      .array(z.enum(['read', 'listen', 'watch']))
-      .default([]),
-
     topics: z.array(z.string()).default([]),
 
     featured: z.boolean().default(false),
@@ -76,10 +72,6 @@ const whatILearn = defineCollection({
     lang: z.enum(['en', 'ko']).default('en'),
     translation: z.string().optional(),
     heroImage: z.string().optional(),
-
-    formats: z
-      .array(z.enum(['read', 'listen', 'watch']))
-      .default([]),
 
     topics: z.array(z.string()).default([]),
 

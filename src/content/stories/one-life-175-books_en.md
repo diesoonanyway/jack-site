@@ -8,8 +8,6 @@ description: '"What 175 unread books taught me about attention, judgment, and
 draft: false
 featured: false
 lang: en
-formats:
-  - read
 translation: /ko/stories/one-life-175-books/
 topics:
   - philosophy

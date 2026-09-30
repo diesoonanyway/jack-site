@@ -5,8 +5,6 @@ date: 2026-09-25
 createdAt: 2026-09-25T10:01:00Z
 draft: false
 lang: ko
-formats:
-  - read
 featured: false
 heroImage: /media/download-1.png
 topics:

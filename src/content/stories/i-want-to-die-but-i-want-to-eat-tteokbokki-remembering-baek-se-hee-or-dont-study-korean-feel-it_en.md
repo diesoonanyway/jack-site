@@ -10,8 +10,6 @@ date: 2026-09-19
 createdAt: 2026-09-19T05:53:00Z
 draft: false
 lang: en
-formats:
-  - listen
 episode: "4"
 spotifyUrl: https://open.spotify.com/episode/6paNoClQSYXAMlTYfHxvbF?si=DQ18je47R9CLWn7kJEWl0w
 topics:

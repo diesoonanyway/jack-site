@@ -4,7 +4,6 @@ interface Props {
   description?: string;
   date: Date;
   dateLocale: string;
-  formats: string[];
   href: string;
   visual?: string;
   hasVideo?: boolean;
@@ -17,15 +16,12 @@ const {
   description,
   date,
   dateLocale,
-  formats,
   href,
   visual,
   hasVideo = false,
   featured = false,
   mobileOnly = false,
 } = Astro.props;
-
-const formatLabel = formats.map((format) => format.toUpperCase()).join(' · ');
 ---
 
 <article class:list={[
@@ -38,7 +34,6 @@ const formatLabel = formats.map((format) => format.toUpperCase()).join(' · ');
 ]}>
   <div class="story-card-labels">
     {featured && <span class="featured-badge">Featured</span>}
-    {formatLabel && <span class="story-formats">{formatLabel}</span>}
   </div>
 
   {visual && (
