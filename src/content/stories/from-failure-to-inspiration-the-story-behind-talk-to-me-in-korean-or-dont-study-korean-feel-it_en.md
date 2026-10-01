@@ -16,6 +16,7 @@ spotifyUrl: https://open.spotify.com/episode/4NsdhS4jsqp8efoDlAsetX?si=FClVwre5S
 topics:
   - korean
 featured: false
+youtubeUrl: https://www.youtube.com/watch?v=4Z0-azCNzfY&t=156s
 ---
 오늘의 문장: 조금라도 계속하면, 길이 열려.
 
