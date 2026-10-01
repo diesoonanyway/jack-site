@@ -72,6 +72,8 @@ const whatILearn = defineCollection({
     lang: z.enum(['en', 'ko']).default('en'),
     translation: z.string().optional(),
     heroImage: z.string().optional(),
+    spotifyUrl: z.string().optional(),
+    youtubeUrl: z.string().optional(),
 
     topics: z.array(z.string()).default([]),
 

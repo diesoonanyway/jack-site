@@ -252,6 +252,16 @@ content:
         options:
           media: media
 
+      - name: spotifyUrl
+        label: Spotify URL
+        type: string
+        description: Optional Spotify episode URL.
+
+      - name: youtubeUrl
+        label: YouTube URL
+        type: string
+        description: Optional watch, youtu.be, Shorts or embed URL.
+
       - name: topics
         label: Topics
         type: reference
