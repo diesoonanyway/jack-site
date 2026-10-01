@@ -15,4 +15,5 @@ spotifyUrl: https://open.spotify.com/episode/6paNoClQSYXAMlTYfHxvbF?si=DQ18je47R
 topics:
   - korean
 featured: false
+youtubeUrl: https://www.youtube.com/watch?v=K8SpdpuQTYQ&t=233s
 ---
