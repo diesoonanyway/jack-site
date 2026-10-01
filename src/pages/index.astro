@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HomeStoryCard from '../components/HomeStoryCard.astro';
 import { getPublicSlug } from '../lib/content-slug';
-import { getYouTubeThumbnailUrl } from '../lib/youtube';
 import { createWebsiteStructuredData } from '../lib/seo';
 
 const { lang = 'en' } = Astro.props;
@@ -95,8 +94,9 @@ const toWhatIFeelCard = (story) => ({
   date: story.data.date,
   featured: story.data.featured,
   href: localizedPath(`/what-i-feel/${getPublicSlug(story.id, story.data.lang)}/`),
-  visual: story.data.heroImage || getYouTubeThumbnailUrl(story.data.youtubeUrl),
-  hasVideo: Boolean(story.data.youtubeUrl),
+  visual: story.data.heroImage,
+  youtubeUrl: story.data.youtubeUrl,
+  spotifyUrl: story.data.spotifyUrl,
 });
 
 const toWhatILearnCard = (entry) => ({
@@ -107,7 +107,8 @@ const toWhatILearnCard = (entry) => ({
   featured: entry.data.featured,
   href: localizedPath(`/what-i-learn/${getPublicSlug(entry.id, entry.data.lang)}/`),
   visual: entry.data.heroImage,
-  hasVideo: false,
+  youtubeUrl: entry.data.youtubeUrl,
+  spotifyUrl: entry.data.spotifyUrl,
 });
 
 const buildHomepageSection = (cards, details) => {
@@ -769,6 +770,33 @@ const homepageSections = [
     height: auto;
   }
 
+  .story-rail-youtube {
+    aspect-ratio: 16 / 9;
+  }
+
+  .story-rail-youtube img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .story-rail-spotify {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 152px;
+    margin: 0 0 26px;
+    overflow: hidden;
+    background: rgba(1, 8, 15, 0.5);
+  }
+
+  .story-rail-spotify iframe {
+    display: block;
+    width: 100%;
+    height: 152px;
+    border: 0;
+  }
+
   .play-cue {
     position: absolute;
     right: 28px;
@@ -973,11 +1001,14 @@ const homepageSections = [
   }
 
   .play-cue--small {
-    right: 14px;
-    bottom: 14px;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    left: 50%;
     width: 38px;
     height: 38px;
     font-size: 0.68rem;
+    transform: translate(-50%, -50%);
   }
 
   .story-rail-item .story-card-description {
