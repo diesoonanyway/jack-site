@@ -9,6 +9,7 @@ export default defineConfig({
       filter: (page) => ![
         'https://ifitallends.com/apps/',
         'https://ifitallends.com/ko/apps/',
+        'https://ifitallends.com/admin/comments/',
       ].includes(page),
     }),
   ],

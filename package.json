@@ -9,7 +9,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:worker": "node --test worker/*.test.ts worker/comments/*.test.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
