@@ -3,7 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { sortByCreatedAt } from '../../lib/content-sort';
 import { getPublicSlug } from '../../lib/content-slug';
-import { getYouTubeThumbnailUrl } from '../../lib/youtube';
+import { getSpotifyEpisodeId } from '../../lib/spotify';
+import { getYouTubeVideoId } from '../../lib/youtube';
 
 const { lang = 'en' } = Astro.props;
 
@@ -49,9 +50,6 @@ const storyPath = (post) =>
     post.data.lang,
   )}/`;
 
-const storyVisual = (post) =>
-  post.data.heroImage ||
-  getYouTubeThumbnailUrl(post.data.youtubeUrl);
 ---
 
 <BaseLayout
@@ -109,12 +107,17 @@ const storyVisual = (post) =>
     {posts.length > 0 ? (
       <div class="stories-archive-list">
         {posts.map((post, index) => {
-          const visual = storyVisual(post);
-
-          const youtubeThumbnail =
-            getYouTubeThumbnailUrl(
-              post.data.youtubeUrl,
-            );
+          const youtubeId = getYouTubeVideoId(
+            post.data.youtubeUrl,
+          );
+          const youtubeThumbnail = youtubeId
+            ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
+            : null;
+          const spotifyId = youtubeId
+            ? null
+            : getSpotifyEpisodeId(
+                post.data.spotifyUrl,
+              );
 
           return (
             <article
@@ -124,14 +127,14 @@ const storyVisual = (post) =>
                 post.data.topics,
               )}
             >
-              {visual && (
+              {youtubeThumbnail ? (
                 <a
                   class="story-archive-visual"
                   href={storyPath(post)}
                   aria-label={post.data.title}
                 >
                   <img
-                    src={visual}
+                    src={youtubeThumbnail}
                     alt=""
                     loading={
                       index === 0
@@ -140,17 +143,45 @@ const storyVisual = (post) =>
                     }
                   />
 
-                  {youtubeThumbnail &&
-                    !post.data.heroImage && (
-                      <span
-                        class="archive-play-cue"
-                        aria-hidden="true"
-                      >
-                        ▶
-                      </span>
-                    )}
+                  <span
+                    class="archive-play-cue"
+                    aria-hidden="true"
+                  >
+                    ▶
+                  </span>
                 </a>
-              )}
+              ) : spotifyId ? (
+                <div class="story-archive-spotify">
+                  <iframe
+                    src={`https://open.spotify.com/embed/episode/${spotifyId}`}
+                    title={
+                      isKorean
+                        ? `${post.data.title} Spotify 재생기`
+                        : `${post.data.title} Spotify player`
+                    }
+                    width="100%"
+                    height="152"
+                    loading="lazy"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  ></iframe>
+                </div>
+              ) : post.data.heroImage ? (
+                <a
+                  class="story-archive-visual"
+                  href={storyPath(post)}
+                  aria-label={post.data.title}
+                >
+                  <img
+                    src={post.data.heroImage}
+                    alt=""
+                    loading={
+                      index === 0
+                        ? 'eager'
+                        : 'lazy'
+                    }
+                  />
+                </a>
+              ) : null}
 
               <div class="story-archive-copy">
                 <h2 class="editorial-title">
@@ -412,10 +443,26 @@ const storyVisual = (post) =>
     object-fit: contain;
   }
 
+  .story-archive-spotify {
+    width: 100%;
+    height: 152px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    background:
+      rgba(1, 8, 15, 0.48);
+  }
+
+  .story-archive-spotify iframe {
+    display: block;
+    width: 100%;
+    height: 152px;
+    border: 0;
+  }
+
   .archive-play-cue {
     position: absolute;
-    right: 22px;
-    bottom: 22px;
+    top: 50%;
+    left: 50%;
     display: grid;
     place-items: center;
     width: 48px;
@@ -428,6 +475,7 @@ const storyVisual = (post) =>
     background:
       rgba(1, 8, 15, 0.7);
     font-size: 0.75rem;
+    transform: translate(-50%, -50%);
     pointer-events: none;
   }
 
