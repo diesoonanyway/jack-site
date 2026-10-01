@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../../lib/content-slug';
 import { getSafeExternalAudioUrl, getSpotifyEpisodeId, getSpotifyExternalUrl } from '../../lib/spotify';
-import { getYouTubeThumbnailUrl, getYouTubeVideoId } from '../../lib/youtube';
+import { getYouTubeVideoId } from '../../lib/youtube';
 import { createArticleStructuredData } from '../../lib/seo';
 import Comments from '../../components/Comments.astro';
 
@@ -31,8 +31,10 @@ const spotifyId = getSpotifyEpisodeId(post.data.spotifyUrl);
 const spotifyExternalUrl = getSpotifyExternalUrl(post.data.spotifyUrl);
 const audioUrl = getSafeExternalAudioUrl(post.data.spotifyUrl);
 const youtubeId = getYouTubeVideoId(post.data.youtubeUrl);
-const youtubeThumbnail = getYouTubeThumbnailUrl(post.data.youtubeUrl);
-const heroVisual = post.data.heroImage || youtubeThumbnail;
+const youtubeThumbnail = youtubeId
+  ? `https://i.ytimg.com/vi/${youtubeId}/mqdefault.jpg`
+  : null;
+const heroVisual = youtubeThumbnail || post.data.heroImage;
 const storyDescription = post.data.intro || post.data.description;
 const isWrittenArticle = !audioUrl && !youtubeId;
 const seoDescription = post.data.description || post.data.title;
@@ -66,16 +68,33 @@ const { Content } = await render(post);
   {alternatePath}
 >
   <article class:list={['story-detail', { 'story-detail--text-only': !heroVisual, 'story-detail--ko': isKorean }]}>
-    {heroVisual && (
+    {youtubeId && youtubeThumbnail ? (
+      <figure class="story-hero-visual story-hero-youtube">
+        <div
+          class="story-youtube-facade"
+          data-media-embed
+          data-media-kind="youtube"
+          data-media-src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1`}
+          data-media-title={isKorean ? `${post.data.title} YouTube 영상` : `${post.data.title} YouTube video`}
+        >
+          <button
+            type="button"
+            class="story-youtube-load"
+            data-media-load
+            aria-label={isKorean ? `${post.data.title} 재생` : `Play ${post.data.title}`}
+          >
+            <img src={youtubeThumbnail} alt="" loading="eager" />
+            <span class="story-play-cue" aria-hidden="true">▶</span>
+          </button>
+        </div>
+      </figure>
+    ) : heroVisual ? (
       <figure class="story-hero-visual">
         <img src={heroVisual} alt="" loading="eager" />
-        {youtubeThumbnail && !post.data.heroImage && (
-          <span class="story-play-cue" aria-hidden="true">▶</span>
-        )}
       </figure>
-    )}
+    ) : null}
 
-    <header class:list={['story-detail-header', { 'story-detail-header--with-media': audioUrl || youtubeId }]}>
+    <header class:list={['story-detail-header', { 'story-detail-header--with-media': audioUrl }]}>
       <h1 class="editorial-title">{post.data.title}</h1>
       {storyDescription && <p class="story-description">{storyDescription}</p>}
       <time class="story-date" datetime={post.data.date.toISOString()}>
@@ -87,7 +106,7 @@ const { Content } = await render(post);
       </time>
     </header>
 
-    {(audioUrl || youtubeId) && (
+    {audioUrl && (
       <div class="story-media">
         {audioUrl && (
           <section class="story-media-item">
@@ -119,37 +138,6 @@ const { Content } = await render(post);
               {spotifyExternalUrl
                 ? (isKorean ? 'Spotify에서 열기 →' : 'Open in Spotify →')
                 : (isKorean ? '오디오 링크 열기 →' : 'Open audio link →')}
-            </a>
-          </section>
-        )}
-
-        {youtubeId && (
-          <section class="story-media-item">
-            <div class="video-embed">
-              <div
-                class="media-embed-placeholder media-embed-placeholder--youtube"
-                data-media-embed
-                data-media-kind="youtube"
-                data-media-src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
-                data-media-title={isKorean ? `${post.data.title} YouTube 영상` : `${post.data.title} YouTube video`}
-              >
-                <button type="button" class="media-load-button" data-media-load>
-                  {isKorean ? 'YouTube 영상 불러오기' : 'Load YouTube video'}
-                </button>
-                <p class="media-privacy-note">
-                  {isKorean
-                    ? '불러오면 YouTube에 연결되며 기술 정보가 전달될 수 있습니다.'
-                    : 'Loading connects to YouTube and may share technical information.'}
-                </p>
-              </div>
-            </div>
-            <a
-              class="media-external-link"
-              href={`https://www.youtube.com/watch?v=${youtubeId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {isKorean ? 'YouTube에서 보기 →' : 'Watch on YouTube →'}
             </a>
           </section>
         )}
@@ -289,10 +277,45 @@ const { Content } = await render(post);
     height: auto;
   }
 
+  .story-hero-youtube {
+    aspect-ratio: 16 / 9;
+  }
+
+  .story-youtube-facade,
+  .story-youtube-load,
+  .story-hero-youtube :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .story-youtube-load {
+    position: relative;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .story-youtube-load img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .story-youtube-load:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -5px;
+  }
+
+  .story-hero-youtube :global(iframe) {
+    border: 0;
+  }
+
   .story-play-cue {
     position: absolute;
-    right: 26px;
-    bottom: 26px;
+    top: 50%;
+    left: 50%;
     display: grid;
     place-items: center;
     width: 52px;
@@ -302,6 +325,7 @@ const { Content } = await render(post);
     color: var(--text);
     background: rgba(1, 8, 15, 0.72);
     font-size: 0.8rem;
+    transform: translate(-50%, -50%);
     pointer-events: none;
   }
 
@@ -401,11 +425,6 @@ const { Content } = await render(post);
     text-align: center;
   }
 
-  .video-embed .media-embed-placeholder {
-    height: 100%;
-    min-height: 0;
-  }
-
   .media-embed-placeholder--spotify {
     justify-items: start;
     min-height: 96px;
@@ -473,27 +492,6 @@ const { Content } = await render(post);
     min-height: 152px;
   }
 
-  .media-load-button {
-    min-height: 44px;
-    padding: 10px 18px;
-    border: 1px solid rgba(219, 234, 255, 0.3);
-    border-radius: 999px;
-    color: var(--text);
-    background: rgba(255, 255, 255, 0.06);
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  .media-load-button:hover {
-    background: rgba(255, 255, 255, 0.12);
-  }
-
-  .media-load-button:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 4px;
-  }
-
   .media-privacy-note {
     max-width: 52ch;
     margin: 0;
@@ -505,16 +503,6 @@ const { Content } = await render(post);
   .media-external-link {
     display: inline-block;
     margin-top: 18px;
-  }
-
-  .video-embed {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-  }
-
-  .video-embed :global(iframe) {
-    width: 100%;
-    height: 100%;
   }
 
   .story-detail .article-body {
@@ -626,8 +614,6 @@ const { Content } = await render(post);
     }
 
     .story-play-cue {
-      right: 16px;
-      bottom: 16px;
       width: 44px;
       height: 44px;
     }
