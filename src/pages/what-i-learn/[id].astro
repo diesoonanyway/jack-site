@@ -2,6 +2,8 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPublicSlug } from '../../lib/content-slug';
+import { getSafeExternalAudioUrl, getSpotifyEpisodeId, getSpotifyExternalUrl } from '../../lib/spotify';
+import { getYouTubeVideoId } from '../../lib/youtube';
 import { createArticleStructuredData } from '../../lib/seo';
 import Comments from '../../components/Comments.astro';
 
@@ -25,6 +27,13 @@ const counterpart = (await getCollection('whatILearn')).find((entry) =>
 const alternatePath = counterpart
   ? `${isKorean ? '' : '/ko'}/what-i-learn/${slug}/`
   : undefined;
+const youtubeId = getYouTubeVideoId(post.data.youtubeUrl);
+const youtubeThumbnail = youtubeId
+  ? `https://i.ytimg.com/vi/${youtubeId}/mqdefault.jpg`
+  : null;
+const spotifyId = getSpotifyEpisodeId(post.data.spotifyUrl);
+const spotifyExternalUrl = getSpotifyExternalUrl(post.data.spotifyUrl);
+const audioUrl = getSafeExternalAudioUrl(post.data.spotifyUrl);
 const seoDescription = post.data.description || post.data.title;
 const canonicalURL = Astro.site
   ? new URL(Astro.url.pathname, Astro.site).toString()
@@ -57,11 +66,30 @@ const { Content } = await render(post);
   {alternatePath}
 >
   <article class:list={['learn-detail', { 'learn-detail--ko': isKorean }]}>
-    {post.data.heroImage && (
+    {youtubeId && youtubeThumbnail ? (
+      <figure class="learn-hero-visual learn-hero-youtube">
+        <div
+          class="learn-youtube-facade"
+          data-youtube-facade
+          data-youtube-src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1`}
+          data-youtube-title={isKorean ? `${post.data.title} YouTube 영상` : `${post.data.title} YouTube video`}
+        >
+          <button
+            type="button"
+            class="learn-youtube-load"
+            data-youtube-load
+            aria-label={isKorean ? `${post.data.title} 재생` : `Play ${post.data.title}`}
+          >
+            <img src={youtubeThumbnail} alt="" loading="eager" />
+            <span class="learn-play-cue" aria-hidden="true">▶</span>
+          </button>
+        </div>
+      </figure>
+    ) : post.data.heroImage ? (
       <figure class="learn-hero-visual">
         <img src={post.data.heroImage} alt="" loading="eager" />
       </figure>
-    )}
+    ) : null}
 
     <header class="learn-detail-header">
       {topicLabels && <p class="learn-topics">{topicLabels}</p>}
@@ -76,10 +104,155 @@ const { Content } = await render(post);
       </time>
     </header>
 
+    {audioUrl && (
+      <div class="learn-media">
+        <section class="learn-media-item">
+          {spotifyId && (
+            <div
+              class="media-embed-placeholder media-embed-placeholder--spotify"
+              data-media-embed
+              data-media-kind="spotify"
+              data-media-src={`https://open.spotify.com/embed/episode/${spotifyId}`}
+              data-spotify-uri={`spotify:episode:${spotifyId}`}
+              data-media-title={isKorean ? `${post.data.title} Spotify 재생기` : `${post.data.title} Spotify player`}
+            >
+              <button type="button" class="spotify-listen-button" data-media-load>
+                <span class="spotify-play-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M9 7.5v9l7-4.5-7-4.5Z"></path>
+                  </svg>
+                </span>
+                <span>{isKorean ? '이 에피소드 듣기' : 'Listen to this episode'}</span>
+              </button>
+              <p class="media-privacy-note">
+                {isKorean
+                  ? '불러오면 Spotify에 연결되며 기술 정보가 전달될 수 있습니다.'
+                  : 'Loading connects to Spotify and may share technical information.'}
+              </p>
+            </div>
+          )}
+          <a class="media-external-link" href={audioUrl} target="_blank" rel="noopener noreferrer">
+            {spotifyExternalUrl
+              ? (isKorean ? 'Spotify에서 열기 →' : 'Open in Spotify →')
+              : (isKorean ? '오디오 링크 열기 →' : 'Open audio link →')}
+          </a>
+        </section>
+      </div>
+    )}
+
     <div class="article-body"><Content /></div>
   </article>
   <Comments section="what-i-learn" {slug} {lang} />
 </BaseLayout>
+
+<script>
+  type SpotifyEmbedController = {
+    play: () => void;
+  };
+
+  type SpotifyIframeApi = {
+    createController: (
+      element: HTMLElement,
+      options: { width: string; height: string; uri: string },
+      callback: (controller: SpotifyEmbedController) => void,
+    ) => void;
+  };
+
+  type SpotifyWindow = Window & {
+    onSpotifyIframeApiReady?: (api: SpotifyIframeApi) => void;
+    __ifitallendsSpotifyApi?: SpotifyIframeApi;
+    __ifitallendsSpotifyApiPromise?: Promise<SpotifyIframeApi>;
+  };
+
+  const spotifyWindow = window as SpotifyWindow;
+
+  const loadSpotifyApi = () => {
+    if (spotifyWindow.__ifitallendsSpotifyApi) {
+      return Promise.resolve(spotifyWindow.__ifitallendsSpotifyApi);
+    }
+
+    if (spotifyWindow.__ifitallendsSpotifyApiPromise) {
+      return spotifyWindow.__ifitallendsSpotifyApiPromise;
+    }
+
+    spotifyWindow.__ifitallendsSpotifyApiPromise = new Promise((resolve, reject) => {
+      spotifyWindow.onSpotifyIframeApiReady = (api) => {
+        spotifyWindow.__ifitallendsSpotifyApi = api;
+        resolve(api);
+      };
+
+      const existingScript = document.querySelector<HTMLScriptElement>('script[data-spotify-iframe-api]');
+      if (existingScript) return;
+
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://open.spotify.com/embed/iframe-api/v1';
+      script.dataset.spotifyIframeApi = 'true';
+      script.addEventListener('error', () => reject(new Error('Spotify iFrame API failed to load')), { once: true });
+      document.body.append(script);
+    });
+
+    return spotifyWindow.__ifitallendsSpotifyApiPromise;
+  };
+
+  const createSpotifyFallbackIframe = (placeholder: HTMLElement, src: string, title: string) => {
+    const iframe = document.createElement('iframe');
+    iframe.title = title;
+    iframe.src = src;
+    iframe.loading = 'lazy';
+    iframe.allowFullscreen = true;
+    iframe.width = '100%';
+    iframe.height = '152';
+    iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+    placeholder.replaceWith(iframe);
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-media-embed]').forEach((placeholder) => {
+    const button = placeholder.querySelector<HTMLButtonElement>('[data-media-load]');
+    const src = placeholder.dataset.mediaSrc;
+    const title = placeholder.dataset.mediaTitle;
+    const uri = placeholder.dataset.spotifyUri;
+
+    if (!button || !src || !title || !uri) return;
+
+    button.addEventListener('click', () => {
+      button.disabled = true;
+      placeholder.setAttribute('aria-busy', 'true');
+
+      loadSpotifyApi()
+        .then((api) => {
+          const mount = document.createElement('div');
+          mount.className = 'spotify-embed-mount';
+          placeholder.replaceChildren(mount);
+          placeholder.removeAttribute('aria-busy');
+
+          api.createController(mount, {
+            width: '100%',
+            height: '152',
+            uri,
+          }, (controller) => controller.play());
+        })
+        .catch(() => createSpotifyFallbackIframe(placeholder, src, title));
+    }, { once: true });
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-youtube-facade]').forEach((facade) => {
+    const button = facade.querySelector<HTMLButtonElement>('[data-youtube-load]');
+    const src = facade.dataset.youtubeSrc;
+    const title = facade.dataset.youtubeTitle;
+
+    if (!button || !src || !title) return;
+
+    button.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = src;
+      iframe.title = title;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      facade.replaceWith(iframe);
+    }, { once: true });
+  });
+</script>
 
 <style>
   .learn-detail {
@@ -90,6 +263,7 @@ const { Content } = await render(post);
   }
 
   .learn-hero-visual {
+    position: relative;
     width: 100%;
     max-width: 1120px;
     margin: 0 auto clamp(58px, 7vw, 96px);
@@ -101,6 +275,58 @@ const { Content } = await render(post);
     width: 100%;
     max-width: 100%;
     height: auto;
+  }
+
+  .learn-hero-youtube {
+    aspect-ratio: 16 / 9;
+  }
+
+  .learn-youtube-facade,
+  .learn-youtube-load,
+  .learn-hero-youtube :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .learn-youtube-load {
+    position: relative;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .learn-youtube-load img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .learn-youtube-load:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -5px;
+  }
+
+  .learn-hero-youtube :global(iframe) {
+    border: 0;
+  }
+
+  .learn-play-cue {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgba(246, 244, 239, 0.45);
+    border-radius: 50%;
+    color: var(--text);
+    background: rgba(1, 8, 15, 0.72);
+    font-size: 0.8rem;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
   }
 
   .learn-detail-header,
@@ -148,6 +374,99 @@ const { Content } = await render(post);
 
   .learn-detail-header time {
     display: block;
+  }
+
+  .learn-media {
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto clamp(56px, 7vw, 88px);
+  }
+
+  .learn-media-item {
+    padding-bottom: 36px;
+    border-bottom: 1px solid rgba(220, 230, 240, 0.13);
+  }
+
+  .learn-media-item :global(iframe) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    border: 0;
+  }
+
+  .media-embed-placeholder {
+    display: grid;
+    justify-items: start;
+    align-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 96px;
+    text-align: left;
+  }
+
+  .spotify-listen-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 56px;
+    padding: 0;
+    border: 0;
+    color: var(--text);
+    background: transparent;
+    font: inherit;
+    font-family: var(--font-editorial);
+    font-size: clamp(1.2rem, 2vw, 1.45rem);
+    cursor: pointer;
+  }
+
+  .spotify-listen-button:disabled {
+    cursor: wait;
+    opacity: 0.72;
+  }
+
+  .spotify-play-icon {
+    display: grid;
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    place-items: center;
+    border: 1px solid rgba(219, 234, 255, 0.38);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .spotify-play-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+
+  .spotify-listen-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+  }
+
+  :global(.spotify-embed-mount) {
+    width: 100%;
+    min-height: 152px;
+  }
+
+  .media-privacy-note {
+    max-width: 52ch;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  .media-external-link {
+    display: inline-block;
+    margin-top: 18px;
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: rgba(246, 244, 239, 0.34);
+    text-underline-offset: 0.32em;
   }
 
   .article-body {
@@ -203,6 +522,11 @@ const { Content } = await render(post);
     .learn-detail-header h1 {
       margin-bottom: 26px;
       font-size: clamp(2.7rem, 13vw, 4.4rem);
+    }
+
+    .learn-play-cue {
+      width: 44px;
+      height: 44px;
     }
 
     .article-body {
