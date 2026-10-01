@@ -912,6 +912,11 @@ const measurementId = 'G-Z9K72KWHGP';
           );
       }
 
+      .mobile-site-background,
+      .mobile-scroll-darkener {
+        display: none;
+      }
+
       .site-shell {
         position: relative;
         z-index: 1;
@@ -1202,10 +1207,49 @@ const measurementId = 'G-Z9K72KWHGP';
 
       @media (max-width: 760px) {
         body {
+          background-image: none;
           background-attachment: scroll;
         }
 
+        .mobile-site-background,
+        .mobile-scroll-darkener {
+          position: fixed;
+          top: 0;
+          left: 0;
+          display: block;
+          width: 100vw;
+          height: 100vh;
+          height: 100dvh;
+          pointer-events: none;
+        }
+
+        .mobile-site-background {
+          z-index: 0;
+          background-color: var(--bg);
+          background-image:
+            linear-gradient(
+              rgba(1, 6, 12, 0.08),
+              rgba(1, 6, 12, 0.12)
+            ),
+            url('/images/moon-ocean.png');
+          background-size: cover;
+          background-position: 50% 50%;
+          background-repeat: no-repeat;
+        }
+
+        .mobile-scroll-darkener {
+          z-index: 1;
+          background: #000;
+          opacity: var(--mobile-scroll-darkness, 0);
+          will-change: opacity;
+        }
+
+        .page-depth {
+          display: none;
+        }
+
         .site-shell {
+          z-index: 2;
           width:
             calc(100% - 20px);
         }
@@ -1345,6 +1389,16 @@ const measurementId = 'G-Z9K72KWHGP';
 
   <body>
     <div
+      class="mobile-site-background"
+      aria-hidden="true"
+    ></div>
+
+    <div
+      class="mobile-scroll-darkener"
+      aria-hidden="true"
+    ></div>
+
+    <div
       class="page-depth"
       aria-hidden="true"
     ></div>
@@ -1429,5 +1483,44 @@ const measurementId = 'G-Z9K72KWHGP';
         </div>
       </footer>
     </div>
+
+    <script>
+      const mobileBackgroundQuery = window.matchMedia('(max-width: 760px)');
+      const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const rootElement = document.documentElement;
+      let mobileDarkeningFrame = 0;
+
+      const updateMobileScrollDarkness = () => {
+        mobileDarkeningFrame = 0;
+
+        if (!mobileBackgroundQuery.matches) {
+          rootElement.style.removeProperty('--mobile-scroll-darkness');
+          return;
+        }
+
+        const scrollRange = Math.max(rootElement.scrollHeight - window.innerHeight, 1);
+        const progress = Math.min(Math.max(window.scrollY / scrollRange, 0), 1);
+        const easedProgress = reducedMotionQuery.matches
+          ? progress
+          : progress * progress * (3 - 2 * progress);
+
+        rootElement.style.setProperty(
+          '--mobile-scroll-darkness',
+          (easedProgress * 0.74).toFixed(3),
+        );
+      };
+
+      const queueMobileScrollDarknessUpdate = () => {
+        if (mobileDarkeningFrame) return;
+        mobileDarkeningFrame = window.requestAnimationFrame(updateMobileScrollDarkness);
+      };
+
+      updateMobileScrollDarkness();
+      window.addEventListener('scroll', queueMobileScrollDarknessUpdate, { passive: true });
+      window.addEventListener('resize', queueMobileScrollDarknessUpdate);
+      window.visualViewport?.addEventListener('resize', queueMobileScrollDarknessUpdate);
+      mobileBackgroundQuery.addEventListener('change', queueMobileScrollDarknessUpdate);
+      reducedMotionQuery.addEventListener('change', queueMobileScrollDarknessUpdate);
+    </script>
   </body>
 </html>
