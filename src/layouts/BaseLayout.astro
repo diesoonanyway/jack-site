@@ -1,6 +1,5 @@
 ---
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
-import ConsentManager from '../components/ConsentManager.astro';
 import StorySearch from '../components/StorySearch.astro';
 import { serializeJsonLd, SITE_NAME } from '../lib/seo';
 
@@ -20,18 +19,28 @@ const canonicalURL = Astro.site
   ? new URL(Astro.url.pathname, Astro.site)
   : undefined;
 
-const hasAlternate = typeof alternatePath === 'string' && alternatePath.length > 0;
-const enPath = lang === 'en' ? Astro.url.pathname : alternatePath;
-const koPath = lang === 'ko' ? Astro.url.pathname : alternatePath;
+const hasAlternate =
+  typeof alternatePath === 'string' && alternatePath.length > 0;
+
+const enPath = lang === 'en'
+  ? Astro.url.pathname
+  : alternatePath;
+
+const koPath = lang === 'ko'
+  ? Astro.url.pathname
+  : alternatePath;
+
 const enAlternateURL = hasAlternate && Astro.site
   ? new URL(enPath, Astro.site)
   : undefined;
+
 const koAlternateURL = hasAlternate && Astro.site
   ? new URL(koPath, Astro.site)
   : undefined;
 
 const pathPrefix = lang === 'ko' ? '/ko' : '';
 const homePath = lang === 'ko' ? '/ko/' : '/';
+
 const navigation = lang === 'ko'
   ? {
       whatIFeel: 'What I Feel',
@@ -68,12 +77,639 @@ const measurementId = 'G-Z9K72KWHGP';
   <head>
     <meta charset="UTF-8" />
 
+    {isProduction && (
+      <>
+        <!-- Google Consent Mode: privacy-first defaults -->
+        <script is:inline>
+          window.dataLayer = window.dataLayer || [];
+
+          window.gtag = window.gtag || function () {
+            window.dataLayer.push(arguments);
+          };
+
+          window.gtag('consent', 'default', {
+            ad_storage: 'denied',
+            analytics_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            wait_for_update: 1000
+          });
+        </script>
+
+        <!-- InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.3) -->
+        <script is:inline type="text/javascript">
+          (function() {
+            var host = window.location.hostname;
+            var element = document.createElement('script');
+            var firstScript = document.getElementsByTagName('script')[0];
+
+            var url = 'https://cmp.inmobi.com'
+              .concat(
+                '/choice/',
+                'uhzk8BkQJZZzn',
+                '/',
+                host,
+                '/choice.js?tag_version=V3'
+              );
+
+            var uspTries = 0;
+            var uspTriesLimit = 3;
+
+            element.async = true;
+            element.type = 'text/javascript';
+            element.src = url;
+
+            firstScript.parentNode.insertBefore(
+              element,
+              firstScript
+            );
+
+            function makeStub() {
+              var TCF_LOCATOR_NAME = '__tcfapiLocator';
+              var queue = [];
+              var win = window;
+              var cmpFrame;
+
+              function addFrame() {
+                var doc = win.document;
+                var otherCMP = !!(
+                  win.frames[TCF_LOCATOR_NAME]
+                );
+
+                if (!otherCMP) {
+                  if (doc.body) {
+                    var iframe =
+                      doc.createElement('iframe');
+
+                    iframe.style.cssText =
+                      'display:none';
+
+                    iframe.name =
+                      TCF_LOCATOR_NAME;
+
+                    doc.body.appendChild(iframe);
+                  } else {
+                    setTimeout(addFrame, 5);
+                  }
+                }
+
+                return !otherCMP;
+              }
+
+              function tcfAPIHandler() {
+                var gdprApplies;
+                var args = arguments;
+
+                if (!args.length) {
+                  return queue;
+                } else if (
+                  args[0] === 'setGdprApplies'
+                ) {
+                  if (
+                    args.length > 3 &&
+                    args[2] === 2 &&
+                    typeof args[3] === 'boolean'
+                  ) {
+                    gdprApplies = args[3];
+
+                    if (
+                      typeof args[2] ===
+                      'function'
+                    ) {
+                      args[2]('set', true);
+                    }
+                  }
+                } else if (
+                  args[0] === 'ping'
+                ) {
+                  var retr = {
+                    gdprApplies: gdprApplies,
+                    cmpLoaded: false,
+                    cmpStatus: 'stub'
+                  };
+
+                  if (
+                    typeof args[2] ===
+                    'function'
+                  ) {
+                    args[2](retr);
+                  }
+                } else {
+                  if (
+                    args[0] === 'init' &&
+                    typeof args[3] === 'object'
+                  ) {
+                    args[3] = Object.assign(
+                      args[3],
+                      {
+                        tag_version: 'V3'
+                      }
+                    );
+                  }
+
+                  queue.push(args);
+                }
+              }
+
+              function postMessageEventHandler(
+                event
+              ) {
+                var msgIsString =
+                  typeof event.data === 'string';
+
+                var json = {};
+
+                try {
+                  if (msgIsString) {
+                    json = JSON.parse(
+                      event.data
+                    );
+                  } else {
+                    json = event.data;
+                  }
+                } catch (ignore) {}
+
+                var payload =
+                  json.__tcfapiCall;
+
+                if (payload) {
+                  window.__tcfapi(
+                    payload.command,
+                    payload.version,
+                    function(
+                      retValue,
+                      success
+                    ) {
+                      var returnMsg = {
+                        __tcfapiReturn: {
+                          returnValue:
+                            retValue,
+                          success:
+                            success,
+                          callId:
+                            payload.callId
+                        }
+                      };
+
+                      if (msgIsString) {
+                        returnMsg =
+                          JSON.stringify(
+                            returnMsg
+                          );
+                      }
+
+                      if (
+                        event &&
+                        event.source &&
+                        event.source
+                          .postMessage
+                      ) {
+                        event.source
+                          .postMessage(
+                            returnMsg,
+                            '*'
+                          );
+                      }
+                    },
+                    payload.parameter
+                  );
+                }
+              }
+
+              while (win) {
+                try {
+                  if (
+                    win.frames[
+                      TCF_LOCATOR_NAME
+                    ]
+                  ) {
+                    cmpFrame = win;
+                    break;
+                  }
+                } catch (ignore) {}
+
+                if (
+                  win === window.top
+                ) {
+                  break;
+                }
+
+                win = win.parent;
+              }
+
+              if (!cmpFrame) {
+                addFrame();
+
+                win.__tcfapi =
+                  tcfAPIHandler;
+
+                win.addEventListener(
+                  'message',
+                  postMessageEventHandler,
+                  false
+                );
+              }
+            }
+
+            makeStub();
+
+            function makeGppStub() {
+              const CMP_ID = 10;
+
+              const SUPPORTED_APIS = [
+                '2:tcfeuv2',
+                '6:uspv1',
+                '7:usnatv1',
+                '8:usca',
+                '9:usvav1',
+                '10:uscov1',
+                '11:usutv1',
+                '12:usctv1'
+              ];
+
+              window.__gpp_addFrame =
+                function(n) {
+                  if (!window.frames[n]) {
+                    if (document.body) {
+                      var i =
+                        document.createElement(
+                          'iframe'
+                        );
+
+                      i.style.cssText =
+                        'display:none';
+
+                      i.name = n;
+
+                      document.body
+                        .appendChild(i);
+                    } else {
+                      window.setTimeout(
+                        window.__gpp_addFrame,
+                        10,
+                        n
+                      );
+                    }
+                  }
+                };
+
+              window.__gpp_stub =
+                function() {
+                  var b = arguments;
+
+                  __gpp.queue =
+                    __gpp.queue || [];
+
+                  __gpp.events =
+                    __gpp.events || [];
+
+                  if (
+                    !b.length ||
+                    (
+                      b.length === 1 &&
+                      b[0] === 'queue'
+                    )
+                  ) {
+                    return __gpp.queue;
+                  }
+
+                  if (
+                    b.length === 1 &&
+                    b[0] === 'events'
+                  ) {
+                    return __gpp.events;
+                  }
+
+                  var cmd = b[0];
+
+                  var clb =
+                    b.length > 1
+                      ? b[1]
+                      : null;
+
+                  var par =
+                    b.length > 2
+                      ? b[2]
+                      : null;
+
+                  if (cmd === 'ping') {
+                    clb(
+                      {
+                        gppVersion: '1.1',
+                        cmpStatus: 'stub',
+                        cmpDisplayStatus:
+                          'hidden',
+                        signalStatus:
+                          'not ready',
+                        supportedAPIs:
+                          SUPPORTED_APIS,
+                        cmpId: CMP_ID,
+                        sectionList: [],
+                        applicableSections:
+                          [-1],
+                        gppString: '',
+                        parsedSections: {}
+                      },
+                      true
+                    );
+                  } else if (
+                    cmd ===
+                    'addEventListener'
+                  ) {
+                    if (
+                      !('lastId' in __gpp)
+                    ) {
+                      __gpp.lastId = 0;
+                    }
+
+                    __gpp.lastId++;
+
+                    var lnr =
+                      __gpp.lastId;
+
+                    __gpp.events.push({
+                      id: lnr,
+                      callback: clb,
+                      parameter: par
+                    });
+
+                    clb(
+                      {
+                        eventName:
+                          'listenerRegistered',
+                        listenerId: lnr,
+                        data: true,
+                        pingData: {
+                          gppVersion:
+                            '1.1',
+                          cmpStatus:
+                            'stub',
+                          cmpDisplayStatus:
+                            'hidden',
+                          signalStatus:
+                            'not ready',
+                          supportedAPIs:
+                            SUPPORTED_APIS,
+                          cmpId: CMP_ID,
+                          sectionList: [],
+                          applicableSections:
+                            [-1],
+                          gppString: '',
+                          parsedSections: {}
+                        }
+                      },
+                      true
+                    );
+                  } else if (
+                    cmd ===
+                    'removeEventListener'
+                  ) {
+                    var success = false;
+
+                    for (
+                      var i = 0;
+                      i <
+                      __gpp.events.length;
+                      i++
+                    ) {
+                      if (
+                        __gpp.events[i]
+                          .id === par
+                      ) {
+                        __gpp.events
+                          .splice(i, 1);
+
+                        success = true;
+                        break;
+                      }
+                    }
+
+                    clb(
+                      {
+                        eventName:
+                          'listenerRemoved',
+                        listenerId: par,
+                        data: success,
+                        pingData: {
+                          gppVersion:
+                            '1.1',
+                          cmpStatus:
+                            'stub',
+                          cmpDisplayStatus:
+                            'hidden',
+                          signalStatus:
+                            'not ready',
+                          supportedAPIs:
+                            SUPPORTED_APIS,
+                          cmpId: CMP_ID,
+                          sectionList: [],
+                          applicableSections:
+                            [-1],
+                          gppString: '',
+                          parsedSections: {}
+                        }
+                      },
+                      true
+                    );
+                  } else if (
+                    cmd === 'hasSection'
+                  ) {
+                    clb(false, true);
+                  } else if (
+                    cmd ===
+                      'getSection' ||
+                    cmd === 'getField'
+                  ) {
+                    clb(null, true);
+                  } else {
+                    __gpp.queue.push(
+                      [].slice.apply(b)
+                    );
+                  }
+                };
+
+              window.__gpp_msghandler =
+                function(event) {
+                  var msgIsString =
+                    typeof event.data ===
+                    'string';
+
+                  try {
+                    var json =
+                      msgIsString
+                        ? JSON.parse(
+                            event.data
+                          )
+                        : event.data;
+                  } catch (e) {
+                    var json = null;
+                  }
+
+                  if (
+                    typeof json ===
+                      'object' &&
+                    json !== null &&
+                    '__gppCall' in json
+                  ) {
+                    var i =
+                      json.__gppCall;
+
+                    window.__gpp(
+                      i.command,
+                      function(
+                        retValue,
+                        success
+                      ) {
+                        var returnMsg = {
+                          __gppReturn: {
+                            returnValue:
+                              retValue,
+                            success:
+                              success,
+                            callId:
+                              i.callId
+                          }
+                        };
+
+                        event.source
+                          .postMessage(
+                            msgIsString
+                              ? JSON.stringify(
+                                  returnMsg
+                                )
+                              : returnMsg,
+                            '*'
+                          );
+                      },
+                      'parameter' in i
+                        ? i.parameter
+                        : null,
+                      'version' in i
+                        ? i.version
+                        : '1.1'
+                    );
+                  }
+                };
+
+              if (
+                !('__gpp' in window) ||
+                typeof window.__gpp !==
+                  'function'
+              ) {
+                window.__gpp =
+                  window.__gpp_stub;
+
+                window.addEventListener(
+                  'message',
+                  window.__gpp_msghandler,
+                  false
+                );
+
+                window.__gpp_addFrame(
+                  '__gppLocator'
+                );
+              }
+            }
+
+            makeGppStub();
+
+            var uspStubFunction =
+              function() {
+                var arg = arguments;
+
+                if (
+                  typeof window.__uspapi !==
+                  uspStubFunction
+                ) {
+                  setTimeout(
+                    function() {
+                      if (
+                        typeof window
+                          .__uspapi !==
+                        'undefined'
+                      ) {
+                        window.__uspapi
+                          .apply(
+                            window.__uspapi,
+                            arg
+                          );
+                      }
+                    },
+                    500
+                  );
+                }
+              };
+
+            var checkIfUspIsReady =
+              function() {
+                uspTries++;
+
+                if (
+                  window.__uspapi ===
+                    uspStubFunction &&
+                  uspTries <
+                    uspTriesLimit
+                ) {
+                  console.warn(
+                    'USP is not accessible'
+                  );
+                } else {
+                  clearInterval(
+                    uspInterval
+                  );
+                }
+              };
+
+            if (
+              typeof window.__uspapi ===
+              'undefined'
+            ) {
+              window.__uspapi =
+                uspStubFunction;
+
+              var uspInterval =
+                setInterval(
+                  checkIfUspIsReady,
+                  6000
+                );
+            }
+          })();
+        </script>
+        <!-- End InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.3) -->
+
+        <!-- Google Analytics 4 -->
+        <script
+          is:inline
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
+        ></script>
+
+        <script
+          is:inline
+          define:vars={{ measurementId }}
+        >
+          window.gtag(
+            'js',
+            new Date()
+          );
+
+          window.gtag(
+            'config',
+            measurementId
+          );
+        </script>
+      </>
+    )}
+
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1"
     />
 
-    <meta name="google-adsense-account" content="ca-pub-7011660665339454" />
+    <meta
+      name="google-adsense-account"
+      content="ca-pub-7011660665339454"
+    />
 
     <title>{title}</title>
 
@@ -84,7 +720,9 @@ const measurementId = 'G-Z9K72KWHGP';
 
     <meta
       name="robots"
-      content={noindex ? 'noindex, nofollow' : 'index, follow'}
+      content={noindex
+        ? 'noindex, nofollow'
+        : 'index, follow'}
     />
 
     {canonicalURL && (
@@ -188,16 +826,26 @@ const measurementId = 'G-Z9K72KWHGP';
         --accent-strong: #ffffff;
         --max: 1480px;
         --reading: 780px;
-        --font-english: Georgia, 'Times New Roman', Times, serif;
-        --font-korean: Batang, '바탕', 'Noto Serif KR', 'Noto Serif CJK KR', AppleMyungjo, serif;
+        --font-english:
+          Georgia,
+          'Times New Roman',
+          Times,
+          serif;
+        --font-korean:
+          Batang,
+          '바탕',
+          'Noto Serif KR',
+          'Noto Serif CJK KR',
+          AppleMyungjo,
+          serif;
         --font-site: var(--font-english);
         --font-editorial: var(--font-site);
         --editorial-title-weight: 500;
         --editorial-title-leading: 1.14;
         --editorial-title-tracking: -0.015em;
-
         --shadow:
-          0 24px 80px rgba(0, 0, 0, 0.22);
+          0 24px 80px
+          rgba(0, 0, 0, 0.22);
       }
 
       * {
@@ -225,7 +873,6 @@ const measurementId = 'G-Z9K72KWHGP';
         color: var(--text);
 
         font-family: var(--font-site);
-
         line-height: 1.6;
 
         background-color: var(--bg);
@@ -248,7 +895,6 @@ const measurementId = 'G-Z9K72KWHGP';
         inset: 0;
 
         z-index: 0;
-
         pointer-events: none;
 
         background:
@@ -297,7 +943,6 @@ const measurementId = 'G-Z9K72KWHGP';
 
         justify-content: space-between;
         align-items: center;
-
         gap: 32px;
 
         width: 100%;
@@ -313,18 +958,25 @@ const measurementId = 'G-Z9K72KWHGP';
           rgba(1, 7, 14, 0.7);
 
         backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        -webkit-backdrop-filter:
+          blur(16px);
 
         box-shadow: var(--shadow);
       }
 
       .brand {
         flex: 0 0 auto;
-        font-family: var(--font-editorial);
+
+        font-family:
+          var(--font-editorial);
+
         font-size: 1.75rem;
-        font-weight: var(--editorial-title-weight);
+        font-weight:
+          var(--editorial-title-weight);
+
         line-height: 1.1;
         letter-spacing: -0.01em;
+
         white-space: nowrap;
       }
 
@@ -341,6 +993,7 @@ const measurementId = 'G-Z9K72KWHGP';
       .nav-primary {
         display: flex;
         align-items: center;
+
         gap: 26px;
       }
 
@@ -384,7 +1037,11 @@ const measurementId = 'G-Z9K72KWHGP';
 
       h1 {
         font-size:
-          clamp(4.5rem, 8vw, 8.6rem);
+          clamp(
+            4.5rem,
+            8vw,
+            8.6rem
+          );
 
         line-height: 0.9;
 
@@ -393,7 +1050,11 @@ const measurementId = 'G-Z9K72KWHGP';
 
       h2 {
         font-size:
-          clamp(2.7rem, 5vw, 5rem);
+          clamp(
+            2.7rem,
+            5vw,
+            5rem
+          );
 
         line-height: 0.98;
 
@@ -402,7 +1063,11 @@ const measurementId = 'G-Z9K72KWHGP';
 
       h3 {
         font-size:
-          clamp(1.7rem, 3vw, 2.5rem);
+          clamp(
+            1.7rem,
+            3vw,
+            2.5rem
+          );
 
         line-height: 1.08;
 
@@ -418,10 +1083,17 @@ const measurementId = 'G-Z9K72KWHGP';
       }
 
       .editorial-title {
-        font-family: var(--font-editorial);
-        font-weight: var(--editorial-title-weight);
-        line-height: var(--editorial-title-leading);
-        letter-spacing: var(--editorial-title-tracking);
+        font-family:
+          var(--font-editorial);
+
+        font-weight:
+          var(--editorial-title-weight);
+
+        line-height:
+          var(--editorial-title-leading);
+
+        letter-spacing:
+          var(--editorial-title-tracking);
       }
 
       .muted {
@@ -429,13 +1101,16 @@ const measurementId = 'G-Z9K72KWHGP';
       }
 
       .reading-width {
-        max-width: var(--reading);
+        max-width:
+          var(--reading);
       }
 
       .article-body {
-        max-width: var(--reading);
+        max-width:
+          var(--reading);
 
-        color: var(--body-text);
+        color:
+          var(--body-text);
 
         font-size: 1.12rem;
       }
@@ -488,10 +1163,10 @@ const measurementId = 'G-Z9K72KWHGP';
           rgba(0, 4, 10, 0.8);
 
         backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        -webkit-backdrop-filter:
+          blur(12px);
 
         color: var(--muted);
-
         font-size: 0.88rem;
 
         box-shadow: var(--shadow);
@@ -517,7 +1192,12 @@ const measurementId = 'G-Z9K72KWHGP';
 
       .footer-divider {
         color:
-          rgba(255, 255, 255, 0.28);
+          rgba(
+            255,
+            255,
+            255,
+            0.28
+          );
       }
 
       @media (max-width: 760px) {
@@ -532,17 +1212,26 @@ const measurementId = 'G-Z9K72KWHGP';
 
         .site-header {
           top: 8px;
+
           display: grid;
-          grid-template-columns: minmax(0, 1fr) auto;
+
+          grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+
           align-items: center;
+
           gap: 12px;
+
           padding: 14px;
         }
 
         .brand {
           grid-column: 1;
           grid-row: 1;
+
           min-width: 0;
+
           font-size: 1.375rem;
         }
 
@@ -553,16 +1242,37 @@ const measurementId = 'G-Z9K72KWHGP';
         .nav-primary {
           grid-column: 1 / -1;
           grid-row: 2;
+
           display: flex;
+
           align-items: center;
-          gap: clamp(12px, 4vw, 18px);
+
+          gap:
+            clamp(
+              12px,
+              4vw,
+              18px
+            );
+
           min-width: 0;
           max-width: 100%;
+
           padding-bottom: 2px;
+
           overflow-x: auto;
-          overscroll-behavior-inline: contain;
+
+          overscroll-behavior-inline:
+            contain;
+
           scrollbar-width: none;
-          font-size: clamp(0.78rem, 3.6vw, 0.9rem);
+
+          font-size:
+            clamp(
+              0.78rem,
+              3.6vw,
+              0.9rem
+            );
+
           white-space: nowrap;
         }
 
@@ -578,6 +1288,7 @@ const measurementId = 'G-Z9K72KWHGP';
         .nav .language-switcher {
           grid-column: 2;
           grid-row: 1;
+
           justify-self: end;
         }
 
@@ -615,6 +1326,7 @@ const measurementId = 'G-Z9K72KWHGP';
 
         .site-footer {
           align-items: flex-start;
+
           flex-direction: column;
 
           padding: 20px 18px;
@@ -622,6 +1334,7 @@ const measurementId = 'G-Z9K72KWHGP';
 
         .footer-right {
           align-items: flex-start;
+
           flex-wrap: wrap;
 
           gap: 8px 12px;
@@ -636,12 +1349,6 @@ const measurementId = 'G-Z9K72KWHGP';
       aria-hidden="true"
     ></div>
 
-    <ConsentManager
-      {lang}
-      {measurementId}
-      enableAnalytics={isProduction}
-    />
-
     <div class="site-shell">
       <header class="site-header">
         <a
@@ -653,15 +1360,21 @@ const measurementId = 'G-Z9K72KWHGP';
 
         <nav class="nav">
           <div class="nav-primary">
-            <a href={`${pathPrefix}/what-i-feel/`}>
+            <a
+              href={`${pathPrefix}/what-i-feel/`}
+            >
               {navigation.whatIFeel}
             </a>
 
-            <a href={`${pathPrefix}/what-i-learn/`}>
+            <a
+              href={`${pathPrefix}/what-i-learn/`}
+            >
               {navigation.whatILearn}
             </a>
 
-            <a href={`${pathPrefix}/about/`}>
+            <a
+              href={`${pathPrefix}/about/`}
+            >
               {navigation.about}
             </a>
 
