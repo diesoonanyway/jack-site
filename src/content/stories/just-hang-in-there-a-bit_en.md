@@ -14,6 +14,7 @@ spotifyUrl: https://open.spotify.com/episode/5UAX2KHL1rEC2n1It0XDvq?si=-PFpv-iMR
 topics:
   - korean
 featured: false
+youtubeUrl: https://www.youtube.com/watch?v=TbHMv9EvQZ8&t=190s
 ---
 💭 In this episode:
 
