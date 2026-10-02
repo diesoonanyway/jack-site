@@ -3,7 +3,7 @@ title: There Are No Old People
 slug: no-age
 date: 2026-10-02
 createdAt: 2026-10-02T08:57:00Z
-draft: true
+draft: false
 lang: en
 heroImage: /media/chatgpt-image-sep-30-2026-114952-pm.png
 topics:
