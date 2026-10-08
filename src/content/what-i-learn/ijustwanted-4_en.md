@@ -4,7 +4,7 @@ title: I Just Wanted to Write. Somehow, I Built a Website EP.4 — A Computer Th
 slug: ijustwanted-4
 date: 2026-10-09
 createdAt: 2026-10-09T09:51:00Z
-draft: true
+draft: false
 lang: en
 heroImage: /media/robot-helpers-clear-the-way-to-write.png
 topics:
