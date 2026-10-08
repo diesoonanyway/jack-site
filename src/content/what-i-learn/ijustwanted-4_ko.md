@@ -3,7 +3,7 @@ title: 컴맹인 내가 AI로 웹사이트를 만든 사연 EP.4 — 꼼꼼히 �
 slug: ijustwanted-4
 date: 2026-10-09
 createdAt: 2026-10-09T09:29:00Z
-draft: true
+draft: false
 lang: ko
 heroImage: /media/robot-helpers-clear-the-way-to-write.png
 topics:
