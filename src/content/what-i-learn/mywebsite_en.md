@@ -1,6 +1,5 @@
 ---
-title: "How I Built a Website with AI Despite Being Terrible with Computers —
-  EP.1: Why I Chose Astro"
+title: "I Just Wanted to Write. Somehow, I Built a Website  — EP.1: Why I Chose Astro"
 slug: mywebsite
 date: 2026-10-04
 createdAt: 2026-10-04T14:06:00Z
