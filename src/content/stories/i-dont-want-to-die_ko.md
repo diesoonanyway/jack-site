@@ -8,7 +8,7 @@ lang: ko
 heroImage: /media/download-2.png
 featured: false
 topics:
-  - philosophy
+  - mental health
 ---
 내 잘난 멋에 남들과 똑같은 삶은 안 살겠다던 그 패기는 다 어디 갔을까?
 
