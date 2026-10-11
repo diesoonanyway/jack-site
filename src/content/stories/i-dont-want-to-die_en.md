@@ -9,7 +9,7 @@ lang: en
 heroImage: /media/download-2.png
 featured: false
 topics:
-  - philosophy
+  - mental health
 ---
 Where did all that ambitions go — the part of me that once swore I would never live the same life as everyone else?
 
