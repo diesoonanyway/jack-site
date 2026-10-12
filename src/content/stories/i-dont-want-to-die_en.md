@@ -11,56 +11,51 @@ featured: false
 topics:
   - mental health
 ---
-Where did all that ambitions go — the part of me that once swore I would never live the same life as everyone else?
+When I was younger, I really thought I was going to be someone. I had nothing. Absolutely nothing. But I was so sure I wasn’t going to live like everyone else. I was going to do something different. I don’t know where all that confidence went.
 
-As my hair grows thinner,  
-as the lines around my eyes multiply,  
-as the once-perky chest slowly begins to sag into a frown,  
-that fierce confidence seems to disappear with them.
+My hair keeps getting thinner,  
+there are more lines on my face…  
+and I don’t know, it feels like that my life is fading away slowly.
 
-My forties.  
-That awkward age when I am no longer young, but not quite old either. I still cannot believe it. I had not even recovered from the shock of turning thirty when the first digit changed to four, and suddenly my heart felt dark and heavy, like an old abandoned house.
+And now I’m at this weird age. I’m not young anymore, but I’m not exactly old. I don’t really know what I’m supposed to be. Someone in their twenties once said that he was going to kill himself when he turned forty. Forty... The meaning can be different. some see it as the new beginning of their life or some see it as the end of their life...
 
-Someone I knew once said,
+Have you seen *Before Midnight*? There’s this scene where Céline talks about a friend who found out he only had nine months to live. And his first reaction was relief. Because he had enough money for nine months. He could stop worrying about whether he’d have enough. When I first saw it, I just thought,
 
-“I’ll kill myself when I turn forty.”
+“Huh. That’s a strange way to think.”
 
-For some people, forty is the beginning of old age. For others, it is the end of youth. And for some, it can feel like the final chapter of a life they would rather close than continue.
+But I keep remembering it now. I mean… how lonely must he have been? How tired do you have to be before that’s your first reaction? Sometimes I think about it too. If I knew how long I had left, I could just earn enough to cover that time, couldn’t I? Then maybe I could stop worrying and actually live for a bit.
 
-In *Before Midnight*, Céline talks about a friend who was given nine months to live. Strangely, the first thing he felt was relief. He had enough money to survive those nine months. He had made it. At the time, I thought it was simply an unusual way of seeing things. But as I have grown older, I have found myself returning to that story more and more.
+I know there are good things in life. I’m not saying there aren’t. But don’t you sometimes feel like the good moments are much shorter than all the worrying? All the hurt and anxiety and just… feeling sad? You know when you are running a marathon, there are cups of water on the way. That’s what the good things feel like sometimes. You’re struggling, you’re about ready to stop, and then something comes along that gets you a little further.
 
-“How painful and lonely must his life have been before he could say something like that?”
+Someone you love.  
+A sport you like.  
+Just a decent day.
 
-And sometimes I wonder: if I knew exactly how much time I had left, could I earn only enough to survive that period, stop worrying about everything else, and simply live until it was over?
+I think that’s how I’ve made it this far. A little bit of this, a little bit of that.
 
-Of course, life contains many happy moments. But we spend far longer moving between worry, hurt, anxiety and sadness. Like cups of water placed along a marathon route, small moments of happiness appear just often enough to push us forward.
+But lately… I don’t know. They don’t seem to help as much. I keep going back and forth. Several times a day, sometimes. I’ll think, “Right. Come on. Let’s try this.” And for a while, I really mean it. I feel like I could start over and build a completely different life. Then the next day, I just want to stay asleep. I don’t want to open my eyes and have to do it all again. I don't have to face the ugly fact that I’m just not capable of being successful what other people do. And I wouldn’t have to keep trying to prove something to everyone because I’m too embarrassed to admit how small I feel.
 
-A sport I love.  
-A person I love.  
-A good day.
+Lately, I just want to go somewhere. Far away. Somewhere nobody knows me. And leave all this stuff behind. All the things I learned because I thought that was how you survived.
 
-These small things have carried me this far. But after surviving forty years, their effect no longer feels as strong as it once did. Several times a day, I move between wanting to try again and wanting to give up. One day, I am full of hope and determination, convinced that my forties will be the beginning of an entirely new life. On another day, I wish I could close my eyes and never open them again. Then this difficult life would become nothing. I would not have to admit the humiliating possibility that I may not have what it takes to succeed like everyone else. I would not have to keep struggling to prove my worth to the world because I cannot bear to accept my own smallness.
+How to act around people so they’d accept you.  
+How to keep yourself busy.  
+Just getting through one day after another, trying to keep up with a pace I didn’t even choose.
 
-Lately, I often want to go somewhere far away. Somewhere no one knows me. There, I want to vomit out everything I have learned in order to survive in this world.
+I want to get it all out of me, you know? And then work out what I actually want in there.
 
-The performance I learned so I could fit in with others.  
-The compulsion to stay busy because I am terrified of falling behind.  
-The endless days spent forcing myself to live at the speed and in the manner other people decided was correct.
+What do I even like?  
+What makes me laugh?  
+What would I keep doing if nobody thought it was impressive?
 
-Then, once I am empty, I want to fill myself with the things that might make me want to live again.
+“If it all ends anyway ”
 
-“What do I actually like?”  
-“What makes me laugh?”  
-“What would I continue doing even if no one admired me for it?”
+That’s kind of my motto. I don’t mean I should just wreck my life because I’m going to die soon anyway. I mean… if I only get this one life, shouldn’t I spend some of it doing what I actually want?  
+And if it goes wrong, that won’t last forever either. The failure, the pain of it. I suppose telling myself that makes me a bit less scared. Like having some kind of insurance.
 
-I have one motto that has carried me this far.
+I say all this and make it sound like I’ve figured something out. I haven’t. When I’m saying it to someone else, I’m really trying to get myself to believe it. I still look at my friends and compare. I still want to know where I stand. And if I think I’m behind them, I get anxious and start trying to get ahead again.
 
-“We are all going to die soon anyway.”
+So… yeah. I don’t know. Maybe I’m so tired because I’ve spent too long being whoever I’m supposed to be. At work, around other people, with my family. Always trying to get it right for someone. Maybe I haven’t had much room to just be me.
 
-It does not mean I should live recklessly because death is coming. Since life will end anyway, I want to spend it doing what I genuinely want to do. It is also a kind of insurance policy against fear. Life will end anyway, so why be so afraid of failure? Why not try?
+I’m not saying I want to die. I just… don’t feel that much desire to get up and try really hard again. That’s all...
 
-When I say this to other people, I sound as though I have reached some enlightened understanding of life. But they are still only words. I still measure my position by looking at my friends and everyone around me. I still become anxious when I think I am falling behind. I still work to climb even slightly higher than they have. Perhaps I am tired not only because life is difficult. Perhaps I am tired because I have spent too long performing a life that was never truly mine.
-
-I am not saying that I want to die or something. I just don’t have strong desire to live longer. That is all.
-
-“I wonder what my father would say to this disappointing version of me if he were still alive?”  
+Sometimes I wish my dad were still here. I wonder what he’d say if he saw his son like this...feeling so small and defeated...
