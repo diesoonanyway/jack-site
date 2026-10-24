@@ -14,7 +14,7 @@ heroImage: /media/korean-landscape.jpg
 topics:
   - mental health
 featured: false
-youtubeUrl: https://youtu.be/Y7C3ivJMDCs
+youtubeUrl: https://youtu.be/XRE2B8OkwNc
 ---
 나는 양극성장애를 앓고 있고, 정신장애 2급이야. 블로그는 20년 넘게 써왔는데 예전 블로그는 닫은 상태야.
 
