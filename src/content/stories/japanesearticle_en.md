@@ -14,6 +14,7 @@ heroImage: /media/english-landscape.jpg
 topics:
   - mental health
 featured: false
+youtubeUrl: https://youtu.be/V5fgJNddxpw
 ---
 I have bipolar disorder, and I’m classed as having a Grade 2 psychiatric disability. I’ve been blogging for over 20 years, although my old blog is closed now.
 
