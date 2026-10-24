@@ -6,7 +6,7 @@ description: |-
   일본 사이트 note에 실린 글을 번역하고 일부 각색했습니다.
 
   원문: [https://note.com/mikeneko309/n/nf7b035ee3db4]
-date: 2026-10-30
+date: 2026-10-25
 createdAt: 2026-10-24T22:17:00Z
 draft: false
 lang: ko
