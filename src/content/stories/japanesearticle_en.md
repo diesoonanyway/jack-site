@@ -5,7 +5,7 @@ description: |-
   A story about childhood trauma and the life that followed.
   Translated and lightly adapted from a Japanese post on note.
 
-  Original: [https://note.com/mikeneko309/n/nf7b035ee3db4](https://note.com/mikeneko309/n/nf7b035ee3db4)
+  Original: [https://note.com/mikeneko309/n/nf7b035ee3db4]
 date: 2026-10-24
 createdAt: 2026-10-24T22:40:00Z
 draft: false
