@@ -8,6 +8,7 @@ lang: en
 topics:
   - mental health
 featured: false
+youtubeUrl: https://youtu.be/o_03fMJbDqc
 ---
 I don’t trust anyone. It’s not that I struggle to trust people. Trusting anyone other than myself just feels impossible. When someone’s kind to me, I act grateful, but inside, I’m cynical.
 
