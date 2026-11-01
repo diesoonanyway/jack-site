@@ -8,6 +8,7 @@ lang: ko
 topics:
   - mental health
 featured: false
+youtubeUrl: https://youtu.be/Bs1FJAHyzx8
 ---
 난 아무도 믿지를 못해. 믿기가 힘들다는 게 아니라 그냥 나 아닌 누구를 믿는다는 건 불가능해.  
 누군가 잘해주면 겉으로는 고마워하면서도 속으로는
